@@ -1,4 +1,5 @@
 import React from 'react';
+import logo from './thmix.png';
 
 class App extends React.Component {
   render() {
@@ -22,8 +23,9 @@ class App extends React.Component {
           </div>
         </div>
       </nav>
+
       <section className="container">
-        <div className="Bg($gray-800) px-4 py-3 text-light text-center text-lg-right shadow">
+        <div className="Bgp(c) Bgz(cv) Bg(#00000088) px-4 py-3 text-light text-center text-lg-right shadow" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, .8)), url(${logo})`}}>
           <small>13,880,077 players, 12,444 currently online in 436 games</small>
           <h2 className="Mt(100px) h4 font-weight-normal font-italic mb-0">the bestest free-to-win rhythm game</h2>
           <small className="C($pink)">rhythm is just a click away</small>

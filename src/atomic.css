@@ -1,8 +1,18 @@
-.Bg\(\$gray-800\) {
-  background: #343a40;
+.Bd {
+  border-width: 1px;
+  border-style: solid;
+}
+.Bg\(\#00000088\) {
+  background: #000000;
 }
 .Bgc\(\$gray-600\) {
   background-color: #6c757d;
+}
+.Bgz\(cv\) {
+  background-size: cover;
+}
+.Bgp\(c\) {
+  background-position: center;
 }
 .C\(\$gray-500\) {
   color: #adb5bd;
@@ -24,4 +34,14 @@
 }
 .W\(100\%\) {
   width: 100%;
+}
+.Cf:before, .Cf:after {
+  content: " ";
+  display: table;
+}
+.Cf:after {
+  clear: both;
+}
+.Cf {
+  zoom: 1;
 }
