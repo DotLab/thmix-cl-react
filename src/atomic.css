@@ -20,6 +20,9 @@
 .C\(\$pink\) {
   color: #e83e8c;
 }
+.C\(\$red\) {
+  color: #dc3545;
+}
 .Lh\(18px\) {
   line-height: 18px;
 }

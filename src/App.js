@@ -39,43 +39,49 @@ class App extends React.Component {
 
       <section className="container mt-4">
         <form className="Maw(500px) Mx(a) shadow p-3 rounded">
-          <div class="form-group">
+          <div className="form-group">
             <label>Email address</label>
-            <input class="form-control" type="email" placeholder="Enter email"/>
+            <input className="form-control" type="email"/>
           </div>
-          <div class="form-group">
+          <div className="form-group">
             <label>Password</label>
-            <input class="form-control" type="password" placeholder="Password"/>
+            <input className="form-control" type="password"/>
           </div>
-          <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1"/>
-            <label class="form-check-label" for="exampleCheck1">Remember me</label>
+          <div className="form-group form-check">
+            <input type="checkbox" className="form-check-input"/>
+            <label className="form-check-label">Remember me</label>
           </div>
-          <button type="submit" class="btn btn-primary">Login</button>
+          <div className="form-group">
+            <div class="g-recaptcha" data-sitekey="6LfMg5YUAAAAAAJr_ANH5TVvhoSHsJEa6oGSHw6f"></div>
+          </div>
+          <button type="submit" className="btn btn-primary">Login</button>
         </form>
       </section>
 
       <section className="container mt-4">
         <form className="Maw(500px) Mx(a) shadow p-3 rounded">
-          <div class="form-group">
-            <label>Email address</label>
-            <input class="form-control" type="email" placeholder="Enter email"/>
-            <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+          <div className="form-group">
+            <div className="form-group">
+              <label>Username <span className="C($red)">*</span></label>
+              <input className="form-control" type="email"/>
+              <small className="form-text text-muted">This will be your username.</small>
+            </div>
+            <label>Email address <span className="C($red)">*</span></label>
+            <input className="form-control" type="email"/>
+            <small className="form-text text-muted">We'll never share your email address with anyone else.</small>
           </div>
-          <div class="form-group">
-            <label>Display name</label>
-            <input class="form-control" type="email" placeholder="Enter email"/>
-            <small class="form-text text-muted">Public displaying name.</small>
+          <div className="form-group">
+            <label>Password <span className="C($red)">*</span></label>
+            <input className="form-control" type="password"/>
           </div>
-          <div class="form-group">
-            <label>Password</label>
-            <input class="form-control" type="password" placeholder="Password"/>
+          <div className="form-group">
+            <label>Verify account <span className="C($red)">*</span></label>
+            <div class="g-recaptcha" data-sitekey="6LfMg5YUAAAAAAJr_ANH5TVvhoSHsJEa6oGSHw6f"></div>
           </div>
-          <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1"/>
-            <label class="form-check-label" for="exampleCheck1">I agree to the terms of service</label>
+          <div className="form-group">
+            <small className="form-text text-muted">By clicking “Register” below, you agree to our terms of service and privacy statement.</small>
           </div>
-          <button type="submit" class="btn btn-primary">Register</button>
+          <button type="submit" className="btn btn-primary">Register</button>
         </form>
       </section>
 
