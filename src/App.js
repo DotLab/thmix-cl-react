@@ -37,7 +37,49 @@ class App extends React.Component {
         </div>
       </section>
 
-      <footer className="Pos(a) B(0) W(100%) Lh(18px) Bgc($gray-600) text-center py-1">
+      <section className="container mt-4">
+        <form className="Maw(500px) Mx(a) shadow p-3 rounded">
+          <div class="form-group">
+            <label>Email address</label>
+            <input class="form-control" type="email" placeholder="Enter email"/>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input class="form-control" type="password" placeholder="Password"/>
+          </div>
+          <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1"/>
+            <label class="form-check-label" for="exampleCheck1">Remember me</label>
+          </div>
+          <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+      </section>
+
+      <section className="container mt-4">
+        <form className="Maw(500px) Mx(a) shadow p-3 rounded">
+          <div class="form-group">
+            <label>Email address</label>
+            <input class="form-control" type="email" placeholder="Enter email"/>
+            <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+          </div>
+          <div class="form-group">
+            <label>Display name</label>
+            <input class="form-control" type="email" placeholder="Enter email"/>
+            <small class="form-text text-muted">Public displaying name.</small>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input class="form-control" type="password" placeholder="Password"/>
+          </div>
+          <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1"/>
+            <label class="form-check-label" for="exampleCheck1">I agree to the terms of service</label>
+          </div>
+          <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+      </section>
+
+      <footer className="W(100%) Lh(18px) Bgc($gray-600) mt-4 text-center py-1">
         <div className="container">
           <div className="text-light">
             <small className="d-inline-block text-nowrap pr-4">terms</small>
