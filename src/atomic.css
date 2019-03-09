@@ -2,8 +2,11 @@
   border-width: 1px;
   border-style: solid;
 }
-.Bg\(\#00000088\) {
-  background: #000000;
+.Bgc\(\$gray-700\) {
+  background-color: #495057;
+}
+.Bgc\(\$purple\) {
+  background-color: #6f42c1;
 }
 .Bgc\(\$gray-600\) {
   background-color: #6c757d;
@@ -35,6 +38,13 @@
 }
 .Maw\(500px\) {
   max-width: 500px;
+}
+.Px\(50px\) {
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.Pb\(100px\) {
+  padding-bottom: 100px;
 }
 .W\(100\%\) {
   width: 100%;
