@@ -5,6 +5,7 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
 
+import Help from './components/posts/Help';
 import Terms from './components/posts/Terms';
 import Privacy from './components/posts/Privacy';
 import Copyright from './components/posts/Copyright';
@@ -20,6 +21,7 @@ class App extends React.Component {
           <div className="collapse navbar-collapse" id="navbarText">
             <ul className="navbar-nav mr-auto">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/rankings">rankings</NavLink></li> */}
@@ -37,6 +39,7 @@ class App extends React.Component {
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
 
+        <Route path="/help" component={Help} />
         <Route path="/terms" component={Terms} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/copyright" component={Copyright} />

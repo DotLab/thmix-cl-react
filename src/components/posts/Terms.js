@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 
 class App extends React.Component {
   render() {
-    return <div className="bg-dark">
+    return <div>
       <section className="Bgc($purple) container shadow text-light pt-4 pb-1">
         <h2 className="font-weight-normal">Touhou Mix Terms of Service</h2>
       </section>

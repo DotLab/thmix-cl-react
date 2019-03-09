@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 
 class App extends React.Component {
   render() {
-    return <div className="bg-dark">
+    return <div>
       <section className="Bgc($purple) container shadow text-light pt-4 pb-1">
         <h2 className="font-weight-normal">Touhou Mix Privacy Policy</h2>
       </section>
@@ -123,9 +123,9 @@ class App extends React.Component {
           information to us without parental permission, we will endeavour to delete the information from our systems.</p>
 
         <h3>Data Controller</h3>
-        <p>Hi, I am Kai and I am your data controller. If you have any privacy concerns or requests to exercise your legal rights, don't hesitate to
+        <p>Hi, I am Shinya and I am your data controller. If you have any privacy concerns or requests to exercise your legal rights, don't hesitate to
           contact me directly at the address listed below.</p>
-        <p>Email: <a className="text-warning" href="mailto:mvoltage@outlook.com">mvoltage@outlook.com</a> (24 hour response guaranteed)</p>
+        <p>Email: <a className="text-warning" href="mailto:shinya3@yahoo.com">shinya3@yahoo.com</a> (24 hour response guaranteed)</p>
       </section>
     </div>;
   }

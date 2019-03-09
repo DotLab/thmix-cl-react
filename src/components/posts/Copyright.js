@@ -2,7 +2,7 @@ import React from 'react';
 
 class App extends React.Component {
   render() {
-    return <div className="bg-dark">
+    return <div>
       <section className="Bgc($purple) container shadow text-light pt-4 pb-1">
         <h2 className="font-weight-normal">Touhou Mix Copyright Policy</h2>
       </section>
@@ -75,7 +75,7 @@ class App extends React.Component {
           in 10 to 14 business days or more after receipt of the counter-notice, at Touhou Mix's sole discretion.</p>
 
         <h3>Designated Agent Contact Details</h3>
-        <p>Email: <a className="text-warning" href="mailto:mvoltage@outlook.com">mvoltage@outlook.com</a> (24 hour response guaranteed)</p>
+        <p>Email: <a className="text-warning" href="mailto:shinya3@yahoo.com">shinya3@yahoo.com</a> (24 hour response guaranteed)</p>
       </section>
     </div>;
   }
