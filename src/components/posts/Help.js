@@ -20,7 +20,7 @@ class App extends React.Component {
         <p>Join our QQ group at <span className="text-warning">562614447</span></p>
 
         <h3>Other questions</h3>
-        Please tell us your questions directly at the address listed below.
+        <p>Please tell us your questions directly at the address listed below.</p>
         <p>Email: <a className="text-warning" href="mailto:shinya3@yahoo.com">shinya3@yahoo.com</a> (24 hour response guaranteed)</p>
       </section>
     </div>;
