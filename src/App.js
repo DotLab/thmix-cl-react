@@ -53,10 +53,10 @@ class App extends React.Component {
       <footer className="W(100%) Lh(18px) Bgc($gray-600) text-center py-1 shadow">
         <div className="container">
           <div className="small">
-            <Link className="d-inline-block text-nowrap text-decoration-none text-light pr-4" to="/terms">terms</Link>
-            <Link className="d-inline-block text-nowrap text-decoration-none text-light pr-4" to="/privacy">privacy</Link>
-            <Link className="d-inline-block text-nowrap text-decoration-none text-light pr-4" to="/copyright">copyright(DMCA)</Link>
-            <a className="d-inline-block text-nowrap text-decoration-none text-light pr-4" href="http://thmix.cc/boot/report.php">server status</a>
+            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/terms">terms</Link>
+            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/privacy">privacy</Link>
+            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/copyright">copyright(DMCA)</Link>
+            <a className="d-inline-block text-nowrap text-decoration-none text-light mr-4" href="http://thmix.cc/boot/report.php">server status</a>
             <a className="d-inline-block text-nowrap text-decoration-none text-light     " href="https://github.com/DotLab">source code</a>
           </div>
           <div className="C($gray-500)">
