@@ -7,6 +7,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 
 import MidiListing from './components/MidiListing';
+import RankingListing from './components/RankingListing';
 
 import Help from './components/posts/Help';
 import Terms from './components/posts/Terms';
@@ -25,7 +26,7 @@ class App extends React.Component {
             <ul className="navbar-nav mr-auto">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li>
+              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/rankings">rankings</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
             </ul>
@@ -43,6 +44,7 @@ class App extends React.Component {
         <PropsRoute path="/register" component={Register} />
 
         <PropsRoute path="/midis" component={MidiListing} />
+        <PropsRoute path="/rankings" component={RankingListing} />
 
         <PropsRoute path="/help" component={Help} />
         <PropsRoute path="/terms" component={Terms} />
