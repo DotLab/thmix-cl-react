@@ -9,7 +9,7 @@ import * as serviceWorker from './serviceWorker';
 
 window.recaptchaOptions = {
   useRecaptchaNet: true,
-  removeOnUnmount: false,
+  removeOnUnmount: true,
 };
 
 ReactDOM.render(<BrowserRouter><App /></BrowserRouter>, document.getElementById('root'));

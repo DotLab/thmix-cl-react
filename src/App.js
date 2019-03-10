@@ -5,6 +5,8 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
 
+import MidiListing from './components/MidiListing';
+
 import Help from './components/posts/Help';
 import Terms from './components/posts/Terms';
 import Privacy from './components/posts/Privacy';
@@ -21,15 +23,15 @@ class App extends React.Component {
           <div className="collapse navbar-collapse" id="navbarText">
             <ul className="navbar-nav mr-auto">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
-              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/rankings">rankings</NavLink></li> */}
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/rankings">rankings</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
             </ul>
-            {/* <ul className="navbar-nav">
+            <ul className="navbar-nav">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login">login</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
-            </ul> */}
+            </ul>
           </div>
         </div>
       </nav>
@@ -38,6 +40,8 @@ class App extends React.Component {
         <Route exact path="/" component={Home} />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
+
+        <Route path="/midis" component={MidiListing} />
 
         <Route path="/help" component={Help} />
         <Route path="/terms" component={Terms} />
@@ -51,7 +55,7 @@ class App extends React.Component {
             <Link className="d-inline-block text-nowrap text-decoration-none text-light pr-4" to="/terms">terms</Link>
             <Link className="d-inline-block text-nowrap text-decoration-none text-light pr-4" to="/privacy">privacy</Link>
             <Link className="d-inline-block text-nowrap text-decoration-none text-light pr-4" to="/copyright">copyright(DMCA)</Link>
-            {/* <a className="d-inline-block text-nowrap text-decoration-none text-light pr-4" href="http://thmix.cc/boot/report.php">server status</a> */}
+            <a className="d-inline-block text-nowrap text-decoration-none text-light pr-4" href="http://thmix.cc/boot/report.php">server status</a>
             <a className="d-inline-block text-nowrap text-decoration-none text-light     " href="https://github.com/DotLab">source code</a>
           </div>
           <div className="C($gray-500)">
