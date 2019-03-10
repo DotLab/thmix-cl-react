@@ -1,5 +1,6 @@
 import React from 'react';
 import {Route, Switch, Link, NavLink} from 'react-router-dom';
+import PropsRoute from './PropsRoute';
 
 import Home from './components/Home';
 import Login from './components/Login';
@@ -38,24 +39,24 @@ class App extends React.Component {
 
       <Switch>
         <Route exact path="/" component={Home} />
-        <Route path="/login" component={Login} />
-        <Route path="/register" component={Register} />
+        <PropsRoute path="/login" component={Login} />
+        <PropsRoute path="/register" component={Register} />
 
-        <Route path="/midis" component={MidiListing} />
+        <PropsRoute path="/midis" component={MidiListing} />
 
-        <Route path="/help" component={Help} />
-        <Route path="/terms" component={Terms} />
-        <Route path="/privacy" component={Privacy} />
-        <Route path="/copyright" component={Copyright} />
+        <PropsRoute path="/help" component={Help} />
+        <PropsRoute path="/terms" component={Terms} />
+        <PropsRoute path="/privacy" component={Privacy} />
+        <PropsRoute path="/copyright" component={Copyright} />
       </Switch>
 
       <footer className="W(100%) Lh(18px) Bgc($gray-600) text-center py-1 shadow">
         <div className="container">
           <div className="small">
-            <Link className="d-inline-block text-nowrap text-decoration-none text-light pr-4" to="/terms">terms</Link>
-            <Link className="d-inline-block text-nowrap text-decoration-none text-light pr-4" to="/privacy">privacy</Link>
-            <Link className="d-inline-block text-nowrap text-decoration-none text-light pr-4" to="/copyright">copyright(DMCA)</Link>
-            <a className="d-inline-block text-nowrap text-decoration-none text-light pr-4" href="http://thmix.cc/boot/report.php">server status</a>
+            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/terms">terms</Link>
+            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/privacy">privacy</Link>
+            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/copyright">copyright(DMCA)</Link>
+            <a className="d-inline-block text-nowrap text-decoration-none text-light mr-4" href="http://thmix.cc/boot/report.php">server status</a>
             <a className="d-inline-block text-nowrap text-decoration-none text-light     " href="https://github.com/DotLab">source code</a>
           </div>
           <div className="C($gray-500)">
