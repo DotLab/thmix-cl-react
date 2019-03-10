@@ -46,8 +46,8 @@ export default class MidiListing extends React.Component {
         <div className="row small mt-3">
           <div className="col-md-2">CATEGORIES</div>
           <div className="col-md-10">
-            <span className="Cur(p) d-inline-block text-nowrap mr-3">Ranked</span>
-            <span className="Cur(p) C($pink) d-inline-block text-nowrap mr-3">Approved</span>
+            {/* <span className="Cur(p) d-inline-block text-nowrap mr-3">Ranked</span> */}
+            <span className="Cur(p) d-inline-block text-nowrap mr-3">Approved</span>
             <span className="Cur(p) C($pink) d-inline-block text-nowrap mr-3">Pending</span>
             <span className="Cur(p) C($pink) d-inline-block text-nowrap mr-3">Graveyard</span>
           </div>
