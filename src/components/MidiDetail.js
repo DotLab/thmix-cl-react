@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import ReCAPTCHA from 'react-google-recaptcha';
+// import ReCAPTCHA from 'react-google-recaptcha';
 
 import SampleAvatar from './SampleAvatar.jpg';
 
@@ -17,6 +17,23 @@ const Row = () => (<tr className="Bgc($gray-200) Bgc($gray-300):h mb-1">
   <td className="px-2 py-1 C($gray-600)">644</td>
   <td className="px-2 py-1 C($gray-600) rounded-right">583</td>
 </tr>);
+
+const Reply = () => (<div className="Bdc($gray-400)! border-bottom">
+  <div className="Cf Maw(1000px) mx-auto py-2">
+    <div className="mt-2">
+      <div className="W(10%) float-left pr-3">
+        <img className="W(100%) rounded-circle shadow-sm" src={SampleAvatar} alt=""/>
+      </div>
+      <div className="W(90%) D(ib)">
+        <div>
+          <span className="badge badge-pill badge-primary">A+</span> <Link className="font-weight-bold font-italic" to="/users">domSaur</Link>
+        </div>
+        <div>finally a map for this song ;w;(albeit taco)</div>
+        <div><span className="C($gray-600) small">7 days ago</span></div>
+      </div>
+    </div>
+  </div>
+</div>);
 
 export default class MidiDetail extends React.Component {
   render() {
@@ -101,7 +118,7 @@ export default class MidiDetail extends React.Component {
 
       <section className="Bgc($gray-800) pt-2 pb-3">
         {/* rank */}
-        <div className="container bg-light shadow p-3 mb-3">
+        <div className="container bg-white shadow p-3 mb-3">
           {/* 1st */}
           <div className="rounded border shadow-sm px-3">
             <div className="D(ib) Lh(1) text-center align-middle">
@@ -178,9 +195,9 @@ export default class MidiDetail extends React.Component {
           </div>
         </div>
         {/* comments */}
-        <div className="container bg-light shadow">
+        <div className="container bg-white shadow">
           {/* input */}
-          <div className="Cf Maw(1000px) mx-auto py-3">
+          {/* <div className="Cf Maw(1000px) mx-auto py-3">
             <h2 className="C($pink) h5 m-0">Comments <span className="badge badge-secondary badge-pill">3</span></h2>
             <div className="mt-2">
               <div className="W(10%) float-left pr-3">
@@ -192,9 +209,16 @@ export default class MidiDetail extends React.Component {
                 <button className="btn btn-primary mt-2 ml-2" type="submit">Post</button>
               </form>
             </div>
+          </div> */}
+        </div>
+        <div className="Bgc($gray-200) container">
+          <div className="">
+            <Reply />
+            <Reply />
+            <Reply />
+            <Reply />
           </div>
         </div>
-        <div className="container Bgc($gray-300)">hi</div>
       </section>
     </div>;
   }
