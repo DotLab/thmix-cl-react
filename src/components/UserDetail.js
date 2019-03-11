@@ -1,6 +1,24 @@
 import React from 'react';
 import SampleAvatar from './SampleAvatar.jpg';
 
+const Rank = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) px-3 rounded mt-1">
+  <span className="my-2 badge badge-warning badge-pill">A+</span>
+  <div className="d-inline-block my-2 align-middle ml-2">
+    <div className="font-italic">Songs Compilation <small>by Foreground Eclipse</small></div>
+    <div className="text-warning small">I Won't Say "Farewell"; Someday, We'll Meet Again <span className="text-muted">22 days ago</span></div>
+  </div>
+  <div className="d-inline-block my-2 align-middle ml-4 ml-md-5">
+    <div className="text-warning font-italic font-weight-bold">98.34%</div>
+  </div>
+  <div className="d-inline-block my-2 align-middle ml-4">
+    <div className="font-italic font-weight-bold">453perf</div>
+    <div className="small">weighted 100%</div>
+  </div>
+  <div className="d-inline-block my-2 align-middle ml-4">
+    <div className="C(lightgreen) font-weight-bold">453perf</div>
+  </div>
+</div>);
+
 export default class App extends React.Component {
   render() {
     return <div className="Bgc($black)">
@@ -72,6 +90,35 @@ export default class App extends React.Component {
           </div>
         </div>
       </section>
+
+      <div className="Bdc(springgreen) Bdts(s) Bdtw(2px) mt-2">
+        <section className="container Bgc($gray-900) mt-2 px-5 py-3 text-light">
+          <h3 className="h5"><span className="Bdc(springgreen) Bdbs(s) Bdbw(2px)">me!</span></h3>
+          <div>
+if u need a testplay hit up my forum pms this is reserved for maps that have a good chance at getting ranked though
+twitch discord
+youtube for unranked plays
+skin
+          </div>
+        </section>
+        <section className="container Bgc($gray-900) mt-2 px-5 py-3 text-light">
+          <h3 className="h5"><span className="Bdc(springgreen) Bdbs(s) Bdbw(2px)">Ranks</span></h3>
+          <h4 className="h6 mt-3">Best Performances</h4>
+          <div>
+            <Rank />
+            <Rank />
+            <Rank />
+            <Rank />
+          </div>
+          <h4 className="h6 mt-3">First Place Ranks <span className="badge badge-pill badge-dark">44</span></h4>
+          <div>
+            <Rank />
+            <Rank />
+            <Rank />
+            <Rank />
+          </div>
+        </section>
+      </div>
     </div>;
   }
 }
