@@ -8,7 +8,8 @@ import Register from './components/Register';
 
 import MidiListing from './components/MidiListing';
 import MidiDetail from './components/MidiDetail';
-import RankingListing from './components/RankingListing';
+import UserListing from './components/UserListing';
+import UserDetail from './components/UserDetail';
 
 import Help from './components/posts/Help';
 import Terms from './components/posts/Terms';
@@ -28,7 +29,7 @@ class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/rankings">rankings</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">rankings</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
             </ul>
             <ul className="navbar-nav">
@@ -46,7 +47,8 @@ class App extends React.Component {
 
         <PropsRoute exact path="/midis" component={MidiListing} />
         <PropsRoute path="/midis/:midiId" component={MidiDetail} />
-        <PropsRoute path="/rankings" component={RankingListing} />
+        <PropsRoute exact path="/users" component={UserListing} />
+        <PropsRoute path="/users/:userId" component={UserDetail} />
 
         <PropsRoute path="/help" component={Help} />
         <PropsRoute path="/terms" component={Terms} />
