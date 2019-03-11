@@ -3,10 +3,25 @@ import {Link} from 'react-router-dom';
 
 import SampleAvatar from './SampleAvatar.jpg';
 
+const Row = () => (<tr className="Bgc($gray-200) Bgc($gray-300):h mb-1">
+  <td className="px-2 py-1 rounded-left font-weight-bold">#1</td>
+  <td className="px-2 py-1"><span className="badge badge-primary badge-pill">A+</span></td>
+  <td className="px-2 py-1 text-left"><img className="H(1em) rounded" src={SampleAvatar} alt="avatar"/> <Link className="text-dark" to="/users/idke">idke</Link></td>
+  <td className="px-2 py-1 C($gray-600)">342,234,444</td>
+  <td className="px-2 py-1 C($gray-600)">34,342x</td>
+  <td className="px-2 py-1 C($gray-600)">84%</td>
+  <td className="px-2 py-1">1,334</td>
+  <td className="px-2 py-1 C($gray-600)">23</td>
+  <td className="px-2 py-1 C($gray-600)">23</td>
+  <td className="px-2 py-1 C($gray-600)">644</td>
+  <td className="px-2 py-1 C($gray-600) rounded-right">583</td>
+</tr>);
+
 export default class MidiDetail extends React.Component {
   render() {
     return <div>
       <section className="container">
+        {/* hero */}
         <div className="Bgp(c) Bgz(cv) text-light row shadow px-md-4" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, .8)), url(https://assets.ppy.sh/beatmaps/163112/covers/card.jpg?1521017332)`}}>
           <div className="col-md-8">
             <div className="pt-2 pb-2 pb-md-4">
@@ -43,15 +58,28 @@ export default class MidiDetail extends React.Component {
             </div>
           </div>
         </div>
-        <div className="shadow row px-md-4">
+        {/* desc */}
+        <div className="shadow row px-md-4 mb-2">
           <div className="col-md-8">
-            <div className="row py-md-4">
-              <div className="col-lg-8">hi</div>
-              <div className="col-lg-4">hi</div>
+            {/* left */}
+            <div className="row py-2">
+              <div className="col-lg-8 py-2">
+                <h3 className="h6 m-0">Description</h3>
+                <div className="small">
+                  Until the day the scar in my heart heals
+                  and the two of us become but a memory,
+                  is it okay if I continue to love you?
+                </div>
+              </div>
+              <div className="col-lg-4 py-2">
+                <h3 className="h6 m-0">Source</h3>
+                <div className="small"><Link to="/">CHUNITHM</Link></div>
+              </div>
             </div>
           </div>
           <div className="col-md-4">
-            <div className="Bgc($gray-200) ml-md-auto px-3 py-2">
+            {/* right */}
+            <div className="Bgc($gray-200) ml-md-auto mt-md-3 px-3 py-2 shadow-sm">
               <div className="text-center mt-2">Pass Rate</div>
               <div>
                 <i className="fa-fw fas fa-check"></i>45,394
@@ -70,6 +98,89 @@ export default class MidiDetail extends React.Component {
         </div>
       </section>
 
+      <section className="Bgc($gray-800) pt-2 pb-3">
+        {/* rank */}
+        <div className="container bg-light shadow p-3 mb-3">
+          {/* 1st */}
+          <div className="rounded border shadow-sm px-3">
+            <div className="D(ib) Lh(1) text-center align-middle">
+              <div className="Fz(1.2em) font-weight-bold m-0">#1</div>
+              <div className="badge badge-success badge-pill mt-1">A+</div>
+            </div>
+            <div className="D(ib) ml-3">
+              <img className="H(80px) my-2 rounded shadow-sm" src={SampleAvatar} alt=""/>
+            </div>
+            <div className="Mend(120px)--xl Mend(20px)--lg D(ib) ml-2 align-middle">
+              <h4 className="h6 m-0 font-italic">Alchyr</h4>
+              <div className="small">achieved about 2 hour ago</div>
+            </div>
+            <div className="D(ib) mx-2 my-2 align-middle">
+              <div className="Fz(.75em) font-weight-bold border-bottom">TOTAL SUNSHINE</div>
+              <div className="Fz(1.25em)">453,432,435</div>
+            </div>
+            <div className="D(ib) mx-2 my-2 align-middle">
+              <div className="Fz(.75em) font-weight-bold border-bottom">MAX COMBO</div>
+              <div className="Fz(1.25em)">445x</div>
+            </div>
+            <div className="D(ib) mx-2 my-2 align-middle">
+              <div className="Fz(.75em) font-weight-bold border-bottom">ACCURACY</div>
+              <div className="Fz(1.25em)">90.4%</div>
+            </div>
+            <div className="D(ib) mx-2 my-2 align-middle">
+              <div className="Fz(.75em) font-weight-bold border-bottom">PERF</div>
+              <div className="Fz(1.25em)">453</div>
+            </div>
+            <div className="D(ib) mx-2 my-2 align-middle">
+              <div className="Fz(.75em) font-weight-bold border-bottom">PERFECT</div>
+              <div className="Fz(1em)">453</div>
+            </div>
+            <div className="D(ib) mx-2 my-2 align-middle">
+              <div className="Fz(.75em) font-weight-bold border-bottom">GREAT</div>
+              <div className="Fz(1em)">453</div>
+            </div>
+            <div className="D(ib) mx-2 my-2 align-middle">
+              <div className="Fz(.75em) font-weight-bold border-bottom">GOOD</div>
+              <div className="Fz(1em)">453</div>
+            </div>
+            <div className="D(ib) mx-2 my-2 align-middle">
+              <div className="Fz(.75em) font-weight-bold border-bottom">MISS</div>
+              <div className="Fz(1em)">453</div>
+            </div>
+          </div>
+          {/* ranking */}
+          <div className="table-responsive">
+            <table className="Bdcl(s) Bdsp(0,.25em) text-nowrap text-center">
+              <thead className="small">
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td className="w-100"></td>
+                  <td className="px-2 py-1 text-muted">sunshine</td>
+                  <td className="px-2 py-1 text-muted">combo</td>
+                  <td className="px-2 py-1 text-muted">accuracy</td>
+                  <td className="px-2 py-1">performance</td>
+                  <td className="px-2 py-1 text-muted">perfect</td>
+                  <td className="px-2 py-1 text-muted">great</td>
+                  <td className="px-2 py-1 text-muted">good</td>
+                  <td className="px-2 py-1 text-muted">miss</td>
+                </tr>
+              </thead>
+              <tbody>
+                <Row/>
+                <Row/>
+                <Row/>
+                <Row/>
+                <Row/>
+                <Row/>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {/* comments */}
+        <div className="container bg-light shadow">
+          hi
+        </div>
+      </section>
     </div>;
   }
 }
