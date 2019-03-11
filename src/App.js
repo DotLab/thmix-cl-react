@@ -7,6 +7,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 
 import MidiListing from './components/MidiListing';
+import MidiDetail from './components/MidiDetail';
 import RankingListing from './components/RankingListing';
 
 import Help from './components/posts/Help';
@@ -43,7 +44,8 @@ class App extends React.Component {
         <PropsRoute path="/login" component={Login} />
         <PropsRoute path="/register" component={Register} />
 
-        <PropsRoute path="/midis" component={MidiListing} />
+        <PropsRoute exact path="/midis" component={MidiListing} />
+        <PropsRoute path="/midis/:midiId" component={MidiDetail} />
         <PropsRoute path="/rankings" component={RankingListing} />
 
         <PropsRoute path="/help" component={Help} />
