@@ -49,4 +49,10 @@ export default class Api {
     this.hasHandshakeSucceeded = true;
     debug('onHandshakeDone', res);
   }
+
+  register({recaptcha, username, email, password}) {
+    return new Promise((resolve, reject) => {
+      this.socket.emit('cl_register', {recaptcha, username, email, password});
+    });
+  }
 }
