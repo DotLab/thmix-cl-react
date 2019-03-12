@@ -8,14 +8,20 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import Api from './Api';
-const api = new Api();
+import ApiContext from './ApiContext';
 
 window.recaptchaOptions = {
   useRecaptchaNet: true,
   removeOnUnmount: true,
 };
 
-ReactDOM.render(<BrowserRouter><App api={api}/></BrowserRouter>, document.getElementById('root'));
+const api = new Api();
+
+ReactDOM.render(<BrowserRouter>
+  <ApiContext.Provider value={api}>
+    <App api={api}/>
+  </ApiContext.Provider>
+</BrowserRouter>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

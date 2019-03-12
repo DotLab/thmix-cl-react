@@ -3,7 +3,11 @@ import ReCAPTCHA from 'react-google-recaptcha';
 
 import {onChangeNamedDirect} from '../utils';
 
+import ApiContext from '../ApiContext';
+
 class App extends React.Component {
+  static contextType = ApiContext;
+
   constructor(props) {
     super(props);
     this.onRecaptchaChange = onChangeNamedDirect.bind(this, 'recaptcha');

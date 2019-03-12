@@ -16,7 +16,11 @@ import Terms from './components/posts/Terms';
 import Privacy from './components/posts/Privacy';
 import Copyright from './components/posts/Copyright';
 
+import ApiContext from './ApiContext';
+
 class App extends React.Component {
+  static contextType = ApiContext;
+
   render() {
     return <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
