@@ -7,20 +7,23 @@ import './atomic.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-import Api from './Api';
-import ApiContext from './ApiContext';
+import io from 'socket.io-client';
 
 window.recaptchaOptions = {
   useRecaptchaNet: true,
   removeOnUnmount: true,
 };
 
-const api = new Api();
+let socket;
+if (process.env.NODE_ENV === 'development') {
+  const loc = window.location;
+  socket = io(loc.protocol + '//' + loc.hostname + ':6003');
+} else {
+  socket = io();
+}
 
 ReactDOM.render(<BrowserRouter>
-  <ApiContext.Provider value={api}>
-    <App api={api}/>
-  </ApiContext.Provider>
+  <App socket={socket}/>
 </BrowserRouter>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

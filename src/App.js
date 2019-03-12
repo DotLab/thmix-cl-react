@@ -16,13 +16,68 @@ import Terms from './components/posts/Terms';
 import Privacy from './components/posts/Privacy';
 import Copyright from './components/posts/Copyright';
 
-import ApiContext from './ApiContext';
+const debug = require('debug')('thmix:App');
+
+const VERSION = 0;
+const INTENT = 'web';
 
 class App extends React.Component {
-  static contextType = ApiContext;
+  constructor(props) {
+    super(props);
+
+    this.history = props.history;
+    this.socket = props.socket;
+
+    this.state = {
+      isHandshakeSuccessful: false,
+      error: null,
+    };
+
+    this.socket.on('disconnect', this.onDisconnect.bind(this));
+
+    this.handshake();
+  }
+
+  error(message) {
+    if (typeof message === 'string') this.setState({error: message});
+  }
+
+  onDisconnect() {
+    this.error('disconnected');
+  }
+
+  genericApi0(event) {
+    return new Promise((resolve, reject) => {
+      this.socket.emit(event, (res) => {
+        if (res.success === true) return resolve(res.data);
+        this.error(res.data);
+        if (typeof reject === 'function') reject(res.data);
+      });
+    });
+  }
+
+  genericApi1(event, arg1) {
+    return new Promise((resolve, reject) => {
+      this.socket.emit(event, arg1, (res) => {
+        if (res.success === true) return resolve(res.data);
+        this.error(res.data);
+        if (typeof reject === 'function') reject(res.data);
+      });
+    });
+  }
+
+  async handshake() {
+    const info = await this.genericApi1('cl_handshake', {version: VERSION, intent: INTENT});
+    debug(info);
+    this.setState({isHandshakeSuccessful: true});
+  }
 
   render() {
+    const s = this.state;
     return <div>
+      {s.error && <div className="Z(1) position-fixed w-100 text-center">
+        <span className="d-inline-block alert alert-danger p-2 shadow"><strong>Error</strong>: {s.error}</span>
+      </div>}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
@@ -47,7 +102,7 @@ class App extends React.Component {
       <Switch>
         <Route exact path="/" component={Home} />
         <PropsRoute path="/login" component={Login} />
-        <PropsRoute path="/register" component={Register} />
+        <PropsRoute path="/register" component={Register} app={this}/>
 
         <PropsRoute exact path="/midis" component={MidiListing} />
         <PropsRoute path="/midis/:midiId" component={MidiDetail} />
