@@ -1,11 +1,12 @@
 import React from 'react';
 import SampleAvatar from './SampleAvatar.jpg';
+import SampleListCover from './SampleListCover.jpg';
 
 const Rank = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) px-3 rounded mt-1">
   <span className="my-2 badge badge-warning badge-pill">A+</span>
   <div className="d-inline-block my-2 align-middle ml-2">
     <div className="font-italic">Songs Compilation <small>by Foreground Eclipse</small></div>
-    <div className="text-warning small">I Won't Say "Farewell"; Someday, We'll Meet Again <span className="text-muted">22 days ago</span></div>
+    <div className="text-warning small">I Won't Say "Farewell"; Someday, We'll Meet Again <span className="C($gray-500)">22 days ago</span></div>
   </div>
   <div className="d-inline-block my-2 align-middle ml-4 ml-md-5">
     <div className="text-warning font-italic font-weight-bold">98.34%</div>
@@ -16,6 +17,17 @@ const Rank = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) px-
   </div>
   <div className="d-inline-block my-2 align-middle ml-4">
     <div className="C(lightgreen) font-weight-bold">453perf</div>
+  </div>
+</div>);
+
+const Played = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) pr-3 rounded mt-1">
+  <img className="d-inline-block rounded-left" src={SampleListCover} alt=""/>
+  <div className="d-inline-block my-2 align-middle ml-2">
+    <div><strong>Songs Compilation</strong> <small>by Foreground Eclipse</small></div>
+    <div className="C($gray-500) small">mapped by <strong>Kite</strong></div>
+  </div>
+  <div className="d-inline-block my-2 align-middle ml-4 ml-md-5">
+    <div className="text-warning font-weight-bold"><i className="fas fa-play"></i> 345</div>
   </div>
 </div>);
 
@@ -92,15 +104,17 @@ export default class App extends React.Component {
       </section>
 
       <div className="Bdc(springgreen) Bdts(s) Bdtw(2px) mt-2">
+        {/* me */}
         <section className="container Bgc($gray-900) mt-2 px-5 py-3 text-light">
           <h3 className="h5"><span className="Bdc(springgreen) Bdbs(s) Bdbw(2px)">me!</span></h3>
           <div>
-if u need a testplay hit up my forum pms this is reserved for maps that have a good chance at getting ranked though
-twitch discord
-youtube for unranked plays
-skin
+            if u need a testplay hit up my forum pms this is reserved for maps that have a good chance at getting ranked though
+            twitch discord
+            youtube for unranked plays
+            skin
           </div>
         </section>
+        {/* ranks */}
         <section className="container Bgc($gray-900) mt-2 px-5 py-3 text-light">
           <h3 className="h5"><span className="Bdc(springgreen) Bdbs(s) Bdbw(2px)">Ranks</span></h3>
           <h4 className="h6 mt-3">Best Performances</h4>
@@ -111,6 +125,26 @@ skin
             <Rank />
           </div>
           <h4 className="h6 mt-3">First Place Ranks <span className="badge badge-pill badge-dark">44</span></h4>
+          <div>
+            <Rank />
+            <Rank />
+            <Rank />
+            <Rank />
+          </div>
+        </section>
+        {/* historical */}
+        <section className="container Bgc($gray-900) mt-2 px-5 py-3 text-light">
+          <h3 className="h5"><span className="Bdc(springgreen) Bdbs(s) Bdbw(2px)">Historical</span></h3>
+          <h4 className="h6 mt-3">Play History</h4>
+          <div>i am a graph</div>
+          <h4 className="h6 mt-3">Most Played Midis</h4>
+          <div>
+            <Played />
+            <Played />
+            <Played />
+            <Played />
+          </div>
+          <h4 className="h6 mt-3">Recent Plays</h4>
           <div>
             <Rank />
             <Rank />
