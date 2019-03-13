@@ -16,6 +16,8 @@ import Terms from './components/posts/Terms';
 import Privacy from './components/posts/Privacy';
 import Copyright from './components/posts/Copyright';
 
+import SampleAvatar from './components/SampleAvatar.jpg';
+
 // const debug = require('debug')('thmix:App');
 
 const VERSION = 0;
@@ -30,10 +32,12 @@ class App extends React.Component {
 
     this.state = {
       isHandshakeSuccessful: false,
+      user: null,
       error: null,
     };
 
     this.socket.on('disconnect', this.onDisconnect.bind(this));
+    this.socket.on('reconnect', this.onReconnect.bind(this));
 
     this.handshake();
   }
@@ -43,7 +47,18 @@ class App extends React.Component {
   }
 
   onDisconnect() {
+    this.setState({
+      isHandshakeSuccessful: false,
+      user: null,
+    });
+
     this.error('disconnected');
+  }
+
+  async onReconnect() {
+    this.setState({error: null});
+
+    await this.handshake();
   }
 
   genericApi0(event) {
@@ -101,10 +116,14 @@ class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">rankings</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
             </ul>
-            <ul className="navbar-nav">
+            {!s.user ? <ul className="navbar-nav">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login">login</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
-            </ul>
+            </ul> : <ul className="navbar-nav">
+              <li className="nav-item">
+                <Link to="/users/kailang"><img className="W(2em) d-inline-block rounded" src={SampleAvatar} alt=""/></Link>
+              </li>
+            </ul>}
           </div>
         </div>
       </nav>
