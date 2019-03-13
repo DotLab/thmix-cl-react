@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, Switch, Link, NavLink} from 'react-router-dom';
+import {Route, Switch, Link, NavLink, withRouter} from 'react-router-dom';
 import PropsRoute from './PropsRoute';
 
 import Home from './components/Home';
@@ -16,7 +16,7 @@ import Terms from './components/posts/Terms';
 import Privacy from './components/posts/Privacy';
 import Copyright from './components/posts/Copyright';
 
-const debug = require('debug')('thmix:App');
+// const debug = require('debug')('thmix:App');
 
 const VERSION = 0;
 const INTENT = 'web';
@@ -67,15 +67,25 @@ class App extends React.Component {
   }
 
   async handshake() {
-    const info = await this.genericApi1('cl_handshake', {version: VERSION, intent: INTENT});
-    debug(info);
+    await this.genericApi1('cl_handshake', {version: VERSION, intent: INTENT});
     this.setState({isHandshakeSuccessful: true});
+  }
+
+  async register({recaptcha, username, email, password}) {
+    await this.genericApi1('cl_web_register', {recaptcha, username, email, password});
+    this.history.push('/login');
+  }
+
+  async login({recaptcha, email, password}) {
+    const user = await this.genericApi1('cl_web_login', {recaptcha, email, password});
+    this.setState({user});
+    this.history.replace('/');
   }
 
   render() {
     const s = this.state;
     return <div>
-      {s.error && <div className="Z(1) position-fixed w-100 text-center">
+      {s.error && <div className="Pe(n) Z(1) position-fixed w-100 text-center">
         <span className="d-inline-block alert alert-danger p-2 shadow"><strong>Error</strong>: {s.error}</span>
       </div>}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
@@ -101,7 +111,7 @@ class App extends React.Component {
 
       <Switch>
         <Route exact path="/" component={Home} />
-        <PropsRoute path="/login" component={Login} />
+        <PropsRoute path="/login" component={Login} app={this}/>
         <PropsRoute path="/register" component={Register} app={this}/>
 
         <PropsRoute exact path="/midis" component={MidiListing} />
@@ -133,4 +143,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default withRouter(App);

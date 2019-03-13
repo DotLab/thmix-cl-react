@@ -7,18 +7,25 @@ import {onChange, onChangeNamedDirect} from '../utils';
 class App extends React.Component {
   constructor(props) {
     super(props);
+
+    this.app = this.props.app;
+
     this.onChange = onChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
     this.onRecaptchaChange = onChangeNamedDirect.bind(this, 'recaptcha');
+    this.onSubmit = this.onSubmit.bind(this);
+
     this.state = {
       recaptcha: null,
+      username: null,
+      email: null,
+      password: null,
     };
   }
 
   onSubmit(e) {
     e.preventDefault();
 
-    this.context.register(this.state);
+    this.app.register(this.state);
   }
 
   render() {
@@ -39,7 +46,8 @@ class App extends React.Component {
           <input className="form-control" type="password" required name="password" onChange={this.onChange}/>
         </div>
         <div className="form-group">
-          <ReCAPTCHA sitekey="6LfMg5YUAAAAAAJr_ANH5TVvhoSHsJEa6oGSHw6f" name="hi" onChange={this.onRecaptchaChange}/>
+          {/* <ReCAPTCHA sitekey="6LfMg5YUAAAAAAJr_ANH5TVvhoSHsJEa6oGSHw6f" onChange={this.onRecaptchaChange}/> */}
+          <ReCAPTCHA sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" onChange={this.onRecaptchaChange}/>
         </div>
         <div className="form-group">
           <small className="form-text text-muted">By clicking “Register” below, you agree to our <Link to="/terms">terms of service</Link> and <Link to="/privacy">privacy policies</Link>.</small>
