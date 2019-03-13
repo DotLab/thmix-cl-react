@@ -10,6 +10,7 @@ import MidiListing from './components/MidiListing';
 import MidiDetail from './components/MidiDetail';
 import UserListing from './components/UserListing';
 import UserDetail from './components/UserDetail';
+import EditUserDetail from './components/EditUserDetail';
 
 import Help from './components/posts/Help';
 import Terms from './components/posts/Terms';
@@ -86,8 +87,8 @@ class App extends React.Component {
     this.setState({isHandshakeSuccessful: true});
   }
 
-  async register({recaptcha, username, email, password}) {
-    await this.genericApi1('cl_web_register', {recaptcha, username, email, password});
+  async register({recaptcha, name, email, password}) {
+    await this.genericApi1('cl_web_register', {recaptcha, name, email, password});
     this.history.push('/login');
   }
 
@@ -95,6 +96,11 @@ class App extends React.Component {
     const user = await this.genericApi1('cl_web_login', {recaptcha, email, password});
     this.setState({user});
     this.history.replace('/');
+  }
+
+  async getUser({userId}) {
+    const user = await this.genericApi1('cl_web_get_user', {userId});
+    return user;
   }
 
   render() {
@@ -121,7 +127,7 @@ class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
             </ul> : <ul className="navbar-nav">
               <li className="nav-item">
-                <Link to="/users/kailang"><img className="W(2em) d-inline-block rounded" src={SampleAvatar} alt=""/></Link>
+                <Link to={`/users/${s.user.id}`}><img className="W(2em) d-inline-block rounded" src={SampleAvatar} alt=""/></Link>
               </li>
             </ul>}
           </div>
@@ -136,7 +142,8 @@ class App extends React.Component {
         <PropsRoute exact path="/midis" component={MidiListing} />
         <PropsRoute path="/midis/:midiId" component={MidiDetail} />
         <PropsRoute exact path="/users" component={UserListing} />
-        <PropsRoute path="/users/:userId" component={UserDetail} />
+        <PropsRoute exact path="/users/:userId" component={UserDetail} app={this} />
+        <PropsRoute path="/users/:userId/edit" component={EditUserDetail} app={this} />
 
         <PropsRoute path="/help" component={Help} />
         <PropsRoute path="/terms" component={Terms} />

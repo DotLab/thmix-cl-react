@@ -34,7 +34,7 @@ class App extends React.Component {
         <div className="form-group">
           <div className="form-group">
             <label>Username <span className="C($red)">*</span></label>
-            <input className="form-control" type="text" required name="username" onChange={this.onChange}/>
+            <input className="form-control" type="text" required name="name" onChange={this.onChange}/>
             <small className="form-text text-muted">This will be your username.</small>
           </div>
           <label>Email address <span className="C($red)">*</span></label>
