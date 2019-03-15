@@ -1,5 +1,5 @@
 import React from 'react';
-import SampleAvatar from './SampleAvatar.jpg';
+import DefaultAvatar from './DefaultAvatar.jpg';
 import SampleListCover from './SampleListCover.jpg';
 
 import {formatDate, formatNumber, getTimeSpan, getTimeSpanBetween, formatTimeSpan} from '../utils';
@@ -49,6 +49,7 @@ export default class App extends React.Component {
       joinedDate: null,
       seenDate: null,
       bio: null,
+      avatarUrl: null,
 
       playCount: null,
       totalScores: null,
@@ -69,7 +70,7 @@ export default class App extends React.Component {
 
   async componentDidMount() {
     const user = await this.app.getUser({userId: this.props.match.params.userId});
-    console.log(user);
+
     this.setState(user);
     this.setState({loading: false, isSelf: this.app.state.user && user.id === this.app.state.user.id});
   }
@@ -91,7 +92,7 @@ export default class App extends React.Component {
       <section className="Bgc($gray-800) Bdtw(2px) Bdts(s) Bdc(springgreen) py-3 px-5 container text-light">
         <div className="row">
           <div className="col-md-8">
-            <img className="H(100px) rounded shadow-sm d-inline-block" src={SampleAvatar} alt=""/>
+            <img className="H(100px) rounded shadow-sm d-inline-block" src={s.avatarUrl || DefaultAvatar} alt=""/>
             <div className="Lh(1.15) d-inline-block align-middle ml-3">
               <h3 className="h4 mb-1">{s.name}</h3>
               <div>Joined <strong>{formatDate(s.joinedDate)}</strong></div>

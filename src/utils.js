@@ -103,7 +103,7 @@ export function onTextareaChange(e) {
   /* eslint-disable-next-line no-invalid-this */
   this.setState({[e.target.name]: e.target.value});
   /* eslint-disable-next-line no-invalid-this */
-  this.setState({[e.target.name + 'LineCount']: e.target.value.split('\n').length});
+  this.setState({[e.target.name + 'RowCount']: e.target.value.split('\n').length});
 }
 
 export function onChangeNamed(name, e) {

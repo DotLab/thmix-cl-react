@@ -17,7 +17,7 @@ import Terms from './components/posts/Terms';
 import Privacy from './components/posts/Privacy';
 import Copyright from './components/posts/Copyright';
 
-import SampleAvatar from './components/SampleAvatar.jpg';
+import DefaultAvatar from './components/DefaultAvatar.jpg';
 
 // const debug = require('debug')('thmix:App');
 
@@ -35,6 +35,8 @@ class App extends React.Component {
       isHandshakeSuccessful: false,
       user: null,
       error: null,
+      success: null,
+      // waiting: true,
     };
 
     this.socket.on('disconnect', this.onDisconnect.bind(this));
@@ -43,8 +45,18 @@ class App extends React.Component {
     this.handshake();
   }
 
+  async componentDidMount() {
+    await this.login({recaptcha: '', email: 'a@a.com', password: 'a'});
+    // this.setState({waiting: false});
+  }
+
   error(message) {
     if (typeof message === 'string') this.setState({error: message});
+  }
+
+  success(message) {
+    this.setState({success: message});
+    setTimeout(() => this.setState({success: null}), 1500);
   }
 
   onDisconnect() {
@@ -60,6 +72,7 @@ class App extends React.Component {
     this.setState({error: null});
 
     await this.handshake();
+    await this.login({recaptcha: '', email: 'a@a.com', password: 'a'});
   }
 
   genericApi0(event) {
@@ -95,7 +108,7 @@ class App extends React.Component {
   async login({recaptcha, email, password}) {
     const user = await this.genericApi1('cl_web_login', {recaptcha, email, password});
     this.setState({user});
-    this.history.replace('/');
+    // this.history.replace('/');
   }
 
   async getUser({userId}) {
@@ -103,11 +116,21 @@ class App extends React.Component {
     return user;
   }
 
+  async userUpdateBio({bio}) {
+    const user = await this.genericApi1('cl_web_user_update_bio', {bio});
+    this.setState({user});
+    this.success('bio updated');
+  }
+
   render() {
     const s = this.state;
+
+    if (s.waiting) return <div></div>;
+
     return <div>
-      {s.error && <div className="Pe(n) Z(1) position-fixed w-100 text-center">
-        <span className="d-inline-block alert alert-danger p-2 shadow"><strong>Error</strong>: {s.error}</span>
+      {(s.error || s.success) && <div className="Pe(n) Z(1) position-fixed w-100 text-center">
+        {s.error && <span className="d-inline-block alert alert-danger p-2 shadow"><strong>Error</strong>: {s.error}</span>}
+        {s.success && <span className="d-inline-block alert alert-success p-2 shadow"><strong>Success</strong>: {s.success}</span>}
       </div>}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -127,7 +150,7 @@ class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
             </ul> : <ul className="navbar-nav">
               <li className="nav-item">
-                <Link to={`/users/${s.user.id}`}><img className="W(2em) d-inline-block rounded" src={SampleAvatar} alt=""/></Link>
+                <Link to={`/users/${s.user.id}`}><img className="W(2em) d-inline-block rounded" src={s.user.avatarUrl || DefaultAvatar} alt=""/></Link>
               </li>
             </ul>}
           </div>
