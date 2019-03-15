@@ -31,6 +31,8 @@ class App extends React.Component {
     this.history = props.history;
     this.socket = props.socket;
 
+    this.supportFileUpload = File && FileReader;
+
     this.state = {
       isHandshakeSuccessful: false,
       user: null,
@@ -120,6 +122,12 @@ class App extends React.Component {
     const user = await this.genericApi1('cl_web_user_update_bio', {bio});
     this.setState({user});
     this.success('bio updated');
+  }
+
+  async userUploadAvatar({size, buffer}) {
+    const user = await this.genericApi1('cl_web_user_upload_avatar', {size, buffer});
+    this.setState({user});
+    this.success('avatar uploaded');
   }
 
   render() {
