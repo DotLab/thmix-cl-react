@@ -13,8 +13,10 @@ export default class EditUserDetail extends React.Component {
 
     this.app = props.app;
 
-    // const canEdit = this.app.state.user && this.app.state.user.id === props.match.params.userId;
-    // if (!canEdit) this.app.history.replace(`/users/${props.match.params.userId}`);
+    if (!this.app.isDevelopment) {
+      const canEdit = this.app.state.user && this.app.state.user.id === props.match.params.userId;
+      if (!canEdit) this.app.history.replace(`/users/${props.match.params.userId}`);
+    }
 
     this.onChange = onChange.bind(this);
     this.updateBio = this.updateBio.bind(this);
