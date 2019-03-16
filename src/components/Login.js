@@ -2,6 +2,7 @@ import React from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 import {onChange, onChangeNamedDirect} from '../utils';
+import {RECAPTCHA_KEY, TEST_RECAPTCHA_KEY} from '../secrets';
 
 class App extends React.Component {
   constructor(props) {
@@ -40,8 +41,7 @@ class App extends React.Component {
             <label className="form-check-label">Remember me</label>
           </div> */}
         <div className="form-group">
-          {/* <ReCAPTCHA sitekey="6LfMg5YUAAAAAAJr_ANH5TVvhoSHsJEa6oGSHw6f" name="hi" onChange={this.onRecaptchaChange}/> */}
-          <ReCAPTCHA sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" onChange={this.onRecaptchaChange}/>
+          <ReCAPTCHA sitekey={this.app.isDevelopment ? TEST_RECAPTCHA_KEY : RECAPTCHA_KEY} onChange={this.onRecaptchaChange}/>
         </div>
         <button type="submit" className="btn btn-primary" disabled={!this.state.recaptcha}>Login</button>
       </form>

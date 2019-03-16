@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 import {onChange, onChangeNamedDirect} from '../utils';
+import {RECAPTCHA_KEY, TEST_RECAPTCHA_KEY} from '../secrets';
 
 class App extends React.Component {
   constructor(props) {
@@ -46,8 +47,7 @@ class App extends React.Component {
           <input className="form-control" type="password" required name="password" onChange={this.onChange}/>
         </div>
         <div className="form-group">
-          {/* <ReCAPTCHA sitekey="6LfMg5YUAAAAAAJr_ANH5TVvhoSHsJEa6oGSHw6f" onChange={this.onRecaptchaChange}/> */}
-          <ReCAPTCHA sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" onChange={this.onRecaptchaChange}/>
+          <ReCAPTCHA sitekey={this.app.isDevelopment ? TEST_RECAPTCHA_KEY : RECAPTCHA_KEY} onChange={this.onRecaptchaChange}/>
         </div>
         <div className="form-group">
           <small className="form-text text-muted">By clicking “Register” below, you agree to our <Link to="/terms">terms of service</Link> and <Link to="/privacy">privacy policies</Link>.</small>

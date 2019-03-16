@@ -19,10 +19,14 @@ import Copyright from './components/posts/Copyright';
 
 import DefaultAvatar from './components/DefaultAvatar.jpg';
 
+import {TEST_EMAIL, TEST_PASSWORD} from './secrets';
+
 // const debug = require('debug')('thmix:App');
 
 const VERSION = 0;
 const INTENT = 'web';
+
+const DEVELOPMENT = 'development';
 
 class App extends React.Component {
   constructor(props) {
@@ -30,6 +34,7 @@ class App extends React.Component {
 
     this.history = props.history;
     this.socket = props.socket;
+    this.isDevelopment = props.env === DEVELOPMENT;
 
     this.supportFileUpload = File && FileReader;
 
@@ -38,18 +43,12 @@ class App extends React.Component {
       user: null,
       error: null,
       success: null,
-      // waiting: true,
     };
 
     this.socket.on('disconnect', this.onDisconnect.bind(this));
     this.socket.on('reconnect', this.onReconnect.bind(this));
 
     this.handshake();
-  }
-
-  async componentDidMount() {
-    await this.login({recaptcha: '', email: 'a@a.com', password: 'a'});
-    // this.setState({waiting: false});
   }
 
   error(message) {
@@ -74,7 +73,6 @@ class App extends React.Component {
     this.setState({error: null});
 
     await this.handshake();
-    await this.login({recaptcha: '', email: 'a@a.com', password: 'a'});
   }
 
   genericApi0(event) {
@@ -100,6 +98,10 @@ class App extends React.Component {
   async handshake() {
     await this.genericApi1('cl_handshake', {version: VERSION, intent: INTENT});
     this.setState({isHandshakeSuccessful: true});
+
+    if (this.isDevelopment) {
+      await this.login({recaptcha: '', email: TEST_EMAIL, password: TEST_PASSWORD});
+    }
   }
 
   async register({recaptcha, name, email, password}) {
@@ -110,7 +112,10 @@ class App extends React.Component {
   async login({recaptcha, email, password}) {
     const user = await this.genericApi1('cl_web_login', {recaptcha, email, password});
     this.setState({user});
-    // this.history.replace('/');
+
+    if (!this.isDevelopment) {
+      this.history.replace('/');
+    }
   }
 
   async getUser({userId}) {
