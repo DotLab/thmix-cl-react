@@ -42,8 +42,7 @@ export default class App extends React.Component {
     this.startEdit = this.startEdit.bind(this);
 
     this.state = {
-      loading: true,
-
+      id: null,
       name: null,
 
       joinedDate: null,
@@ -72,7 +71,6 @@ export default class App extends React.Component {
     const user = await this.app.getUser({userId: this.props.match.params.userId});
 
     this.setState(user);
-    this.setState({loading: false, isSelf: this.app.state.user && user.id === this.app.state.user.id});
   }
 
   startEdit() {
@@ -81,11 +79,13 @@ export default class App extends React.Component {
 
   render() {
     const s = this.state;
+    const isSelf = this.app.state.user && s.id === this.app.state.user.id;
+
     return <div className="Bgc($black)">
       <section className="Bgc($gray-600) Pt(60px) Pb(20px) px-5 container text-light ">
         <h2 className="m-0 font-weight-normal">
           Player <span className="C(springgreen)">Info</span>
-          {s.isSelf && <span className="Cur(p) C($gray-100) float-right" onClick={this.startEdit}><i className="fas fa-pencil-alt"></i></span>}
+          {isSelf && <span className="C($gray-100) float-right" onClick={this.startEdit}><button className="btn btn-dark"><i className="fas fa-pencil-alt"></i></button></span>}
         </h2>
       </section>
       {/* intro */}

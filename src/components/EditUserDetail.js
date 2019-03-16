@@ -66,8 +66,6 @@ export default class EditUserDetail extends React.Component {
     const size = e.target.files[0].size;
     if (size > 1048576) {
       this.app.error('image too large');
-      this.app.error('image too small');
-      this.app.attack('image too small');
     } else {
       const fr = new FileReader();
       fr.onload = (e) => {
