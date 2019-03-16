@@ -19,11 +19,12 @@ export function formatDateTime(date) {
   return date.toLocaleString(date);
 }
 
-export function formatNumber(number) {
-  if (number == null) return null;
+export function formatNumber(number, digitCount) {
+  if (number == null) return '0';
   if (typeof number === 'string') {
     number = parseFloat(number);
   }
+  if (digitCount !== undefined) number = number.toFixed(digitCount);
   return number.toLocaleString();
 }
 
@@ -44,6 +45,50 @@ export function formatNumberShort(number, digitCount) {
   return `${(number / 1e9).toFixed(digitCount)}B`;
 }
 
+const second = 1000;
+const minute = second * 60;
+const hour = minute * 60;
+const day = hour * 24;
+const year = day * 365;
+
+export function getTimeSpanBetween(date1, date2) {
+  if (!date1 || !date2) return {};
+  if (typeof date1 === 'string') date1 = new Date(date1);
+  if (typeof date2 === 'string') date2 = new Date(date2);
+  return getTimeSpan(date1.getTime() - date2.getTime());
+}
+
+export function getTimeSpan(ms) {
+  const y = Math.floor(ms / year);
+  ms -= y * year;
+  const d = Math.floor(ms / day);
+  ms -= d * day;
+  const h = Math.floor(ms / hour);
+  ms -= h * hour;
+  const m = Math.floor(ms / minute);
+  ms -= m * minute;
+  const s = Math.floor(ms / second);
+  return {y, d, h, m, s};
+}
+
+export function formatTimeSpan(span, level) {
+  const y = span.y ? span.y + 'y ' : '';
+  const d = span.d ? span.d + 'd ' : '';
+  const h = span.h ? span.h + 'h ' : '';
+  const m = span.m ? span.m + 'm ' : '';
+  const s = span.s ? span.s + 's' : '';
+
+  let res;
+  switch (level) {
+    case 'y': res = y.trimRight(); break;
+    case 'd': res = (y + d).trimRight(); break;
+    case 'h': res = (y + d + h).trimRight(); break;
+    case 'm': res = (y + d + h + m).trimRight(); break;
+    default: res = (y + d + h + m + s).trimRight(); break;
+  }
+  return res ? res : '0' + (level ? level : 's');
+}
+
 export function onChange(e) {
   /* eslint-disable-next-line no-invalid-this */
   this.setState({[e.target.name]: e.target.value});
@@ -58,7 +103,7 @@ export function onTextareaChange(e) {
   /* eslint-disable-next-line no-invalid-this */
   this.setState({[e.target.name]: e.target.value});
   /* eslint-disable-next-line no-invalid-this */
-  this.setState({[e.target.name + 'LineCount']: e.target.value.split('\n').length});
+  this.setState({[e.target.name + 'RowCount']: e.target.value.split('\n').length});
 }
 
 export function onChangeNamed(name, e) {

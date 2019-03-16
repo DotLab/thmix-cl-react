@@ -2,12 +2,12 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 // import ReCAPTCHA from 'react-google-recaptcha';
 
-import SampleAvatar from './SampleAvatar.jpg';
+import DefaultAvatar from './DefaultAvatar.jpg';
 
 const Row = () => (<tr className="Bgc($gray-200) Bgc($gray-300):h mb-1">
   <td className="px-2 py-1 rounded-left font-weight-bold">#1</td>
   <td className="px-2 py-1"><span className="badge badge-primary badge-pill">A+</span></td>
-  <td className="px-2 py-1 text-left"><img className="H(1em) rounded" src={SampleAvatar} alt="avatar"/> <Link className="text-dark" to="/users/idke">idke</Link></td>
+  <td className="px-2 py-1 text-left"><img className="H(1em) rounded" src={DefaultAvatar} alt="avatar"/> <Link className="text-dark" to="/users/idke">idke</Link></td>
   <td className="px-2 py-1 C($gray-600)">342,234,444</td>
   <td className="px-2 py-1 C($gray-600)">34,342x</td>
   <td className="px-2 py-1 C($gray-600)">84%</td>
@@ -22,7 +22,7 @@ const Reply = () => (<div className="Bdc($gray-400)! border-bottom">
   <div className="Cf Maw(1000px) mx-auto py-2">
     <div className="mt-2">
       <div className="W(10%) float-left pr-3">
-        <img className="W(100%) rounded-circle shadow-sm" src={SampleAvatar} alt=""/>
+        <img className="W(100%) rounded-circle shadow-sm" src={DefaultAvatar} alt=""/>
       </div>
       <div className="W(90%) D(ib)">
         <div>
@@ -49,7 +49,7 @@ export default class MidiDetail extends React.Component {
                 <div className="h5 m-0">Lexurus</div>
               </div>
               <div className="Cf mt-4">
-                <img className="H(60px) rounded float-left" src={SampleAvatar} alt=""/>
+                <img className="H(60px) rounded float-left" src={DefaultAvatar} alt=""/>
                 <div className="D(ib) Lh(1.15) ml-2 small">
                   <div className="mb-2">mapped by <Link className="text-light" to="/users/">W h i t e</Link></div>
                   <div>submitted on <strong>5 April 2014</strong></div>
@@ -126,7 +126,7 @@ export default class MidiDetail extends React.Component {
               <div className="badge badge-success badge-pill mt-1">A+</div>
             </div>
             <div className="D(ib) ml-3">
-              <img className="H(80px) my-2 rounded shadow-sm" src={SampleAvatar} alt=""/>
+              <img className="H(80px) my-2 rounded shadow-sm" src={DefaultAvatar} alt=""/>
             </div>
             <div className="Mend(120px)--xl Mend(20px)--lg D(ib) ml-2 align-middle">
               <h4 className="h6 m-0 font-italic">Alchyr</h4>
@@ -201,7 +201,7 @@ export default class MidiDetail extends React.Component {
             <h2 className="C($pink) h5 m-0">Comments <span className="badge badge-secondary badge-pill">3</span></h2>
             <div className="mt-2">
               <div className="W(10%) float-left pr-3">
-                <img className="W(100%) rounded-circle shadow-sm" src={SampleAvatar} alt=""/>
+                <img className="W(100%) rounded-circle shadow-sm" src={DefaultAvatar} alt=""/>
               </div>
               <form className="W(90%) D(ib)">
                 <textarea className="form-control" type="text" />

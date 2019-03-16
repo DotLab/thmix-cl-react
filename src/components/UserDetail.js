@@ -1,6 +1,8 @@
 import React from 'react';
-import SampleAvatar from './SampleAvatar.jpg';
+import DefaultAvatar from './DefaultAvatar.jpg';
 import SampleListCover from './SampleListCover.jpg';
+
+import {formatDate, formatNumber, getTimeSpan, getTimeSpanBetween, formatTimeSpan} from '../utils';
 
 const Rank = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) px-3 rounded mt-1">
   <span className="my-2 badge badge-warning badge-pill">A+</span>
@@ -32,29 +34,79 @@ const Played = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) p
 </div>);
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.app = props.app;
+
+    this.startEdit = this.startEdit.bind(this);
+
+    this.state = {
+      id: null,
+      name: null,
+
+      joinedDate: null,
+      seenDate: null,
+      bio: null,
+      avatarUrl: null,
+
+      playCount: null,
+      totalScores: null,
+      maxCombo: null,
+      accuracy: null,
+
+      totalPlayTime: null,
+      weightedPp: null,
+      ranking: null,
+      sCount: null,
+      aCount: null,
+      bCount: null,
+      cCount: null,
+      dCount: null,
+      fCount: null,
+    };
+  }
+
+  async componentDidMount() {
+    const user = await this.app.getUser({userId: this.props.match.params.userId});
+
+    this.setState(user);
+  }
+
+  startEdit() {
+    this.app.history.push(`/users/${this.app.state.user.id}/edit`);
+  }
+
   render() {
+    const s = this.state;
+    const isSelf = this.app.state.user && s.id === this.app.state.user.id;
+
     return <div className="Bgc($black)">
       <section className="Bgc($gray-600) Pt(60px) Pb(20px) px-5 container text-light ">
-        <h2 className="m-0 font-weight-normal">Player <text className="C(springgreen)">Info</text></h2>
+        <h2 className="m-0 font-weight-normal">
+          Player <span className="C(springgreen)">Info</span>
+          {isSelf && <span className="C($gray-100) float-right" onClick={this.startEdit}><button className="btn btn-dark"><i className="fas fa-pencil-alt"></i></button></span>}
+        </h2>
       </section>
       {/* intro */}
       <section className="Bgc($gray-800) Bdtw(2px) Bdts(s) Bdc(springgreen) py-3 px-5 container text-light">
         <div className="row">
           <div className="col-md-8">
-            <img className="H(100px) rounded shadow-sm d-inline-block" src={SampleAvatar} alt=""/>
+            <img className="H(100px) rounded shadow-sm d-inline-block" src={s.avatarUrl || DefaultAvatar} alt=""/>
             <div className="Lh(1.15) d-inline-block align-middle ml-3">
-              <h3 className="h4 m-0">idke</h3>
-              <div>Joined <strong>July 2014</strong></div>
-              <div>Last seen <strong>4 hours ago</strong></div>
+              <h3 className="h4 mb-1">{s.name}</h3>
+              <div>Joined <strong>{formatDate(s.joinedDate)}</strong></div>
+              {/* <div>Last seen <strong>{formatDate(s.seenDate)}</strong></div> */}
+              <div>Last seen <strong>{formatTimeSpan(getTimeSpanBetween(new Date(), s.seenDate))} ago</strong></div>
             </div>
           </div>
           <div className="col-md-4">
             <table className="w-100">
               <tbody>
-                <tr><td>Play Count</td><td className="text-right font-weight-bold">45,233</td></tr>
-                <tr><td>Total Sunshine</td><td className="text-right font-weight-bold">45,233,345,323</td></tr>
-                <tr><td>Max Combo</td><td className="text-right font-weight-bold">4,523x</td></tr>
-                <tr><td>Accuracy</td><td className="text-right font-weight-bold">45.34%</td></tr>
+                <tr><td>Play Count</td><td className="text-right font-weight-bold">{formatNumber(s.playCount)}</td></tr>
+                <tr><td>Total Scores</td><td className="text-right font-weight-bold">{formatNumber(s.totalScores)}</td></tr>
+                <tr><td>Max Combo</td><td className="text-right font-weight-bold">{formatNumber(s.maxCombo)}x</td></tr>
+                <tr><td>Accuracy</td><td className="text-right font-weight-bold">{formatNumber(s.accuracy * 100, 2)}%</td></tr>
               </tbody>
             </table>
           </div>
@@ -65,28 +117,36 @@ export default class App extends React.Component {
         <div>
           <span className="d-inline-block">
             <div className="Bdc($yellow) Bdts(s) Bdtw(3px) small font-weight-bold">Total Play Time</div>
-            <div className="Lh(1)">54d 8h 22m</div>
+            <div className="Lh(1)">{formatTimeSpan(getTimeSpan(s.totalPlayTime))}</div>
           </span>
           <span className="d-inline-block ml-2">
-            <div className="Bdc($red) Bdts(s) Bdtw(3px) small font-weight-bold">Performance</div>
-            <div className="Lh(1)">12,434</div>
+            <div className="Bdc($gray-100) Bdts(s) Bdtw(3px) small font-weight-bold">Performance</div>
+            <div className="Lh(1)">{formatNumber(s.weightedPp)}</div>
           </span>
 
           <span className="d-inline-block ml-2 ml-lg-5 text-center">
             <div className="font-weight-bold"><span className="Fz(.8em) Bgc($purple)! badge badge-pill">S</span></div>
-            <div className="Lh(1)">12</div>
-          </span>
-          <span className="d-inline-block ml-2 text-center">
-            <div className="font-weight-bold"><span className="Fz(.8em) badge badge-warning badge-pill">A+</span></div>
-            <div className="Lh(1)">12</div>
+            <div className="Lh(1)">{formatNumber(s.sCount)}</div>
           </span>
           <span className="d-inline-block ml-2 text-center">
             <div className="font-weight-bold"><span className="Fz(.8em) badge badge-warning badge-pill">A</span></div>
-            <div className="Lh(1)">12</div>
+            <div className="Lh(1)">{formatNumber(s.aCount)}</div>
           </span>
           <span className="d-inline-block ml-2 text-center">
-            <div className="font-weight-bold"><span className="Fz(.8em) badge badge-warning badge-pill">A-</span></div>
-            <div className="Lh(1)">12</div>
+            <div className="font-weight-bold"><span className="Fz(.8em) badge badge-light badge-pill">B</span></div>
+            <div className="Lh(1)">{formatNumber(s.bCount)}</div>
+          </span>
+          <span className="d-inline-block ml-2 text-center">
+            <div className="font-weight-bold"><span className="Fz(.8em) badge badge-info badge-pill">C</span></div>
+            <div className="Lh(1)">{formatNumber(s.cCount)}</div>
+          </span>
+          <span className="d-inline-block ml-2 text-center">
+            <div className="font-weight-bold"><span className="Fz(.8em) badge badge-danger badge-pill">D</span></div>
+            <div className="Lh(1)">{formatNumber(s.dCount)}</div>
+          </span>
+          <span className="d-inline-block ml-2 text-center">
+            <div className="font-weight-bold"><span className="Fz(.8em) badge badge-dark badge-pill">F</span></div>
+            <div className="Lh(1)">{formatNumber(s.fCount)}</div>
           </span>
         </div>
         {/* graph */}
@@ -96,7 +156,7 @@ export default class App extends React.Component {
             <div className="D(tbc)">
               <span className="d-inline-block ml-2">
                 <div className="Bdc($yellow) Bdts(s) Bdtw(3px) font-weight-bold">Ranking</div>
-                <div className="Lh(1) Fz(2em) font-weight-light">#12,434</div>
+                <div className="Lh(1) Fz(2em) font-weight-light">#{formatNumber(s.ranking)}</div>
               </span>
             </div>
           </div>
@@ -107,12 +167,7 @@ export default class App extends React.Component {
         {/* me */}
         <section className="container Bgc($gray-900) mt-2 px-5 py-3 text-light">
           <h3 className="h5"><span className="Bdc(springgreen) Bdbs(s) Bdbw(2px)">me!</span></h3>
-          <div>
-            if u need a testplay hit up my forum pms this is reserved for maps that have a good chance at getting ranked though
-            twitch discord
-            youtube for unranked plays
-            skin
-          </div>
+          <div className="Whs(pw)">{s.bio}</div>
         </section>
         {/* ranks */}
         <section className="container Bgc($gray-900) mt-2 px-5 py-3 text-light">
