@@ -3,6 +3,10 @@ import React from 'react';
 import {onTextareaChange, onChange} from '../utils';
 import DefaultAvatar from './DefaultAvatar.jpg';
 
+const Block = ({children}) => (<section className="container px-md-5 mb-2"><div className="row text-light">{children}</div></section>);
+Block.Left = ({children}) => (<div className="Bgc($gray-700) shadow col-lg-3 py-3 pl-4 font-italic">{children}</div>);
+Block.Right = ({children}) => (<div className="Bgc($gray-600) shadow col-lg-9 pt-3">{children}</div>);
+
 export default class EditUserDetail extends React.Component {
   constructor(props) {
     super(props);
@@ -12,17 +16,23 @@ export default class EditUserDetail extends React.Component {
     // const canEdit = this.app.state.user && this.app.state.user.id === props.match.params.userId;
     // if (!canEdit) this.app.history.replace(`/users/${props.match.params.userId}`);
 
-    this.onTextareaChange = onTextareaChange.bind(this);
     this.onChange = onChange.bind(this);
     this.updateBio = this.updateBio.bind(this);
+    this.updatePassword = this.updatePassword.bind(this);
     this.onAvatarChange = this.onAvatarChange.bind(this);
-
+    this.onTextareaChange = onTextareaChange.bind(this);
 
     this.state = {
       name: '',
+
       bio: '',
-      avatarUrl: '',
       bioRowCount: 5,
+
+      avatarUrl: '',
+
+      currentPassword: '',
+      newPassword: '',
+      newPasswordConfirm: '',
     };
   }
 
@@ -38,12 +48,26 @@ export default class EditUserDetail extends React.Component {
     this.app.userUpdateBio(this.state);
   }
 
+  updatePassword() {
+    if (this.state.newPassword && this.state.newPassword === this.state.newPasswordConfirm) {
+      this.setState({
+        currentPassword: '',
+        newPassword: '',
+        newPasswordConfirm: '',
+      });
+
+      this.app.userUpdatePassword(this.state);
+    }
+  }
+
   onAvatarChange(e) {
     if (!e.target.files[0]) return;
 
     const size = e.target.files[0].size;
     if (size > 1048576) {
       this.app.error('image too large');
+      this.app.error('image too small');
+      this.app.attack('image too small');
     } else {
       const fr = new FileReader();
       fr.onload = (e) => {
@@ -65,39 +89,65 @@ export default class EditUserDetail extends React.Component {
         </div>
       </section>
       {/* profile */}
-      <section className="container px-md-5 mb-2">
-        <div className="row text-light">
-          <div className="Bgc($gray-700) shadow col-lg-3 py-3 px-4"><h2 className="h5 m-0">Profile</h2></div>
-          <div className="Bgc($gray-600) shadow col-lg-9 pt-3">
-            <div className="form-group row">
-              <label className="col-sm-2 col-form-label text-right">username</label>
-              <div className="col-sm-10"><input className="form-control" type="text" value={s.name} disabled/></div>
-            </div>
-            <hr/>
-            <div className="form-group row">
-              <label className="col-sm-2 col-form-label text-right">bio</label>
-              <div className="col-sm-10"><textarea className="form-control" value={s.bio} name="bio" rows={this.state.bioRowCount} onChange={this.onTextareaChange}/></div>
-            </div>
-            <div className="form-group text-right">
-              <button className="btn btn-primary" onClick={this.updateBio}>Update Bio</button>
-            </div>
+      <Block>
+        <Block.Left><h2 className="h5 m-0">Profile</h2></Block.Left>
+        <Block.Right>
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label text-right">username</label>
+            <div className="col-sm-9"><input className="form-control" type="text" value={s.name} disabled/></div>
           </div>
-        </div>
-      </section>
+        </Block.Right>
+      </Block>
       {/* avatar */}
-      <section className="container px-md-5 mb-2">
-        <div className="row text-light">
-          <div className="Bgc($gray-700) shadow col-lg-3 py-3 px-4"><h2 className="h5 m-0">Avatar</h2></div>
-          <div className="Bgc($gray-600) shadow col-lg-9 pt-3">
-            <div className="form-group row">
-              <div className="offset-sm-2 col-sm-10">
-                <img className="H(120px) shadow-sm rounded" src={s.avatarUrl || DefaultAvatar} alt=""/>
-                {this.app.supportFileUpload && <input className="D(b) W(a) mt-2 form-control-file" type="file" accept="image/*" onChange={this.onAvatarChange}/>}
-              </div>
+      <Block>
+        <Block.Left><h2 className="h5 m-0">Avatar</h2></Block.Left>
+        <Block.Right>
+          <div className="form-group row">
+            <div className="offset-sm-3 col-sm-9">
+              <img className="H(120px) shadow-sm rounded" src={s.avatarUrl || DefaultAvatar} alt=""/>
+              {this.app.supportFileUpload && <input className="D(b) W(a) mt-2 form-control-file" type="file" accept="image/*" onChange={this.onAvatarChange}/>}
             </div>
           </div>
-        </div>
-      </section>
+        </Block.Right>
+      </Block>
+      {/* bio */}
+      <Block>
+        <Block.Left><h2 className="h5 m-0">Bio</h2></Block.Left>
+        <Block.Right>
+          <div className="form-group row">
+            <div className="offset-sm-3 col-sm-9">
+              <textarea className="form-control" value={s.bio} name="bio" rows={this.state.bioRowCount} onChange={this.onTextareaChange}/>
+            </div>
+          </div>
+          <hr/>
+          <div className="form-group row">
+            <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updateBio}>Update</button></div>
+          </div>
+        </Block.Right>
+      </Block>
+      {/* password */}
+      <Block>
+        <Block.Left><h2 className="h5 m-0">Password</h2></Block.Left>
+        <Block.Right>
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label text-right">current password</label>
+            <div className="col-sm-9"><input className="form-control" type="password" name="currentPassword" value={s.currentPassword} onChange={this.onChange} required/></div>
+          </div>
+          <hr/>
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label text-right">new password</label>
+            <div className="col-sm-9"><input className="form-control" type="password" name="newPassword" value={s.newPassword} onChange={this.onChange} required/></div>
+          </div>
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label text-right">password confirm</label>
+            <div className="col-sm-9"><input className="form-control" type="password" name="newPasswordConfirm" value={s.newPasswordConfirm} onChange={this.onChange} required/></div>
+          </div>
+          <hr/>
+          <div className="form-group row">
+            <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updatePassword}>Update</button></div>
+          </div>
+        </Block.Right>
+      </Block>
     </div>;
   }
 }

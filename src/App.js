@@ -130,6 +130,11 @@ class App extends React.Component {
     this.success('avatar uploaded');
   }
 
+  async userUpdatePassword({currentPassword, newPassword}) {
+    await this.genericApi1('cl_web_user_update_password', {currentPassword, password: newPassword});
+    this.success('password updated');
+  }
+
   render() {
     const s = this.state;
 
