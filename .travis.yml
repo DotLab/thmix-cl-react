@@ -11,19 +11,19 @@ script:
 - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, BRANCH=$BRANCH"
 - if [ "$BRANCH" == "master" ]; then
     echo "production";
-    openssl aes-256-cbc -K $encrypted_341df442da41_key -iv $encrypted_341df442da41_iv -in deploy-rsa.enc -out /tmp/deploy-rsa -d;
-    chmod 600 /tmp/deploy-rsa;
+    openssl aes-256-cbc -K $encrypted_341df442da41_key -iv $encrypted_341df442da41_iv -in web-worker-key.enc -out /tmp/web-worker-key -d;
+    chmod 600 /tmp/web-worker-key;
     eval `ssh-agent`;
-    ssh-add /tmp/deploy-rsa;
-    rsync -avzcP build/ kailangfu@35.233.171.1:/home/kailangfu/www/thmix.org/;
+    ssh-add /tmp/web-worker-key;
+    rsync -avzcP build/ web-worker@35.233.171.1:/home/web-worker/www/thmix.org/;
     kill $SSH_AGENT_PID;
   fi
 - if [ "$BRANCH" == "staging" ]; then
     echo "staging";
-    openssl aes-256-cbc -K $encrypted_341df442da41_key -iv $encrypted_341df442da41_iv -in deploy-rsa.enc -out /tmp/deploy-rsa -d;
-    chmod 600 /tmp/deploy-rsa;
+    openssl aes-256-cbc -K $encrypted_341df442da41_key -iv $encrypted_341df442da41_iv -in web-worker-key.enc -out /tmp/web-worker-key -d;
+    chmod 600 /tmp/web-worker-key;
     eval `ssh-agent`;
-    ssh-add /tmp/deploy-rsa;
-    rsync -avzcP build/ kailangfu@35.233.171.1:/home/kailangfu/www/staging.thmix.org/;
+    ssh-add /tmp/web-worker-key;
+    rsync -avzcP build/ web-worker@35.233.171.1:/home/web-worker/www/staging.thmix.org/;
     kill $SSH_AGENT_PID;
   fi
