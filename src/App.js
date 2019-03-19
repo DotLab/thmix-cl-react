@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, Switch, Link, NavLink, withRouter} from 'react-router-dom';
+import {Route, Switch, Link, NavLink} from 'react-router-dom';
 import PropsRoute from './PropsRoute';
 
 import Home from './components/Home';
@@ -28,7 +28,7 @@ const INTENT = 'web';
 
 const DEVELOPMENT = 'development';
 
-class App extends React.Component {
+export default class App extends React.Component {
   constructor(props) {
     super(props);
 
@@ -104,8 +104,12 @@ class App extends React.Component {
     }
   }
 
-  async register({recaptcha, name, email, password}) {
-    await this.genericApi1('cl_web_register', {recaptcha, name, email, password});
+  async registerPre({recaptcha, name, email}) {
+    await this.genericApi1('cl_web_register_pre', {recaptcha, name, email});
+  }
+
+  async register({code, name, email, password}) {
+    await this.genericApi1('cl_web_register', {code, name, email, password});
     this.history.push('/login');
   }
 
@@ -209,5 +213,3 @@ class App extends React.Component {
     </div>;
   }
 }
-
-export default withRouter(App);
