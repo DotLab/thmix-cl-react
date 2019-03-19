@@ -1,4 +1,4 @@
-export const TEST_EMAIL = 'test@thmix.org';
+export const TEST_EMAIL = 'test@test.com';
 export const TEST_PASSWORD = 'test';
 export const TEST_RECAPTCHA_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
 
