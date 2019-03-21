@@ -8,9 +8,11 @@ import Register from './components/Register';
 
 import MidiListing from './components/MidiListing';
 import MidiDetail from './components/MidiDetail';
+import MidiDetailEdit from './components/MidiDetailEdit';
+import MidiUpload from './components/MidiUpload';
 import UserListing from './components/UserListing';
 import UserDetail from './components/UserDetail';
-import EditUserDetail from './components/EditUserDetail';
+import UserDetailEdit from './components/UserDetailEdit';
 
 import Help from './components/posts/Help';
 import Terms from './components/posts/Terms';
@@ -144,6 +146,29 @@ export default class App extends React.Component {
     this.success('password updated');
   }
 
+  async midiUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_midi_upload', {name, size, buffer});
+    this.success('midi uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/midis/${res.id}`);
+    } else {
+      this.history.push(`/midis/${res.id}/edit`);
+    }
+  }
+
+  async midiGet({id}) {
+    const midi = await this.genericApi1('cl_web_midi_get', {id});
+    return midi;
+  }
+
+  async midiUpdate(update) {
+    const midi = await this.genericApi1('cl_web_midi_update', update);
+    this.success('midi updated');
+
+    return midi;
+  }
+
   render() {
     const s = this.state;
 
@@ -170,7 +195,15 @@ export default class App extends React.Component {
             {!s.user ? <ul className="navbar-nav">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login">login</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
-            </ul> : <ul className="navbar-nav">
+            </ul> : <ul className="navbar-nav align-items-center">
+              <li className="nav-item dropdown">
+                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown">upload</span>
+                <div className="dropdown-menu dropdown-menu-right">
+                  <Link className="dropdown-item" to="/midis/upload">midi</Link>
+                  {/* <div className="dropdown-divider"></div>
+                  <a className="dropdown-item" href=".">Something else here</a> */}
+                </div>
+              </li>
               <li className="nav-item">
                 <Link to={`/users/${s.user.id}`}><img className="W(2em) d-inline-block rounded" src={s.user.avatarUrl || DefaultAvatar} alt=""/></Link>
               </li>
@@ -181,19 +214,21 @@ export default class App extends React.Component {
 
       <Switch>
         <Route exact path="/" component={Home} />
-        <PropsRoute path="/login" component={Login} app={this}/>
-        <PropsRoute path="/register" component={Register} app={this}/>
+        <PropsRoute exact path="/login" component={Login} app={this}/>
+        <PropsRoute exact path="/register" component={Register} app={this}/>
 
         <PropsRoute exact path="/midis" component={MidiListing} />
-        <PropsRoute path="/midis/:midiId" component={MidiDetail} />
+        <PropsRoute exact path="/midis/upload" component={MidiUpload} app={this} />
+        <PropsRoute exact path="/midis/:id" component={MidiDetail} app={this} />
+        <PropsRoute exact path="/midis/:id/edit" component={MidiDetailEdit} app={this} />
         <PropsRoute exact path="/users" component={UserListing} />
         <PropsRoute exact path="/users/:userId" component={UserDetail} app={this} />
-        <PropsRoute path="/users/:userId/edit" component={EditUserDetail} app={this} />
+        <PropsRoute exact path="/users/:userId/edit" component={UserDetailEdit} app={this} />
 
-        <PropsRoute path="/help" component={Help} />
-        <PropsRoute path="/terms" component={Terms} />
-        <PropsRoute path="/privacy" component={Privacy} />
-        <PropsRoute path="/copyright" component={Copyright} />
+        <PropsRoute exact path="/help" component={Help} />
+        <PropsRoute exact path="/terms" component={Terms} />
+        <PropsRoute exact path="/privacy" component={Privacy} />
+        <PropsRoute exact path="/copyright" component={Copyright} />
       </Switch>
 
       <footer className="W(100%) Lh(18px) Bgc($gray-600) text-center py-1 shadow">
