@@ -38,8 +38,6 @@ export default class App extends React.Component {
     this.socket = props.socket;
     this.isDevelopment = props.env === DEVELOPMENT;
 
-    this.supportFileUpload = File && FileReader;
-
     this.state = {
       isHandshakeSuccessful: false,
       user: null,
@@ -58,7 +56,7 @@ export default class App extends React.Component {
   }
 
   success(message) {
-    this.setState({success: message});
+    this.setState({error: null, success: message});
     setTimeout(() => this.setState({success: null}), 1500);
   }
 
@@ -102,21 +100,21 @@ export default class App extends React.Component {
     this.setState({isHandshakeSuccessful: true});
 
     if (this.isDevelopment) {
-      await this.login({recaptcha: '', email: TEST_EMAIL, password: TEST_PASSWORD});
+      await this.userLogin({recaptcha: '', email: TEST_EMAIL, password: TEST_PASSWORD});
     }
   }
 
-  async registerPre({recaptcha, name, email}) {
-    await this.genericApi1('cl_web_register_pre', {recaptcha, name, email});
+  async userRegisterPre({recaptcha, name, email}) {
+    await this.genericApi1('cl_web_user_register_pre', {recaptcha, name, email});
   }
 
-  async register({code, name, email, password}) {
-    await this.genericApi1('cl_web_register', {code, name, email, password});
+  async userRegister({code, name, email, password}) {
+    await this.genericApi1('cl_web_user_register', {code, name, email, password});
     this.history.push('/login');
   }
 
-  async login({recaptcha, email, password}) {
-    const user = await this.genericApi1('cl_web_login', {recaptcha, email, password});
+  async userLogin({recaptcha, email, password}) {
+    const user = await this.genericApi1('cl_web_user_login', {recaptcha, email, password});
     this.setState({user});
 
     if (!this.isDevelopment) {
@@ -124,8 +122,8 @@ export default class App extends React.Component {
     }
   }
 
-  async getUser({userId}) {
-    const user = await this.genericApi1('cl_web_get_user', {userId});
+  async userGet({id}) {
+    const user = await this.genericApi1('cl_web_user_get', {id});
     return user;
   }
 
@@ -189,7 +187,7 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">rankings</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
             </ul>
             {!s.user ? <ul className="navbar-nav">
@@ -221,9 +219,10 @@ export default class App extends React.Component {
         <PropsRoute exact path="/midis/upload" component={MidiUpload} app={this} />
         <PropsRoute exact path="/midis/:id" component={MidiDetail} app={this} />
         <PropsRoute exact path="/midis/:id/edit" component={MidiDetailEdit} app={this} />
+
         <PropsRoute exact path="/users" component={UserListing} />
-        <PropsRoute exact path="/users/:userId" component={UserDetail} app={this} />
-        <PropsRoute exact path="/users/:userId/edit" component={UserDetailEdit} app={this} />
+        <PropsRoute exact path="/users/:id" component={UserDetail} app={this} />
+        <PropsRoute exact path="/users/:id/edit" component={UserDetailEdit} app={this} />
 
         <PropsRoute exact path="/help" component={Help} />
         <PropsRoute exact path="/terms" component={Terms} />

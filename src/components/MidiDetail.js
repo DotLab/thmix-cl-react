@@ -48,16 +48,49 @@ export default class MidiDetail extends React.Component {
 
     this.state = {
       id: null,
-      uploaderId: null, uploaderName: null, uploaderAvatarUrl: null,
-      name: null, desc: null, artistName: null, artistUrl: null,
-      uploadedDate: null, approvedDate: null,
-      sourceArtistName: null, sourceAlbumName: null, sourceSongName: null,
-      touhouAlbumIndex: null, touhouSongIndex: null,
-      comments: [], records: [],
-      trialCount: null, upCount: null, downCount: null, loveCount: null,
-      avgScores: null, avgMaxCombo: null, avgAccuracy: null,
-      passCount: null, failCount: null,
-      sCutoff: null, aCutoff: null, bCutoff: null, cCutoff: null, dCutoff: null,
+
+      uploaderId: null,
+      uploaderName: '',
+      uploaderAvatarUrl: '',
+
+      name: '',
+      desc: '',
+      hash: '',
+      path: '',
+      artistName: '',
+      artistUrl: '',
+      // meta
+      uploadedDate: null,
+      approvedDate: null,
+      // source
+      sourceArtistName: '',
+      sourceAlbumName: '',
+      sourceSongName: '',
+
+      touhouAlbumIndex: -1,
+      touhouSongIndex: -1,
+      // comments
+      comments: [],
+      // cached
+      records: [],
+
+      trialCount: 0,
+      upCount: 0,
+      downCount: 0,
+      loveCount: 0,
+
+      avgScore: 0,
+      avgCombo: 0,
+      avgAccuracy: 0,
+
+      passCount: 0,
+      failCount: 0,
+
+      sCutoff: 0,
+      aCutoff: 0,
+      bCutoff: 0,
+      cCutoff: 0,
+      dCutoff: 0,
     };
   }
 
@@ -102,8 +135,8 @@ export default class MidiDetail extends React.Component {
             </div>
             <div className="mt-4 ml-md-auto px-3 py-2" style={{backgroundColor: '#00000060'}}>
               {/* <div><i className="fa-fw fas fa-star"></i> 4.8</div> */}
-              <div><i className="fa-fw fas fa-sun"></i> {formatNumber(s.avgScores)}</div>
-              <div><i className="fa-fw fas fa-link"></i> {formatNumber(s.avgMaxCombo)}x</div>
+              <div><i className="fa-fw fas fa-sun"></i> {formatNumber(s.avgScore)}</div>
+              <div><i className="fa-fw fas fa-link"></i> {formatNumber(s.avgCombo)}x</div>
               <div><i className="fa-fw fas fa-bullseye"></i> {formatNumber(s.avgAccuracy * 100)}%</div>
             </div>
             <div className="Mt(2px) ml-md-auto px-3 py-2" style={{backgroundColor: '#00000060'}}>

@@ -43,32 +43,37 @@ export default class App extends React.Component {
 
     this.state = {
       id: null,
-      name: null,
 
+      name: '',
+      email: '',
+      salt: '',
+      hash: '',
+      // meta
       joinedDate: null,
       seenDate: null,
-      bio: null,
-      avatarUrl: null,
+      bio: '',
+      avatarUrl: '',
+      avatarPath: '',
+      // cached
+      trialCount: 0,
+      score: 0,
+      combo: 0,
+      accuracy: 0,
 
-      playCount: null,
-      totalScores: null,
-      maxCombo: null,
-      accuracy: null,
-
-      totalPlayTime: null,
-      weightedPp: null,
-      ranking: null,
-      sCount: null,
-      aCount: null,
-      bCount: null,
-      cCount: null,
-      dCount: null,
-      fCount: null,
+      playTime: 0,
+      performance: 0,
+      ranking: 0,
+      sCount: 0,
+      aCount: 0,
+      bCount: 0,
+      cCount: 0,
+      dCount: 0,
+      fCount: 0,
     };
   }
 
   async componentDidMount() {
-    const user = await this.app.getUser({userId: this.props.match.params.userId});
+    const user = await this.app.userGet({id: this.props.match.params.id});
 
     this.setState(user);
   }
@@ -103,9 +108,9 @@ export default class App extends React.Component {
           <div className="col-md-4">
             <table className="w-100">
               <tbody>
-                <tr><td>Play Count</td><td className="text-right font-weight-bold">{formatNumber(s.playCount)}</td></tr>
-                <tr><td>Total Scores</td><td className="text-right font-weight-bold">{formatNumber(s.totalScores)}</td></tr>
-                <tr><td>Max Combo</td><td className="text-right font-weight-bold">{formatNumber(s.maxCombo)}x</td></tr>
+                <tr><td>Play Count</td><td className="text-right font-weight-bold">{formatNumber(s.trialCount)}</td></tr>
+                <tr><td>Total Scores</td><td className="text-right font-weight-bold">{formatNumber(s.score)}</td></tr>
+                <tr><td>Max Combo</td><td className="text-right font-weight-bold">{formatNumber(s.combo)}x</td></tr>
                 <tr><td>Accuracy</td><td className="text-right font-weight-bold">{formatNumber(s.accuracy * 100, 2)}%</td></tr>
               </tbody>
             </table>
@@ -117,11 +122,11 @@ export default class App extends React.Component {
         <div>
           <span className="d-inline-block">
             <div className="Bdc($yellow) Bdts(s) Bdtw(3px) small font-weight-bold">Total Play Time</div>
-            <div className="Lh(1)">{formatTimeSpan(getTimeSpan(s.totalPlayTime))}</div>
+            <div className="Lh(1)">{formatTimeSpan(getTimeSpan(s.playTime))}</div>
           </span>
           <span className="d-inline-block ml-2">
             <div className="Bdc($gray-100) Bdts(s) Bdtw(3px) small font-weight-bold">Performance</div>
-            <div className="Lh(1)">{formatNumber(s.weightedPp)}</div>
+            <div className="Lh(1)">{formatNumber(s.performance)}</div>
           </span>
 
           <span className="d-inline-block ml-2 ml-lg-5 text-center">

@@ -30,14 +30,14 @@ class App extends React.Component {
   async onSubmit(e) {
     e.preventDefault();
 
-    await this.app.registerPre(this.state);
+    await this.app.userRegisterPre(this.state);
     this.setState({waitForCode: true});
   }
 
   onSubmitCode(e) {
     e.preventDefault();
 
-    this.app.register(this.state);
+    this.app.userRegister(this.state);
   }
 
   render() {
