@@ -127,6 +127,11 @@ export default class App extends React.Component {
     return user;
   }
 
+  async userList({page}) {
+    const users = await this.genericApi1('cl_web_user_list', {page});
+    return users;
+  }
+
   async userUpdateBio({bio}) {
     const user = await this.genericApi1('cl_web_user_update_bio', {bio});
     this.setState({user});
@@ -220,7 +225,7 @@ export default class App extends React.Component {
         <PropsRoute exact path="/midis/:id" component={MidiDetail} app={this} />
         <PropsRoute exact path="/midis/:id/edit" component={MidiDetailEdit} app={this} />
 
-        <PropsRoute exact path="/users" component={UserListing} />
+        <PropsRoute exact path="/users" component={UserListing} app={this} />
         <PropsRoute exact path="/users/:id" component={UserDetail} app={this} />
         <PropsRoute exact path="/users/:id/edit" component={UserDetailEdit} app={this} />
 
