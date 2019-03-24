@@ -62,6 +62,7 @@ export default class MidiDetail extends React.Component {
       // meta
       uploadedDate: null,
       approvedDate: null,
+      status: 'PENDING',
       // source
       sourceArtistName: '',
       sourceAlbumName: '',
@@ -130,7 +131,7 @@ export default class MidiDetail extends React.Component {
           </div>
           <div className="col-md-4">
             <div className="text-right mt-md-4">
-              <span className="Fz(1em) badge badge-pill badge-dark p-3 shadow-sm" style={{backgroundColor: '#00000080'}}>PENDING</span>
+              <span className="Fz(1em) badge badge-pill badge-dark p-3 shadow-sm" style={{backgroundColor: '#00000080'}}>{s.status}</span>
               {canEdit && <span className="Fz(1em) Cur(p) badge badge-pill badge-dark p-3 shadow-sm ml-2" style={{backgroundColor: '#00000080'}} onClick={this.startEdit}><i className="fas fa-pencil-alt"></i></span>}
             </div>
             <div className="mt-4 ml-md-auto px-3 py-2" style={{backgroundColor: '#00000060'}}>
