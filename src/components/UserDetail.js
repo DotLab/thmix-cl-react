@@ -157,7 +157,7 @@ export default class App extends React.Component {
         {/* graph */}
         <div className="D(tb) w-100">
           <div className="D(tbr)">
-            <div className="D(tbc) w-100">i am a graph</div>
+            <div className="D(tbc) w-100">None... yet.</div>
             <div className="D(tbc)">
               <span className="d-inline-block ml-2">
                 <div className="Bdc($yellow) Bdts(s) Bdtw(3px) font-weight-bold">Ranking</div>
@@ -179,37 +179,41 @@ export default class App extends React.Component {
           <h3 className="h5"><span className="Bdc(springgreen) Bdbs(s) Bdbw(2px)">Ranks</span></h3>
           <h4 className="h6 mt-3">Best Performances</h4>
           <div>
+            No performance records. :(
+            {/* <Rank />
             <Rank />
             <Rank />
-            <Rank />
-            <Rank />
+            <Rank /> */}
           </div>
-          <h4 className="h6 mt-3">First Place Ranks <span className="badge badge-pill badge-dark">44</span></h4>
+          <h4 className="h6 mt-3">First Place Ranks <span className="badge badge-pill badge-dark">0</span></h4>
           <div>
+            No awesome performance records yet. :(
+            {/* <Rank />
             <Rank />
             <Rank />
-            <Rank />
-            <Rank />
+            <Rank /> */}
           </div>
         </section>
         {/* historical */}
         <section className="container Bgc($gray-900) mt-2 px-5 py-3 text-light">
           <h3 className="h5"><span className="Bdc(springgreen) Bdbs(s) Bdbw(2px)">Historical</span></h3>
           <h4 className="h6 mt-3">Play History</h4>
-          <div>i am a graph</div>
+          <div>None... yet.</div>
           <h4 className="h6 mt-3">Most Played Midis</h4>
           <div>
+            No performance records. :(
+            {/* <Played />
             <Played />
             <Played />
-            <Played />
-            <Played />
+            <Played /> */}
           </div>
           <h4 className="h6 mt-3">Recent Plays</h4>
           <div>
+            No performance records. :(
+            {/* <Rank />
             <Rank />
             <Rank />
-            <Rank />
-            <Rank />
+            <Rank /> */}
           </div>
         </section>
       </div>
