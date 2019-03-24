@@ -165,6 +165,11 @@ export default class App extends React.Component {
     return midi;
   }
 
+  async midiList({touhouAlbumIndex, touhouSongIndex, status, sort, page}) {
+    const midis = await this.genericApi1('cl_web_midi_list', {touhouAlbumIndex, touhouSongIndex, status, sort, page});
+    return midis;
+  }
+
   async midiUpdate(update) {
     const midi = await this.genericApi1('cl_web_midi_update', update);
     this.success('midi updated');
@@ -220,7 +225,7 @@ export default class App extends React.Component {
         <PropsRoute exact path="/login" component={Login} app={this}/>
         <PropsRoute exact path="/register" component={Register} app={this}/>
 
-        <PropsRoute exact path="/midis" component={MidiListing} />
+        <PropsRoute exact path="/midis" component={MidiListing} app={this} />
         <PropsRoute exact path="/midis/upload" component={MidiUpload} app={this} />
         <PropsRoute exact path="/midis/:id" component={MidiDetail} app={this} />
         <PropsRoute exact path="/midis/:id/edit" component={MidiDetailEdit} app={this} />
