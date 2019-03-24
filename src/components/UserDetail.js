@@ -1,37 +1,37 @@
 import React from 'react';
 import DefaultAvatar from './DefaultAvatar.jpg';
-import SampleListCover from './SampleListCover.jpg';
+// import SampleListCover from './SampleListCover.jpg';
 
 import {formatDate, formatNumber, getTimeSpan, getTimeSpanBetween, formatTimeSpan} from '../utils';
 
-const Rank = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) px-3 rounded mt-1">
-  <span className="my-2 badge badge-warning badge-pill">A+</span>
-  <div className="d-inline-block my-2 align-middle ml-2">
-    <div className="font-italic">Songs Compilation <small>by Foreground Eclipse</small></div>
-    <div className="text-warning small">I Won't Say "Farewell"; Someday, We'll Meet Again <span className="C($gray-500)">22 days ago</span></div>
-  </div>
-  <div className="d-inline-block my-2 align-middle ml-4 ml-md-5">
-    <div className="text-warning font-italic font-weight-bold">98.34%</div>
-  </div>
-  <div className="d-inline-block my-2 align-middle ml-4">
-    <div className="font-italic font-weight-bold">453perf</div>
-    <div className="small">weighted 100%</div>
-  </div>
-  <div className="d-inline-block my-2 align-middle ml-4">
-    <div className="C(lightgreen) font-weight-bold">453perf</div>
-  </div>
-</div>);
+// const Rank = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) px-3 rounded mt-1">
+//   <span className="my-2 badge badge-warning badge-pill">A+</span>
+//   <div className="d-inline-block my-2 align-middle ml-2">
+//     <div className="font-italic">Songs Compilation <small>by Foreground Eclipse</small></div>
+//     <div className="text-warning small">I Won't Say "Farewell"; Someday, We'll Meet Again <span className="C($gray-500)">22 days ago</span></div>
+//   </div>
+//   <div className="d-inline-block my-2 align-middle ml-4 ml-md-5">
+//     <div className="text-warning font-italic font-weight-bold">98.34%</div>
+//   </div>
+//   <div className="d-inline-block my-2 align-middle ml-4">
+//     <div className="font-italic font-weight-bold">453perf</div>
+//     <div className="small">weighted 100%</div>
+//   </div>
+//   <div className="d-inline-block my-2 align-middle ml-4">
+//     <div className="C(lightgreen) font-weight-bold">453perf</div>
+//   </div>
+// </div>);
 
-const Played = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) pr-3 rounded mt-1">
-  <img className="d-inline-block rounded-left" src={SampleListCover} alt=""/>
-  <div className="d-inline-block my-2 align-middle ml-2">
-    <div><strong>Songs Compilation</strong> <small>by Foreground Eclipse</small></div>
-    <div className="C($gray-500) small">mapped by <strong>Kite</strong></div>
-  </div>
-  <div className="d-inline-block my-2 align-middle ml-4 ml-md-5">
-    <div className="text-warning font-weight-bold"><i className="fas fa-play"></i> 345</div>
-  </div>
-</div>);
+// const Played = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) pr-3 rounded mt-1">
+//   <img className="d-inline-block rounded-left" src={SampleListCover} alt=""/>
+//   <div className="d-inline-block my-2 align-middle ml-2">
+//     <div><strong>Songs Compilation</strong> <small>by Foreground Eclipse</small></div>
+//     <div className="C($gray-500) small">mapped by <strong>Kite</strong></div>
+//   </div>
+//   <div className="d-inline-block my-2 align-middle ml-4 ml-md-5">
+//     <div className="text-warning font-weight-bold"><i className="fas fa-play"></i> 345</div>
+//   </div>
+// </div>);
 
 export default class App extends React.Component {
   constructor(props) {
