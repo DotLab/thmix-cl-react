@@ -9,35 +9,48 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
+    /** @type import('../App').default */
     this.app = this.props.app;
 
     this.onChange = onChange.bind(this);
     this.onRecaptchaChange = onChangeNamedDirect.bind(this, 'recaptcha');
     this.onSubmit = this.onSubmit.bind(this);
+    this.onSubmitCode = this.onSubmitCode.bind(this);
 
     this.state = {
       recaptcha: null,
-      username: null,
+      code: null,
+      name: null,
       email: null,
       password: null,
+      waitForCode: false,
     };
   }
 
-  onSubmit(e) {
+  async onSubmit(e) {
     e.preventDefault();
 
-    this.app.register(this.state);
+    await this.app.userRegisterPre(this.state);
+    this.setState({waitForCode: true});
+  }
+
+  onSubmitCode(e) {
+    e.preventDefault();
+
+    this.app.userRegister(this.state);
   }
 
   render() {
+    const s = this.state;
+
     return <section className="container my-4">
-      <form className="Maw(500px) Mx(a) shadow p-3 rounded" onSubmit={this.onSubmit}>
+      {!s.waitForCode ? <form className="Maw(500px) Mx(a) shadow p-3 rounded" onSubmit={this.onSubmit}>
         <div className="form-group">
-          <div className="form-group">
-            <label>Username <span className="C($red)">*</span></label>
-            <input className="form-control" type="text" required name="name" onChange={this.onChange}/>
-            <small className="form-text text-muted">This will be your username.</small>
-          </div>
+          <label>Username <span className="C($red)">*</span></label>
+          <input className="form-control" type="text" required name="name" onChange={this.onChange}/>
+          <small className="form-text text-muted">This will be your username.</small>
+        </div>
+        <div className="form-group">
           <label>Email address <span className="C($red)">*</span></label>
           <input className="form-control" type="email" required name="email" onChange={this.onChange}/>
           <small className="form-text text-muted">We'll never share your email address with anyone else.</small>
@@ -53,7 +66,14 @@ class App extends React.Component {
           <small className="form-text text-muted">By clicking “Register” below, you agree to our <Link to="/terms">terms of service</Link> and <Link to="/privacy">privacy policies</Link>.</small>
         </div>
         <button type="submit" className="btn btn-primary" disabled={!this.state.recaptcha}>Register</button>
-      </form>
+      </form> : <form className="Maw(500px) Mx(a) shadow p-3 rounded" onSubmit={this.onSubmitCode}>
+        <div className="form-group">
+          <label>Code <span className="C($red)">*</span></label>
+          <input className="form-control" type="text" required name="code" onChange={this.onChange}/>
+          <small className="form-text text-muted">We send an email to the address that you provided.</small>
+        </div>
+        <button type="submit" className="btn btn-primary" disabled={!this.state.code}>Finish</button>
+      </form>}
     </section>;
   }
 }

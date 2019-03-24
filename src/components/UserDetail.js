@@ -1,37 +1,37 @@
 import React from 'react';
 import DefaultAvatar from './DefaultAvatar.jpg';
-import SampleListCover from './SampleListCover.jpg';
+// import SampleListCover from './SampleListCover.jpg';
 
 import {formatDate, formatNumber, getTimeSpan, getTimeSpanBetween, formatTimeSpan} from '../utils';
 
-const Rank = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) px-3 rounded mt-1">
-  <span className="my-2 badge badge-warning badge-pill">A+</span>
-  <div className="d-inline-block my-2 align-middle ml-2">
-    <div className="font-italic">Songs Compilation <small>by Foreground Eclipse</small></div>
-    <div className="text-warning small">I Won't Say "Farewell"; Someday, We'll Meet Again <span className="C($gray-500)">22 days ago</span></div>
-  </div>
-  <div className="d-inline-block my-2 align-middle ml-4 ml-md-5">
-    <div className="text-warning font-italic font-weight-bold">98.34%</div>
-  </div>
-  <div className="d-inline-block my-2 align-middle ml-4">
-    <div className="font-italic font-weight-bold">453perf</div>
-    <div className="small">weighted 100%</div>
-  </div>
-  <div className="d-inline-block my-2 align-middle ml-4">
-    <div className="C(lightgreen) font-weight-bold">453perf</div>
-  </div>
-</div>);
+// const Rank = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) px-3 rounded mt-1">
+//   <span className="my-2 badge badge-warning badge-pill">A+</span>
+//   <div className="d-inline-block my-2 align-middle ml-2">
+//     <div className="font-italic">Songs Compilation <small>by Foreground Eclipse</small></div>
+//     <div className="text-warning small">I Won't Say "Farewell"; Someday, We'll Meet Again <span className="C($gray-500)">22 days ago</span></div>
+//   </div>
+//   <div className="d-inline-block my-2 align-middle ml-4 ml-md-5">
+//     <div className="text-warning font-italic font-weight-bold">98.34%</div>
+//   </div>
+//   <div className="d-inline-block my-2 align-middle ml-4">
+//     <div className="font-italic font-weight-bold">453perf</div>
+//     <div className="small">weighted 100%</div>
+//   </div>
+//   <div className="d-inline-block my-2 align-middle ml-4">
+//     <div className="C(lightgreen) font-weight-bold">453perf</div>
+//   </div>
+// </div>);
 
-const Played = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) pr-3 rounded mt-1">
-  <img className="d-inline-block rounded-left" src={SampleListCover} alt=""/>
-  <div className="d-inline-block my-2 align-middle ml-2">
-    <div><strong>Songs Compilation</strong> <small>by Foreground Eclipse</small></div>
-    <div className="C($gray-500) small">mapped by <strong>Kite</strong></div>
-  </div>
-  <div className="d-inline-block my-2 align-middle ml-4 ml-md-5">
-    <div className="text-warning font-weight-bold"><i className="fas fa-play"></i> 345</div>
-  </div>
-</div>);
+// const Played = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) pr-3 rounded mt-1">
+//   <img className="d-inline-block rounded-left" src={SampleListCover} alt=""/>
+//   <div className="d-inline-block my-2 align-middle ml-2">
+//     <div><strong>Songs Compilation</strong> <small>by Foreground Eclipse</small></div>
+//     <div className="C($gray-500) small">mapped by <strong>Kite</strong></div>
+//   </div>
+//   <div className="d-inline-block my-2 align-middle ml-4 ml-md-5">
+//     <div className="text-warning font-weight-bold"><i className="fas fa-play"></i> 345</div>
+//   </div>
+// </div>);
 
 export default class App extends React.Component {
   constructor(props) {
@@ -43,32 +43,37 @@ export default class App extends React.Component {
 
     this.state = {
       id: null,
-      name: null,
 
+      name: '',
+      email: '',
+      salt: '',
+      hash: '',
+      // meta
       joinedDate: null,
       seenDate: null,
-      bio: null,
-      avatarUrl: null,
+      bio: '',
+      avatarUrl: '',
+      avatarPath: '',
+      // cached
+      trialCount: 0,
+      score: 0,
+      combo: 0,
+      accuracy: 0,
 
-      playCount: null,
-      totalScores: null,
-      maxCombo: null,
-      accuracy: null,
-
-      totalPlayTime: null,
-      weightedPp: null,
-      ranking: null,
-      sCount: null,
-      aCount: null,
-      bCount: null,
-      cCount: null,
-      dCount: null,
-      fCount: null,
+      playTime: 0,
+      performance: 0,
+      ranking: 0,
+      sCount: 0,
+      aCount: 0,
+      bCount: 0,
+      cCount: 0,
+      dCount: 0,
+      fCount: 0,
     };
   }
 
   async componentDidMount() {
-    const user = await this.app.getUser({userId: this.props.match.params.userId});
+    const user = await this.app.userGet({id: this.props.match.params.id});
 
     this.setState(user);
   }
@@ -103,9 +108,9 @@ export default class App extends React.Component {
           <div className="col-md-4">
             <table className="w-100">
               <tbody>
-                <tr><td>Play Count</td><td className="text-right font-weight-bold">{formatNumber(s.playCount)}</td></tr>
-                <tr><td>Total Scores</td><td className="text-right font-weight-bold">{formatNumber(s.totalScores)}</td></tr>
-                <tr><td>Max Combo</td><td className="text-right font-weight-bold">{formatNumber(s.maxCombo)}x</td></tr>
+                <tr><td>Play Count</td><td className="text-right font-weight-bold">{formatNumber(s.trialCount)}</td></tr>
+                <tr><td>Total Scores</td><td className="text-right font-weight-bold">{formatNumber(s.score)}</td></tr>
+                <tr><td>Max Combo</td><td className="text-right font-weight-bold">{formatNumber(s.combo)}x</td></tr>
                 <tr><td>Accuracy</td><td className="text-right font-weight-bold">{formatNumber(s.accuracy * 100, 2)}%</td></tr>
               </tbody>
             </table>
@@ -117,11 +122,11 @@ export default class App extends React.Component {
         <div>
           <span className="d-inline-block">
             <div className="Bdc($yellow) Bdts(s) Bdtw(3px) small font-weight-bold">Total Play Time</div>
-            <div className="Lh(1)">{formatTimeSpan(getTimeSpan(s.totalPlayTime))}</div>
+            <div className="Lh(1)">{formatTimeSpan(getTimeSpan(s.playTime))}</div>
           </span>
           <span className="d-inline-block ml-2">
             <div className="Bdc($gray-100) Bdts(s) Bdtw(3px) small font-weight-bold">Performance</div>
-            <div className="Lh(1)">{formatNumber(s.weightedPp)}</div>
+            <div className="Lh(1)">{formatNumber(s.performance)}</div>
           </span>
 
           <span className="d-inline-block ml-2 ml-lg-5 text-center">
@@ -152,7 +157,7 @@ export default class App extends React.Component {
         {/* graph */}
         <div className="D(tb) w-100">
           <div className="D(tbr)">
-            <div className="D(tbc) w-100">i am a graph</div>
+            <div className="D(tbc) w-100">None... yet.</div>
             <div className="D(tbc)">
               <span className="d-inline-block ml-2">
                 <div className="Bdc($yellow) Bdts(s) Bdtw(3px) font-weight-bold">Ranking</div>
@@ -174,37 +179,41 @@ export default class App extends React.Component {
           <h3 className="h5"><span className="Bdc(springgreen) Bdbs(s) Bdbw(2px)">Ranks</span></h3>
           <h4 className="h6 mt-3">Best Performances</h4>
           <div>
+            No performance records. :(
+            {/* <Rank />
             <Rank />
             <Rank />
-            <Rank />
-            <Rank />
+            <Rank /> */}
           </div>
-          <h4 className="h6 mt-3">First Place Ranks <span className="badge badge-pill badge-dark">44</span></h4>
+          <h4 className="h6 mt-3">First Place Ranks <span className="badge badge-pill badge-dark">0</span></h4>
           <div>
+            No awesome performance records yet. :(
+            {/* <Rank />
             <Rank />
             <Rank />
-            <Rank />
-            <Rank />
+            <Rank /> */}
           </div>
         </section>
         {/* historical */}
         <section className="container Bgc($gray-900) mt-2 px-5 py-3 text-light">
           <h3 className="h5"><span className="Bdc(springgreen) Bdbs(s) Bdbw(2px)">Historical</span></h3>
           <h4 className="h6 mt-3">Play History</h4>
-          <div>i am a graph</div>
+          <div>None... yet.</div>
           <h4 className="h6 mt-3">Most Played Midis</h4>
           <div>
+            No performance records. :(
+            {/* <Played />
             <Played />
             <Played />
-            <Played />
-            <Played />
+            <Played /> */}
           </div>
           <h4 className="h6 mt-3">Recent Plays</h4>
           <div>
+            No performance records. :(
+            {/* <Rank />
             <Rank />
             <Rank />
-            <Rank />
-            <Rank />
+            <Rank /> */}
           </div>
         </section>
       </div>

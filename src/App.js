@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, Switch, Link, NavLink, withRouter} from 'react-router-dom';
+import {Route, Switch, Link, NavLink} from 'react-router-dom';
 import PropsRoute from './PropsRoute';
 
 import Home from './components/Home';
@@ -8,9 +8,11 @@ import Register from './components/Register';
 
 import MidiListing from './components/MidiListing';
 import MidiDetail from './components/MidiDetail';
+import MidiDetailEdit from './components/MidiDetailEdit';
+import MidiUpload from './components/MidiUpload';
 import UserListing from './components/UserListing';
 import UserDetail from './components/UserDetail';
-import EditUserDetail from './components/EditUserDetail';
+import UserDetailEdit from './components/UserDetailEdit';
 
 import Help from './components/posts/Help';
 import Terms from './components/posts/Terms';
@@ -28,15 +30,13 @@ const INTENT = 'web';
 
 const DEVELOPMENT = 'development';
 
-class App extends React.Component {
+export default class App extends React.Component {
   constructor(props) {
     super(props);
 
     this.history = props.history;
     this.socket = props.socket;
     this.isDevelopment = props.env === DEVELOPMENT;
-
-    this.supportFileUpload = File && FileReader;
 
     this.state = {
       isHandshakeSuccessful: false,
@@ -56,7 +56,7 @@ class App extends React.Component {
   }
 
   success(message) {
-    this.setState({success: message});
+    this.setState({error: null, success: message});
     setTimeout(() => this.setState({success: null}), 1500);
   }
 
@@ -100,17 +100,21 @@ class App extends React.Component {
     this.setState({isHandshakeSuccessful: true});
 
     if (this.isDevelopment) {
-      await this.login({recaptcha: '', email: TEST_EMAIL, password: TEST_PASSWORD});
+      await this.userLogin({recaptcha: '', email: TEST_EMAIL, password: TEST_PASSWORD});
     }
   }
 
-  async register({recaptcha, name, email, password}) {
-    await this.genericApi1('cl_web_register', {recaptcha, name, email, password});
+  async userRegisterPre({recaptcha, name, email}) {
+    await this.genericApi1('cl_web_user_register_pre', {recaptcha, name, email});
+  }
+
+  async userRegister({code, name, email, password}) {
+    await this.genericApi1('cl_web_user_register', {code, name, email, password});
     this.history.push('/login');
   }
 
-  async login({recaptcha, email, password}) {
-    const user = await this.genericApi1('cl_web_login', {recaptcha, email, password});
+  async userLogin({recaptcha, email, password}) {
+    const user = await this.genericApi1('cl_web_user_login', {recaptcha, email, password});
     this.setState({user});
 
     if (!this.isDevelopment) {
@@ -118,9 +122,14 @@ class App extends React.Component {
     }
   }
 
-  async getUser({userId}) {
-    const user = await this.genericApi1('cl_web_get_user', {userId});
+  async userGet({id}) {
+    const user = await this.genericApi1('cl_web_user_get', {id});
     return user;
+  }
+
+  async userList({page}) {
+    const users = await this.genericApi1('cl_web_user_list', {page});
+    return users;
   }
 
   async userUpdateBio({bio}) {
@@ -138,6 +147,34 @@ class App extends React.Component {
   async userUpdatePassword({currentPassword, newPassword}) {
     await this.genericApi1('cl_web_user_update_password', {currentPassword, password: newPassword});
     this.success('password updated');
+  }
+
+  async midiUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_midi_upload', {name, size, buffer});
+    this.success('midi uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/midis/${res.id}`);
+    } else {
+      this.history.push(`/midis/${res.id}/edit`);
+    }
+  }
+
+  async midiGet({id}) {
+    const midi = await this.genericApi1('cl_web_midi_get', {id});
+    return midi;
+  }
+
+  async midiList({touhouAlbumIndex, touhouSongIndex, status, sort, page}) {
+    const midis = await this.genericApi1('cl_web_midi_list', {touhouAlbumIndex, touhouSongIndex, status, sort, page});
+    return midis;
+  }
+
+  async midiUpdate(update) {
+    const midi = await this.genericApi1('cl_web_midi_update', update);
+    this.success('midi updated');
+
+    return midi;
   }
 
   render() {
@@ -160,13 +197,21 @@ class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">rankings</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
             </ul>
             {!s.user ? <ul className="navbar-nav">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login">login</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
-            </ul> : <ul className="navbar-nav">
+            </ul> : <ul className="navbar-nav align-items-center">
+              <li className="nav-item dropdown">
+                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown">upload</span>
+                <div className="dropdown-menu dropdown-menu-right">
+                  <Link className="dropdown-item" to="/midis/upload">midi</Link>
+                  {/* <div className="dropdown-divider"></div>
+                  <a className="dropdown-item" href=".">Something else here</a> */}
+                </div>
+              </li>
               <li className="nav-item">
                 <Link to={`/users/${s.user.id}`}><img className="W(2em) d-inline-block rounded" src={s.user.avatarUrl || DefaultAvatar} alt=""/></Link>
               </li>
@@ -177,19 +222,22 @@ class App extends React.Component {
 
       <Switch>
         <Route exact path="/" component={Home} />
-        <PropsRoute path="/login" component={Login} app={this}/>
-        <PropsRoute path="/register" component={Register} app={this}/>
+        <PropsRoute exact path="/login" component={Login} app={this}/>
+        <PropsRoute exact path="/register" component={Register} app={this}/>
 
-        <PropsRoute exact path="/midis" component={MidiListing} />
-        <PropsRoute path="/midis/:midiId" component={MidiDetail} />
-        <PropsRoute exact path="/users" component={UserListing} />
-        <PropsRoute exact path="/users/:userId" component={UserDetail} app={this} />
-        <PropsRoute path="/users/:userId/edit" component={EditUserDetail} app={this} />
+        <PropsRoute exact path="/midis" component={MidiListing} app={this} />
+        <PropsRoute exact path="/midis/upload" component={MidiUpload} app={this} />
+        <PropsRoute exact path="/midis/:id" component={MidiDetail} app={this} />
+        <PropsRoute exact path="/midis/:id/edit" component={MidiDetailEdit} app={this} />
 
-        <PropsRoute path="/help" component={Help} />
-        <PropsRoute path="/terms" component={Terms} />
-        <PropsRoute path="/privacy" component={Privacy} />
-        <PropsRoute path="/copyright" component={Copyright} />
+        <PropsRoute exact path="/users" component={UserListing} app={this} />
+        <PropsRoute exact path="/users/:id" component={UserDetail} app={this} />
+        <PropsRoute exact path="/users/:id/edit" component={UserDetailEdit} app={this} />
+
+        <PropsRoute exact path="/help" component={Help} />
+        <PropsRoute exact path="/terms" component={Terms} />
+        <PropsRoute exact path="/privacy" component={Privacy} />
+        <PropsRoute exact path="/copyright" component={Copyright} />
       </Switch>
 
       <footer className="W(100%) Lh(18px) Bgc($gray-600) text-center py-1 shadow">
@@ -209,5 +257,3 @@ class App extends React.Component {
     </div>;
   }
 }
-
-export default withRouter(App);

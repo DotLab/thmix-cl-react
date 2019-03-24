@@ -1,39 +1,89 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import QueryString from 'query-string';
 
-import {avatarIconUrl} from '../utils';
+import {formatNumber, getTimeSpan, formatTimeSpan, formatNumberShort} from '../utils';
+import DefaultAvatar from './DefaultAvatar.jpg';
 
-const Row = () => (<tr className="Bgc($gray-700) Bgc($gray-600):h mb-1">
-  <td className="px-2 py-1 rounded-left">#1</td>
-  <td className="px-2 py-1 text-left"><img className="H(1em) rounded" src={avatarIconUrl} alt="avatar"/> <Link className="text-warning" to="/users/idke">idke</Link></td>
-  <td className="px-2 py-1 C($gray-500)">34,234</td>
-  <td className="px-2 py-1 C($gray-500)">342.34m</td>
-  <td className="px-2 py-1 C($gray-500)">34,342,345x</td>
-  <td className="px-2 py-1 C($gray-500)">84%</td>
-  <td className="px-2 py-1">12,334</td>
-  <td className="px-2 py-1 C($gray-500)">23</td>
-  <td className="px-2 py-1 C($gray-500)">644</td>
-  <td className="px-2 py-1 C($gray-500) rounded-right">583</td>
+const MAX_PAGE = 20;
+
+const Row = (s) => (<tr className="Bgc($gray-700) Bgc($gray-600):h mb-1">
+  <td className="px-2 py-1 rounded-left">#{formatNumber(s.ranking)}</td>
+  <td className="px-2 py-1 text-left">
+    <img className="H(1em) Va(m) rounded" src={s.avatarUrl || DefaultAvatar} alt="avatar"/>
+    <Link className="Va(m) Mstart(.25em) text-warning" to={`/users/${s.id}`}>{s.name}</Link>
+  </td>
+  <td className="px-2 py-1 C($gray-500)">{formatTimeSpan(getTimeSpan(s.playTime))}</td>
+  <td className="px-2 py-1 C($gray-500)">{formatNumber(s.trialCount)}</td>
+  <td className="px-2 py-1 C($gray-500)">{formatNumberShort(s.score)}</td>
+  <td className="px-2 py-1 C($gray-500)">{formatNumber(s.combo)}x</td>
+  <td className="px-2 py-1 C($gray-500)">{formatNumber(s.accuracy * 100)}%</td>
+  <td className="px-2 py-1">{formatNumber(s.performance)}</td>
+  <td className="px-2 py-1 C($gray-500)">{formatNumber(s.sCount)}</td>
+  <td className="px-2 py-1 C($gray-500)">{formatNumber(s.aCount)}</td>
+  <td className="px-2 py-1 C($gray-500) rounded-right">{formatNumber(s.bCount)}</td>
 </tr>);
 
-const Pagination = () => (<div className="text-center small">
-  <span className="Cur(p) mr-4 mr-lg-5 text-muted"><i className="fas fa-angle-double-left"></i></span>
-  <span className="Cur(p) mr-4 mr-lg-5 text-muted"><i className="fas fa-angle-left"></i></span>
-  <span className="Cur(p) mr-4 mr-lg-5 text-warning">1</span>
-  <span className="Cur(p) mr-4 mr-lg-5">2</span>
-  <span className="Cur(p) mr-4 mr-lg-5">3</span>
-  <span className="Cur(p) mr-4 mr-lg-5">4</span>
-  <span className="Cur(p) mr-4 mr-lg-5">5</span>
-  <span className="Cur(p) mr-4 mr-lg-5">6</span>
-  <span className="Cur(p) mr-4 mr-lg-5">7</span>
-  <span className="Cur(p) mr-4 mr-lg-5">8</span>
-  <span className="Cur(p) mr-4 mr-lg-5">9</span>
-  <span className="Cur(p) mr-4 mr-lg-5"><i className="fas fa-angle-right"></i></span>
-  <span className="Cur(p)"><i className="fas fa-angle-double-right"></i></span>
-</div>);
+const Pagination = (s) => {
+  const page = s.page;
+
+  const pages = [];
+  const pageStart = Math.max(0, page - 4);
+  const pageEnd = Math.min(pageStart + 8, MAX_PAGE);
+  for (let i = pageStart; i <= pageEnd; i++) pages.push(i);
+
+  const canGoBack = page > 0;
+  const canGoForward = page < MAX_PAGE;
+
+  /* eslint-disable no-multi-spaces*/
+  return <div className="text-center small">
+    {canGoBack &&     <Link className="text-light mr-4 mr-lg-5"                                                 to={'/users?' + QueryString.stringify({page: 0})}>       <i className="fas fa-angle-double-left"></i></Link>}
+    {canGoBack &&     <Link className="text-light mr-4 mr-lg-5"                                                 to={'/users?' + QueryString.stringify({page: page - 1})}><i className="fas fa-angle-left"></i></Link>}
+    {pages.map((p) => <Link className={'mr-4 mr-lg-5' + (p === page ? ' text-warning' : ' text-light')} key={p} to={'/users?' + QueryString.stringify({page: p})}>       {p}</Link>)}
+    {canGoForward &&  <Link className="text-light mr-4 mr-lg-5"                                                 to={'/users?' + QueryString.stringify({page: page + 1})}><i className="fas fa-angle-right"></i></Link>}
+    {canGoForward &&  <Link className="text-light"                                                              to={'/users?' + QueryString.stringify({page: MAX_PAGE})}><i className="fas fa-angle-double-right"></i></Link>}
+  </div>;
+  /* eslint-enable no-multi-spaces*/
+};
 
 export default class RankingListing extends React.Component {
+  constructor(props) {
+    super(props);
+
+    /** @type {import('../App').default} */
+    this.app = props.app;
+
+    this.state = {
+      users: [],
+    };
+  }
+
+  getPage(props) {
+    const query = QueryString.parse(props.location.search);
+    // @ts-ignore
+    let page = parseInt(query.page);
+    if (!(page > 0)) page = 0;
+
+    return page;
+  }
+
+  async componentDidMount() {
+    const page = this.getPage(this.props);
+    const users = await this.app.userList({page: page});
+
+    this.setState({page, users});
+  }
+
+  async componentWillReceiveProps(props) {
+    const page = this.getPage(props);
+    const users = await this.app.userList({page: page});
+
+    this.setState({page, users});
+  }
+
   render() {
+    const s = this.state;
+
     return <div>
       <section className="container">
         <div className="Bgc($gray-900) Py(100px) text-light text-center shadow">
@@ -42,34 +92,30 @@ export default class RankingListing extends React.Component {
       </section>
       <section className="container px-md-5 mb-2">
         <div className="Bgc($gray-800) text-light p-3 shadow">
-          <Pagination />
-          <div className="table-responsive">
+          <Pagination page={s.page} />
+          {!!s.users.length && <div className="table-responsive">
             <table className="Bdcl(s) Bdsp(0,.25em) my-3  text-nowrap text-center">
               <thead className="small">
                 <tr>
                   <td></td>
                   <td className="w-100"></td>
+                  <td className="px-2 py-1 text-muted">play time</td>
                   <td className="px-2 py-1 text-muted">play count</td>
-                  <td className="px-2 py-1 text-muted">sunshine</td>
+                  <td className="px-2 py-1 text-muted">scores</td>
                   <td className="px-2 py-1 text-muted">combo</td>
                   <td className="px-2 py-1 text-muted">accuracy</td>
                   <td className="px-2 py-1">performance</td>
                   <td className="px-2 py-1 text-muted">S</td>
-                  <td className="px-2 py-1 text-muted">A+</td>
                   <td className="px-2 py-1 text-muted">A</td>
+                  <td className="px-2 py-1 text-muted">B</td>
                 </tr>
               </thead>
               <tbody>
-                <Row/>
-                <Row/>
-                <Row/>
-                <Row/>
-                <Row/>
-                <Row/>
+                {s.users.map((user) => <Row {...user} key={user.id} />)}
               </tbody>
             </table>
-          </div>
-          <Pagination />
+          </div>}
+          {!!s.users.length && <Pagination page={s.page} />}
         </div>
       </section>
     </div>;

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {BrowserRouter} from 'react-router-dom';
+import {BrowserRouter, withRouter} from 'react-router-dom';
 
 import './atomic.css';
 
@@ -24,8 +24,10 @@ if (env === 'development') {
   socket = io();
 }
 
+const RoutedApp = withRouter(App);
+
 ReactDOM.render(<BrowserRouter>
-  <App socket={socket} env={env}/>
+  <RoutedApp socket={socket} env={env}/>
 </BrowserRouter>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

@@ -22,7 +22,7 @@ class App extends React.Component {
   onSubmit(e) {
     e.preventDefault();
 
-    this.app.login(this.state);
+    this.app.userLogin(this.state);
   }
 
   render() {

@@ -14,8 +14,8 @@ export default class EditUserDetail extends React.Component {
     this.app = props.app;
 
     if (!this.app.isDevelopment) {
-      const canEdit = this.app.state.user && this.app.state.user.id === props.match.params.userId;
-      if (!canEdit) this.app.history.replace(`/users/${props.match.params.userId}`);
+      const canEdit = this.app.state.user && this.app.state.user.id === props.match.params.id;
+      if (!canEdit) this.app.history.replace(`/users/${props.match.params.id}`);
     }
 
     this.onChange = onChange.bind(this);
@@ -105,7 +105,7 @@ export default class EditUserDetail extends React.Component {
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-9">
               <img className="H(120px) shadow-sm rounded" src={s.avatarUrl || DefaultAvatar} alt=""/>
-              {this.app.supportFileUpload && <input className="D(b) W(a) mt-2 form-control-file" type="file" accept="image/*" onChange={this.onAvatarChange}/>}
+              <input className="D(b) W(a) mt-2 form-control-file" type="file" accept="image/*" onChange={this.onAvatarChange}/>
             </div>
           </div>
         </Block.Right>
