@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {onTextareaChange, onChange, onCheckboxChange} from '../utils';
+import NoImageAvailable from './NoImageAvailable.png';
 
 // @ts-ignore
 import {albums} from '../json/albums';
@@ -23,7 +24,7 @@ export default class MidiDetailEdit extends React.Component {
     this.onCheckboxChange = onCheckboxChange.bind(this);
     this.updateMeta = this.updateMeta.bind(this);
     this.updateSource = this.updateSource.bind(this);
-
+    this.onCoverChange = this.onCoverChange.bind(this);
 
     this.state = {
       id: null,
@@ -61,12 +62,42 @@ export default class MidiDetailEdit extends React.Component {
     });
   }
 
+  onCoverChange(e) {
+    if (!e.target.files[0]) return;
+
+    const size = e.target.files[0].size;
+    if (size > 1048576) {
+      this.app.error('image too large');
+    } else {
+      const fr = new FileReader();
+      fr.onload = (e) => {
+        // @ts-ignore
+        const buffer = e.target.result;
+        this.app.midiUploadCover({id: this.state.id, size, buffer}).then((midi) => this.setState(midi));
+      };
+      fr.readAsArrayBuffer(e.target.files[0]);
+    }
+  }
+
   render() {
     const s = this.state;
     return <div>
       <section className="Bgc($gray-800) container text-light px-5 pb-3 pt-5">
         <h2 className="font-weight-light m-0"><strong className="font-weight-normal">Midi</strong> Detail</h2>
       </section>
+      {/* cover */}
+      <Block>
+        <Block.Left><h2 className="h5 m-0">Cover</h2></Block.Left>
+        <Block.Right>
+          <div className="form-group row">
+            <div className="offset-sm-3 col-sm-9">
+              <img className="H(256px) shadow-sm rounded" src={s.coverUrl || NoImageAvailable} alt=""/>
+              <img className="H(128px) shadow-sm rounded ml-2" src={s.coverBlurUrl} alt=""/>
+              <input className="D(b) W(a) mt-2 form-control-file" type="file" accept="image/*" onChange={this.onCoverChange}/>
+            </div>
+          </div>
+        </Block.Right>
+      </Block>
       <Block>
         <Block.Left><h2 className="h5 m-0">Meta</h2></Block.Left>
         <Block.Right>
