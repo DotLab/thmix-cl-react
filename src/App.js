@@ -177,6 +177,13 @@ export default class App extends React.Component {
     return midi;
   }
 
+  async midiUploadCover({id, size, buffer}) {
+    const midi = await this.genericApi1('cl_web_midi_upload_cover', {id, size, buffer});
+    this.success('cover uploaded');
+
+    return midi;
+  }
+
   render() {
     const s = this.state;
 

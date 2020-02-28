@@ -11,6 +11,7 @@ export default class EditUserDetail extends React.Component {
   constructor(props) {
     super(props);
 
+    /** @type {import('../App').default} */
     this.app = props.app;
 
     if (!this.app.isDevelopment) {
