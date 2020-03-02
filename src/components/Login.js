@@ -8,6 +8,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
+    /** @type {import('../App').default} */
     this.app = props.app;
 
     this.onChange = onChange.bind(this);
