@@ -14,6 +14,8 @@ import UserListing from './components/UserListing';
 import UserDetail from './components/UserDetail';
 import UserDetailEdit from './components/UserDetailEdit';
 
+import Board from './components/Board';
+
 import Help from './components/posts/Help';
 import Terms from './components/posts/Terms';
 import Privacy from './components/posts/Privacy';
@@ -184,6 +186,23 @@ export default class App extends React.Component {
     return midi;
   }
 
+  async boardGetMessages() {
+    const messages = await this.genericApi0('cl_web_board_get_messages');
+    return messages;
+  }
+
+  boardRequestMessageUpdate() {
+    this.genericApi0('cl_web_board_request_message_update');
+  }
+
+  boardStopMessageUpdate() {
+    this.genericApi0('cl_web_board_stop_message_update');
+  }
+
+  boardSendMessage({recaptcha, text}) {
+    this.genericApi1('cl_web_board_send_message', {recaptcha, text});
+  }
+
   render() {
     const s = this.state;
 
@@ -206,6 +225,7 @@ export default class App extends React.Component {
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board">board</NavLink></li>
             </ul>
             {!s.user ? <ul className="navbar-nav">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login">login</NavLink></li>
@@ -240,6 +260,8 @@ export default class App extends React.Component {
         <PropsRoute exact path="/users" component={UserListing} app={this} />
         <PropsRoute exact path="/users/:id" component={UserDetail} app={this} />
         <PropsRoute exact path="/users/:id/edit" component={UserDetailEdit} app={this} />
+
+        <PropsRoute exact path="/board" component={Board} app={this} />
 
         <PropsRoute exact path="/help" component={Help} />
         <PropsRoute exact path="/terms" component={Terms} />

@@ -1,5 +1,5 @@
 import React from 'react';
-import HomeShowcase from './HomeShowcase.png';
+import HomeShowcase from './HomeShowcase.jpg';
 
 class App extends React.Component {
   render() {
