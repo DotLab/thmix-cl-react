@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {onTextareaChange, onChange, onCheckboxChange} from '../utils';
-import NoImageAvailable from './NoImageAvailable.png';
+import NoImageAvailable from './NoImageAvailable.jpg';
 
 // @ts-ignore
 import {albums} from '../json/albums';
