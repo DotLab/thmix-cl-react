@@ -109,6 +109,13 @@ export default class MidiDetail extends React.Component {
     });
   }
 
+  componentWillUnmount() {
+    if (this.state.audio) {
+      this.state.audio.pause();
+      this.setState({audio: null});
+    }
+  }
+
   startEdit() {
     this.app.history.push(`/midis/${this.state.id}/edit`);
   }
