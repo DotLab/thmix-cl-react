@@ -10,6 +10,12 @@ import MidiListing from './components/MidiListing';
 import MidiDetail from './components/MidiDetail';
 import MidiDetailEdit from './components/MidiDetailEdit';
 import MidiUpload from './components/MidiUpload';
+
+import SoundfontListing from './components/SoundfontListing';
+import SoundfontDetail from './components/SoundfontDetail';
+import SoundfontDetailEdit from './components/SoundfontDetailEdit';
+import SoundfontUpload from './components/SoundfontUpload';
+
 import UserListing from './components/UserListing';
 import UserDetail from './components/UserDetail';
 import UserDetailEdit from './components/UserDetailEdit';
@@ -186,6 +192,17 @@ export default class App extends React.Component {
     return midi;
   }
 
+  async soundfontUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_soundfont_upload', {name, size, buffer});
+    this.success('soundfont uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/soundfonts/${res.id}`);
+    } else {
+      this.history.push(`/soundfonts/${res.id}/edit`);
+    }
+  }
+
   async boardGetMessages() {
     const messages = await this.genericApi0('cl_web_board_get_messages');
     return messages;
@@ -222,7 +239,7 @@ export default class App extends React.Component {
             <ul className="navbar-nav mr-auto">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
-              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board">board</NavLink></li>
@@ -235,6 +252,7 @@ export default class App extends React.Component {
                 <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown">upload</span>
                 <div className="dropdown-menu dropdown-menu-right">
                   <Link className="dropdown-item" to="/midis/upload">midi</Link>
+                  <Link className="dropdown-item" to="/soundfonts/upload">soundfont</Link>
                   {/* <div className="dropdown-divider"></div>
                   <a className="dropdown-item" href=".">Something else here</a> */}
                 </div>
@@ -262,6 +280,11 @@ export default class App extends React.Component {
         <PropsRoute exact path="/users/:id/edit" component={UserDetailEdit} app={this} />
 
         <PropsRoute exact path="/board" component={Board} app={this} />
+
+        <PropsRoute exact path="/soundfonts" component={SoundfontListing} app={this} />
+        <PropsRoute exact path="/soundfonts/upload" component={SoundfontUpload} app={this} />
+        <PropsRoute exact path="/soundfonts/:id" component={SoundfontDetail} app={this} />
+        <PropsRoute exact path="/soundfonts/:id/edit" component={SoundfontDetailEdit} app={this} />
 
         <PropsRoute exact path="/help" component={Help} />
         <PropsRoute exact path="/terms" component={Terms} />
