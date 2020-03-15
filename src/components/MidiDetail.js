@@ -60,7 +60,7 @@ export default class MidiDetail extends React.Component {
       artistName: '',
       artistUrl: '',
       audio: null,
-      trackPlayUrl: '',
+      mp3Url: '',
       playing: false,
       // meta
       uploadedDate: null,
@@ -103,7 +103,7 @@ export default class MidiDetail extends React.Component {
   async componentDidMount() {
     const midi = await this.app.midiGet({id: this.props.match.params.id});
     this.setState(midi);
-    const audio = new Audio(this.state.trackPlayUrl);
+    const audio = new Audio(this.state.mp3Url);
     audio.addEventListener('loadeddata', () => {
       this.setState({audio});
     });
