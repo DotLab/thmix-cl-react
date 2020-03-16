@@ -16,8 +16,8 @@ export default class SoundfontUpload extends React.Component {
     const name = e.target.files[0].name;
     const size = e.target.files[0].size;
 
-    if (size > 1048576) {
-      this.app.error('image too large');
+    if (size > 6048576000) {
+      this.app.error('sound');
     } else {
       const fr = new FileReader();
       fr.onload = (e) => {

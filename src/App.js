@@ -203,6 +203,30 @@ export default class App extends React.Component {
     }
   }
 
+  async soundfontUploadCover({id, size, buffer}) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_upload_cover', {id, size, buffer});
+    this.success('cover uploaded');
+
+    return soundfont;
+  }
+
+  async soundfontGet({id}) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_get', {id});
+    return soundfont;
+  }
+
+  async soundfontUpdate(update) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_update', update);
+    this.success('soundfont updated');
+
+    return soundfont;
+  }
+
+  async soundfontList({status, sort, page}) {
+    const soundfonts = await this.genericApi1('cl_web_soundfont_list', {status, sort, page});
+    return soundfonts;
+  }
+
   async boardGetMessages() {
     const messages = await this.genericApi0('cl_web_board_get_messages');
     return messages;
