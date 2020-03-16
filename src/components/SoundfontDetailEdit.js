@@ -82,7 +82,7 @@ export default class SoundfontDetailEdit extends React.Component {
             <div className="col-sm-9"><input className="form-control" type="text" name="name" value={s.name} onChange={this.onChange}/></div>
           </div>
           <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">soundfont name English</label>
+            <label className="col-sm-3 col-form-label text-right">soundfont name English *</label>
             <div className="col-sm-9"><input className="form-control" required type="text" name="nameEng" value={s.nameEng} onChange={this.onChange}/></div>
           </div>
           <div className="form-group row">

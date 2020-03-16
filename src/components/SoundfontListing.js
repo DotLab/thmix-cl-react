@@ -11,12 +11,11 @@ const Card = (s) => (<div className="col-md-6 mb-2 px-1">
       <div className="position-relative w-100 h-100">
         <div className="T(0) Start(0) position-absolute small"><span className="badge badge-lg badge-pill badge-dark p-2 shadow">{s.status}</span></div>
         <div className="T(0) End(0) Lh(1.15) position-absolute text-right">
-          <em>{formatNumber(s.playCount)}</em> <i className="small fa-fw fas fa-play"></i><br/>
           <em>{formatNumber(s.upCount - s.downCount)}</em> <i className="small fa-fw fas fa-chevron-up"></i><br/>
           <em>{formatNumber(s.loveCount)}</em> <i className="small fa-fw fas fa-heart"></i><br/>
         </div>
         <div className="B(0) Start(0) Lh(1.15) position-absolute font-italic w-100">
-          <Link className="h5 m-0 text-light text-truncate" to={`/midis/${s.id}`}>{s.name}</Link>
+          <Link className="h5 m-0 text-light text-truncate" to={`/soundfonts/${s.id}`}>{s.name}</Link>
           <div>{s.artistName}</div>
         </div>
       </div>
