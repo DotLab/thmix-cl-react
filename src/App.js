@@ -21,6 +21,8 @@ import Terms from './components/posts/Terms';
 import Privacy from './components/posts/Privacy';
 import Copyright from './components/posts/Copyright';
 
+import {lang, langToCode} from './languageList';
+
 import DefaultAvatar from './components/DefaultAvatar.jpg';
 
 import {TEST_EMAIL, TEST_PASSWORD} from './secrets';
@@ -45,12 +47,18 @@ export default class App extends React.Component {
       user: null,
       error: null,
       success: null,
+      language: 'zh',
     };
+
+    this.dict = {};
 
     this.socket.on('disconnect', this.onDisconnect.bind(this));
     this.socket.on('reconnect', this.onReconnect.bind(this));
 
     this.handshake();
+    this.setLanguage = this.setLanguage.bind(this);
+    this.tr = this.tr.bind(this);
+    this.translate = this.translate.bind(this);
   }
 
   error(message) {
@@ -203,6 +211,41 @@ export default class App extends React.Component {
     this.genericApi1('cl_web_board_send_message', {recaptcha, text});
   }
 
+  async setLanguage(e) {
+    e.preventDefault();
+    const language = langToCode[e.target.value];
+    this.setState({language});
+  }
+
+  tr({src}) {
+    const lang = this.state.language;
+    if (!this.dict[src]) {
+      this.translate({src});
+      return src;
+    }
+    const text = this.dict[src][lang];
+    if (!text) {
+      this.translate({src});
+      return src;
+    }
+    return text;
+  }
+
+  async translate({src}) {
+    const lang = this.state.language;
+    let text = await this.genericApi1('cl_web_get_translation', {src, lang});
+    if (text !== null) {
+      if (!this.dict[src]) {
+        this.dict[src] = {};
+      }
+      this.dict[src][lang] = text;
+      return;
+    }
+    text = await this.genericApi1('cl_web_translate', {src, lang});
+    this.dict[src] = {};
+    this.dict[src][lang] = text;
+  }
+
   render() {
     const s = this.state;
 
@@ -227,14 +270,22 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board">board</NavLink></li>
             </ul>
+            <ul className="navbar-nav">
+              <li className="nav-item dropdown">
+                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown">English</span>
+                <div className="dropdown-menu dropdown-menu-right">
+                  {lang.map((lang) => <button value={lang} onClick={this.setLanguage} className="dropdown-item Cur(p) C(#28a745):h Px(4px)" key={lang}> {lang}</button>)}
+                </div>
+              </li>
+            </ul>
             {!s.user ? <ul className="navbar-nav">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login">login</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
             </ul> : <ul className="navbar-nav align-items-center">
               <li className="nav-item dropdown">
-                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown">upload</span>
+                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown">{this.tr({src: 'upload'})}</span>
                 <div className="dropdown-menu dropdown-menu-right">
-                  <Link className="dropdown-item" to="/midis/upload">midi</Link>
+                  <Link className="dropdown-item" to="/midis/upload">{this.tr({src: 'midi'})}</Link>
                   {/* <div className="dropdown-divider"></div>
                   <a className="dropdown-item" href=".">Something else here</a> */}
                 </div>
