@@ -21,7 +21,7 @@ import Terms from './components/posts/Terms';
 import Privacy from './components/posts/Privacy';
 import Copyright from './components/posts/Copyright';
 
-import {lang, langToCode} from './languageList';
+import {lang, langToCode, codeToLang} from './languageList';
 
 import DefaultAvatar from './components/DefaultAvatar.jpg';
 
@@ -47,7 +47,7 @@ export default class App extends React.Component {
       user: null,
       error: null,
       success: null,
-      language: 'zh',
+      language: 'en',
     };
 
     this.dict = {};
@@ -272,7 +272,7 @@ export default class App extends React.Component {
             </ul>
             <ul className="navbar-nav">
               <li className="nav-item dropdown">
-                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown">English</span>
+                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown">{codeToLang[s.language]}</span>
                 <div className="dropdown-menu dropdown-menu-right">
                   {lang.map((lang) => <button value={lang} onClick={this.setLanguage} className="dropdown-item Cur(p) C(#28a745):h Px(4px)" key={lang}> {lang}</button>)}
                 </div>
