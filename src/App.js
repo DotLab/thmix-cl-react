@@ -13,6 +13,9 @@ import MidiUpload from './components/MidiUpload';
 import UserListing from './components/UserListing';
 import UserDetail from './components/UserDetail';
 import UserDetailEdit from './components/UserDetailEdit';
+import ResourceListing from './components/ResourceListing';
+import ResourceDetailEdit from './components/ResourceDetailEdit';
+import ResourceUpload from './components/ResourceUpload';
 
 import Board from './components/Board';
 
@@ -203,6 +206,34 @@ export default class App extends React.Component {
     this.genericApi1('cl_web_board_send_message', {recaptcha, text});
   }
 
+  async resourceUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_resource_upload', {name, size, buffer});
+    this.success('resource uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/resources/${res.id}`);
+    } else {
+      this.history.push(`/resources/${res.id}/edit`);
+    }
+  }
+
+  async resourceGet({id}) {
+    const resource = await this.genericApi1('cl_web_resource_get', {id});
+    return resource;
+  }
+
+  async resourceUpdate(update) {
+    const resource = await this.genericApi1('cl_web_resource_update', update);
+    this.success('resource updated');
+
+    return resource;
+  }
+
+  async resourceList({type, status, sort, page}) {
+    const resources = await this.genericApi1('cl_web_resource_list', {type, status, sort, page});
+    return resources;
+  }
+
   render() {
     const s = this.state;
 
@@ -222,6 +253,7 @@ export default class App extends React.Component {
             <ul className="navbar-nav mr-auto">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources">resources</NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
@@ -232,9 +264,11 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
             </ul> : <ul className="navbar-nav align-items-center">
               <li className="nav-item dropdown">
-                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown">upload</span>
+                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i class="fas fa-plus"></i></span>
                 <div className="dropdown-menu dropdown-menu-right">
-                  <Link className="dropdown-item" to="/midis/upload">midi</Link>
+                  <Link className="dropdown-item" to="/midis/upload">Upload midi</Link>
+                  <Link className="dropdown-item" to="/resources/upload">Upload resource</Link>
+                  <Link className="dropdown-item" to="/midis/upload">Create story</Link>
                   {/* <div className="dropdown-divider"></div>
                   <a className="dropdown-item" href=".">Something else here</a> */}
                 </div>
@@ -256,6 +290,10 @@ export default class App extends React.Component {
         <PropsRoute exact path="/midis/upload" component={MidiUpload} app={this} />
         <PropsRoute exact path="/midis/:id" component={MidiDetail} app={this} />
         <PropsRoute exact path="/midis/:id/edit" component={MidiDetailEdit} app={this} />
+
+        <PropsRoute exact path="/resources" component={ResourceListing} app={this} />
+        <PropsRoute exact path="/resources/upload" component={ResourceUpload} app={this} />
+        <PropsRoute exact path="/resources/:id/edit" component={ResourceDetailEdit} app={this} />
 
         <PropsRoute exact path="/users" component={UserListing} app={this} />
         <PropsRoute exact path="/users/:id" component={UserDetail} app={this} />

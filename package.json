@@ -8,7 +8,7 @@
     "eslint": "^5.15.1",
     "eslint-config-google": "^0.12.0",
     "immutability-helper": "^3.0.0",
-    "query-string": "^6.4.0",
+    "query-string": "^6.11.1",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-google-recaptcha": "^1.0.5",
