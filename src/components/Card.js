@@ -66,8 +66,8 @@ export default class Card extends React.Component {
           <div className="position-relative w-100 h-100">
             {canEdit && <div className="T(0) Start(0) position-absolute small"><Link className="badge badge-lg badge-pill badge-dark p-2 shadow" to={{pathname: `/resources/${s.id}/edit`}}>Edit</Link></div>}
             <div className="T(20%) End(34%) Fz(60px) position-absolute text-right" onClick={this.play}>
-              {!playing && <i class="fas fa-play-circle"></i>}
-              {playing && <i class="fas fa-pause-circle"></i>}
+              {!playing && <i className="fas fa-play-circle"></i>}
+              {playing && <i className="fas fa-pause-circle"></i>}
             </div>
             <div className="B(0) Start(0) Lh(1.15) position-absolute font-italic w-100">
               <div className="h5 m-0 text-light text-truncate">{s.name}</div>

@@ -264,7 +264,7 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
             </ul> : <ul className="navbar-nav align-items-center">
               <li className="nav-item dropdown">
-                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i class="fas fa-plus"></i></span>
+                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i className="fas fa-plus"></i></span>
                 <div className="dropdown-menu dropdown-menu-right">
                   <Link className="dropdown-item" to="/midis/upload">Upload midi</Link>
                   <Link className="dropdown-item" to="/resources/upload">Upload resource</Link>
