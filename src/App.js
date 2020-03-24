@@ -17,6 +17,9 @@ import ResourceListing from './components/ResourceListing';
 import ResourceDetailEdit from './components/ResourceDetailEdit';
 import ResourceUpload from './components/ResourceUpload';
 
+import CardUpload from './components/CardUpload';
+import CardDetailEdit from './components/CardDetailEdit';
+
 import Board from './components/Board';
 
 import Help from './components/posts/Help';
@@ -34,6 +37,7 @@ const VERSION = 0;
 const INTENT = 'web';
 
 const DEVELOPMENT = 'development';
+const CARD_EDITOR = 'cardEditor';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -234,10 +238,34 @@ export default class App extends React.Component {
     return resources;
   }
 
+  async cardUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_card_upload', {name, size, buffer});
+    this.success('card uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/cards/${res.id}`);
+    } else {
+      this.history.push(`/cards/${res.id}/edit`);
+    }
+  }
+
+  async cardGet({id}) {
+    const card = await this.genericApi1('cl_web_card_get', {id});
+    return card;
+  }
+
+  async cardUpdate(update) {
+    const card = await this.genericApi1('cl_web_card_update', update);
+    this.success('card updated');
+
+    return card;
+  }
+
   render() {
     const s = this.state;
 
     if (s.waiting) return <div></div>;
+    const isEditor = this.state.user && this.state.user.roles.includes(CARD_EDITOR);
 
     return <div>
       {(s.error || s.success) && <div className="Pe(n) Z(1) position-fixed w-100 text-center">
@@ -254,6 +282,7 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources">resources</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/storys">stories</NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
@@ -268,6 +297,7 @@ export default class App extends React.Component {
                 <div className="dropdown-menu dropdown-menu-right">
                   <Link className="dropdown-item" to="/midis/upload">Upload midi</Link>
                   <Link className="dropdown-item" to="/resources/upload">Upload resource</Link>
+                  {isEditor && <Link className="dropdown-item" to="/cards/upload">Upload card</Link>}
                   <Link className="dropdown-item" to="/midis/upload">Create story</Link>
                   {/* <div className="dropdown-divider"></div>
                   <a className="dropdown-item" href=".">Something else here</a> */}
@@ -294,6 +324,9 @@ export default class App extends React.Component {
         <PropsRoute exact path="/resources" component={ResourceListing} app={this} />
         <PropsRoute exact path="/resources/upload" component={ResourceUpload} app={this} />
         <PropsRoute exact path="/resources/:id/edit" component={ResourceDetailEdit} app={this} />
+
+        <PropsRoute exact path="/cards/upload" component={CardUpload} app={this} />
+        <PropsRoute exact path="/cards/:id/edit" component={CardDetailEdit} app={this} />
 
         <PropsRoute exact path="/users" component={UserListing} app={this} />
         <PropsRoute exact path="/users/:id" component={UserDetail} app={this} />
