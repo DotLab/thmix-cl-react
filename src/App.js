@@ -13,6 +13,8 @@ import MidiUpload from './components/MidiUpload';
 import UserListing from './components/UserListing';
 import UserDetail from './components/UserDetail';
 import UserDetailEdit from './components/UserDetailEdit';
+import BuildUpload from './components/BuildUpload';
+import BuildDetailEdit from './components/BuildDetailEdit';
 
 import Board from './components/Board';
 
@@ -203,6 +205,29 @@ export default class App extends React.Component {
     this.genericApi1('cl_web_board_send_message', {recaptcha, text});
   }
 
+  async buildUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_build_upload', {name, size, buffer});
+    this.success('build uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/builds/${res.id}`);
+    } else {
+      this.history.push(`/builds/${res.id}/edit`);
+    }
+  }
+
+  async buildGet({id}) {
+    const build = await this.genericApi1('cl_web_build_get', {id});
+    return build;
+  }
+
+  async buildUpdate(update) {
+    const build = await this.genericApi1('cl_web_build_update', update);
+    this.success('build updated');
+
+    return build;
+  }
+
   render() {
     const s = this.state;
 
@@ -235,6 +260,7 @@ export default class App extends React.Component {
                 <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown">upload</span>
                 <div className="dropdown-menu dropdown-menu-right">
                   <Link className="dropdown-item" to="/midis/upload">midi</Link>
+                  <Link className="dropdown-item" to="/builds/upload">build</Link>
                   {/* <div className="dropdown-divider"></div>
                   <a className="dropdown-item" href=".">Something else here</a> */}
                 </div>
@@ -260,6 +286,9 @@ export default class App extends React.Component {
         <PropsRoute exact path="/users" component={UserListing} app={this} />
         <PropsRoute exact path="/users/:id" component={UserDetail} app={this} />
         <PropsRoute exact path="/users/:id/edit" component={UserDetailEdit} app={this} />
+
+        <PropsRoute exact path="/builds/upload" component={BuildUpload} app={this} />
+        <PropsRoute exact path="/builds/:id/edit" component={BuildDetailEdit} app={this} />
 
         <PropsRoute exact path="/board" component={Board} app={this} />
 
