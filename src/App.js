@@ -15,6 +15,9 @@ import UserDetail from './components/UserDetail';
 import UserDetailEdit from './components/UserDetailEdit';
 import BuildUpload from './components/BuildUpload';
 import BuildDetailEdit from './components/BuildDetailEdit';
+import AlbumDetailEdit from './components/AlbumDetailEdit';
+import AlbumListing from './components/AlbumListing';
+import SongDetailEdit from './components/SongDetailEdit';
 
 import Board from './components/Board';
 
@@ -53,6 +56,8 @@ export default class App extends React.Component {
     this.socket.on('reconnect', this.onReconnect.bind(this));
 
     this.handshake();
+    this.albumCreate = this.albumCreate.bind(this);
+    this.songCreate = this.songCreate.bind(this);
   }
 
   error(message) {
@@ -228,6 +233,46 @@ export default class App extends React.Component {
     return build;
   }
 
+  async albumCreate() {
+    const res = await this.genericApi0('cl_web_album_create');
+    this.success('album created');
+
+    if (res.duplicated === true) {
+      this.history.push(`/albums/${res.id}`);
+    } else {
+      this.history.push(`/albums/${res.id}/edit`);
+    }
+  }
+
+  async songCreate() {
+    const res = await this.genericApi0('cl_web_song_create');
+    this.success('song created');
+
+    if (res.duplicated === true) {
+      this.history.push(`/songs/${res.id}`);
+    } else {
+      this.history.push(`/songs/${res.id}/edit`);
+    }
+  }
+
+  async albumGet({id}) {
+    const album = await this.genericApi1('cl_web_album_get', {id});
+    return album;
+  }
+
+  async albumUploadCover({id, size, buffer}) {
+    const album = await this.genericApi1('cl_web_album_upload_cover', {id, size, buffer});
+    this.success('cover uploaded');
+    return album;
+  }
+
+  async albumUpdate(update) {
+    const album = await this.genericApi1('cl_web_album_update', update);
+    this.success('album updated');
+
+    return album;
+  }
+
   render() {
     const s = this.state;
 
@@ -257,10 +302,12 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
             </ul> : <ul className="navbar-nav align-items-center">
               <li className="nav-item dropdown">
-                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown">upload</span>
+                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i class="fas fa-plus"></i></span>
                 <div className="dropdown-menu dropdown-menu-right">
-                  <Link className="dropdown-item" to="/midis/upload">midi</Link>
-                  <Link className="dropdown-item" to="/builds/upload">build</Link>
+                  <Link className="dropdown-item" to="/midis/upload">Upload midi</Link>
+                  <Link className="dropdown-item" to="/builds/upload">Upload build</Link>
+                  <div className="dropdown-item Cur(p)" onClick={this.albumCreate}>Create album</div>
+                  <div className="dropdown-item Cur(p)" onClick={this.songCreate}>Create song</div>
                   {/* <div className="dropdown-divider"></div>
                   <a className="dropdown-item" href=".">Something else here</a> */}
                 </div>
@@ -289,6 +336,11 @@ export default class App extends React.Component {
 
         <PropsRoute exact path="/builds/upload" component={BuildUpload} app={this} />
         <PropsRoute exact path="/builds/:id/edit" component={BuildDetailEdit} app={this} />
+
+        <PropsRoute exact path="/songs" component={AlbumListing} app={this} />
+        <PropsRoute exact path="/songs/:id/edit" component={SongDetailEdit} app={this} />
+
+        <PropsRoute exact path="/albums/:id/edit" component={AlbumDetailEdit} app={this} />
 
         <PropsRoute exact path="/board" component={Board} app={this} />
 
