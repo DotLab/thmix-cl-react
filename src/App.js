@@ -18,6 +18,7 @@ import BuildDetailEdit from './components/BuildDetailEdit';
 import AlbumDetailEdit from './components/AlbumDetailEdit';
 import AlbumListing from './components/AlbumListing';
 import SongDetailEdit from './components/SongDetailEdit';
+import PersonDetailEdit from './components/PersonDetailEdit';
 
 import Board from './components/Board';
 
@@ -58,6 +59,7 @@ export default class App extends React.Component {
     this.handshake();
     this.albumCreate = this.albumCreate.bind(this);
     this.songCreate = this.songCreate.bind(this);
+    this.personCreate = this.personCreate.bind(this);
   }
 
   error(message) {
@@ -255,6 +257,17 @@ export default class App extends React.Component {
     }
   }
 
+  async personCreate() {
+    const res = await this.genericApi0('cl_web_person_create');
+    this.success('person created');
+
+    if (res.duplicated === true) {
+      this.history.push(`/persons/${res.id}`);
+    } else {
+      this.history.push(`/persons/${res.id}/edit`);
+    }
+  }
+
   async albumGet({id}) {
     const album = await this.genericApi1('cl_web_album_get', {id});
     return album;
@@ -271,6 +284,36 @@ export default class App extends React.Component {
     this.success('album updated');
 
     return album;
+  }
+
+  async songGet({id}) {
+    const song = await this.genericApi1('cl_web_song_get', {id});
+    return song;
+  }
+
+  async songUpdate(update) {
+    const song = await this.genericApi1('cl_web_song_update', update);
+    this.success('song updated');
+
+    return song;
+  }
+
+  async personGet({id}) {
+    const person = await this.genericApi1('cl_web_person_get', {id});
+    return person;
+  }
+
+  async personUploadAvatar({id, size, buffer}) {
+    const person = await this.genericApi1('cl_web_person_upload_avatar', {id, size, buffer});
+    this.success('cover uploaded');
+    return person;
+  }
+
+  async personUpdate(update) {
+    const person = await this.genericApi1('cl_web_person_update', update);
+    this.success('person updated');
+
+    return person;
   }
 
   render() {
@@ -308,6 +351,7 @@ export default class App extends React.Component {
                   <Link className="dropdown-item" to="/builds/upload">Upload build</Link>
                   <div className="dropdown-item Cur(p)" onClick={this.albumCreate}>Create album</div>
                   <div className="dropdown-item Cur(p)" onClick={this.songCreate}>Create song</div>
+                  <div className="dropdown-item Cur(p)" onClick={this.personCreate}>Create person</div>
                   {/* <div className="dropdown-divider"></div>
                   <a className="dropdown-item" href=".">Something else here</a> */}
                 </div>
@@ -341,6 +385,8 @@ export default class App extends React.Component {
         <PropsRoute exact path="/songs/:id/edit" component={SongDetailEdit} app={this} />
 
         <PropsRoute exact path="/albums/:id/edit" component={AlbumDetailEdit} app={this} />
+
+        <PropsRoute exact path="/persons/:id/edit" component={PersonDetailEdit} app={this} />
 
         <PropsRoute exact path="/board" component={Board} app={this} />
 
