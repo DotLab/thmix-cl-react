@@ -316,6 +316,17 @@ export default class App extends React.Component {
     return person;
   }
 
+  async albumList() {
+    const albums = await this.genericApi0('cl_web_album_list');
+    return albums;
+  }
+
+  async songList({albumId}) {
+    const songs = await this.genericApi1('cl_web_song_list', {albumId});
+    return songs;
+  }
+
+
   render() {
     const s = this.state;
 
@@ -335,6 +346,7 @@ export default class App extends React.Component {
             <ul className="navbar-nav mr-auto">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs">songs</NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
