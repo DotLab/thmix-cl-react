@@ -326,6 +326,20 @@ export default class App extends React.Component {
     return songs;
   }
 
+  async albumName({albumId}) {
+    const album = await this.genericApi1('cl_web_album_name', {albumId});
+    return album;
+  }
+
+  async songName({songId}) {
+    const song = await this.genericApi1('cl_web_song_name', {songId});
+    return song;
+  }
+
+  async artistList() {
+    const artists = await this.genericApi0('cl_web_artist_list');
+    return artists;
+  }
 
   render() {
     const s = this.state;

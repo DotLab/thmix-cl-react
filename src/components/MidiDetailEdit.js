@@ -3,10 +3,10 @@ import React from 'react';
 import {onTextareaChange, onChange, onCheckboxChange} from '../utils';
 import NoImageAvailable from './NoImageAvailable.jpg';
 
-// @ts-ignore
-import {albums} from '../json/albums';
-// @ts-ignore
-import {songs} from '../json/songs';
+// // @ts-ignore
+// import {albums} from '../json/albums';
+// // @ts-ignore
+// import {songs} from '../json/songs';
 
 const Block = ({children}) => (<section className="container px-md-5 mb-2"><div className="row text-light">{children}</div></section>);
 Block.Left = ({children}) => (<div className="Bgc($gray-700) shadow col-lg-3 py-3 pl-4 font-italic">{children}</div>);
@@ -25,6 +25,8 @@ export default class MidiDetailEdit extends React.Component {
     this.updateMeta = this.updateMeta.bind(this);
     this.updateSource = this.updateSource.bind(this);
     this.onCoverChange = this.onCoverChange.bind(this);
+    this.changeAlbum = this.changeAlbum.bind(this);
+    this.changeSong = this.changeSong.bind(this);
 
     this.state = {
       id: null,
@@ -40,12 +42,26 @@ export default class MidiDetailEdit extends React.Component {
       sourceSongName: '',
       touhouAlbumIndex: '-1',
       touhouSongIndex: '-1',
+
+      albums: [],
+      albumId: null,
+      songs: [],
+      songId: null,
+      artists: [],
+
     };
   }
 
   async componentDidMount() {
-    const midi = await this.app.midiGet({id: this.props.match.params.id});
-    this.setState(midi);
+    await Promise.all([
+      this.app.midiGet({id: this.props.match.params.id}),
+      this.app.albumList(),
+      this.app.artistList(),
+    ]).then((value) => {
+      this.setState({albums: value[1]});
+      this.setState({artists: value[2]});
+      this.setState(value[0]);
+    });
   }
 
   updateMeta() {
@@ -77,6 +93,27 @@ export default class MidiDetailEdit extends React.Component {
       };
       fr.readAsArrayBuffer(e.target.files[0]);
     }
+  }
+
+  async changeAlbum(e) {
+    if (e.target.value === '-1') {
+      this.setState({albumId: null, sourceAlbumName: ''});
+      return;
+    }
+    this.setState({albumId: e.target.value});
+    await Promise.all([
+      this.app.albumName({albumId: e.target.value}),
+      this.app.songList({albumId: e.target.value}),
+    ]).then((value) => {
+      this.setState({sourceAlbumName: value[0]});
+      this.setState({songs: value[1]});
+    });
+  }
+
+  async changeSong(e) {
+    this.setState({songId: e.target.value});
+    const sourceSong = await this.app.songName({songId: e.target.value});
+    this.setState({sourceSongName: sourceSong.name});
   }
 
   render() {
@@ -136,20 +173,28 @@ export default class MidiDetailEdit extends React.Component {
           <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">source album name</label>
             <div className="col-sm-9">
-              <select className="form-control" name="touhouAlbumIndex" value={s.touhouAlbumIndex} onChange={this.onChange}>
-                {albums.map((x) => <option key={x.album} value={x.album}>{x.tag}: {x.name}</option>)}
+              <select className="form-control" name="sourceAlbumName" value={s.albumId} onChange={this.changeAlbum}>
+                <option value="-1">not yet included</option>
+                {s.albums.map((x) => <option key={x.id} value={x.id}>{x.abbr}: {x.name}</option>)}
               </select>
-              {s.touhouAlbumIndex.toString() === '-1' && <input className="form-control mt-3" type="text" name="sourceAlbumName" value={s.sourceAlbumName} onChange={this.onChange}/>}
+              {!s.albumId && <input className="form-control mt-3" type="text" name="sourceAlbumName" value={s.sourceAlbumName} onChange={this.onChange}/>}
             </div>
           </div>
-          <div className="form-group row">
+          {s.albumId && <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">source song name</label>
             <div className="col-sm-9">
-              {s.touhouAlbumIndex.toString() !== '-1' ? <select className="form-control" name="touhouSongIndex" value={s.touhouSongIndex} onChange={this.onChange} >
-                {songs.filter((x) => x.album.toString() === s.touhouAlbumIndex.toString()).map((x) => <option key={x.song} value={x.song}>{x.song}: {x.name}</option>)}
-              </select> : <input className="form-control" type="text" name="sourceSongName" value={s.sourceSongName} onChange={this.onChange}/>}
+              <select className="form-control" name="sourceSongName" value={s.songId} onChange={this.changeSong} >
+                <option value="-1">---</option>
+                {s.songs.map((x) => <option key={x.id} value={x._id}>{x.track}: {x.name}</option>)}
+              </select>
             </div>
-          </div>
+          </div>}
+          {!s.albumId && <div className="form-group row">
+            <label className="col-sm-3 col-form-label text-right">source song name</label>
+            <div className="col-sm-9">
+              <input className="form-control" type="text" name="sourceSongName" value={s.sourceSongName} onChange={this.onChange}/>
+            </div>
+          </div>}
           <hr/>
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updateSource}>Update</button></div>
