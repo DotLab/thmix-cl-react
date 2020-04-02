@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 // import ReCAPTCHA from 'react-google-recaptcha';
 
-import {formatNumber, formatDate, touhouAlbum} from '../utils';
+import {formatNumber, formatDate, touhouAlbum, ROLE_MIDI_MOD, ROLE_PARENT_DICT} from '../utils';
 
 import DefaultAvatar from './DefaultAvatar.jpg';
 
@@ -104,9 +104,24 @@ export default class MidiDetail extends React.Component {
     this.app.history.push(`/midis/${this.state.id}/edit`);
   }
 
+  checkUserRole(role) {
+    if (!this.app.state.user || !this.app.state.user.roles || this.app.state.user.roles.length == 0) {
+      return false;
+    }
+    if (this.app.state.user.roles.includes(role)) {
+      return true;
+    }
+    while (ROLE_PARENT_DICT[role]) {
+      role = ROLE_PARENT_DICT[role];
+      if (this.app.state.user.roles.includes(role)) return true;
+    }
+    return false;
+  }
+
   render() {
     const s = this.state;
-    const canEdit = this.app.state.user && this.state.uploaderId === this.app.state.user.id;
+    const isMidiMod = this.checkUserRole(ROLE_MIDI_MOD);
+    const canEdit = this.app.state.user && (this.state.uploaderId === this.app.state.user.id || isMidiMod);
 
     return <div>
       <section className="container">

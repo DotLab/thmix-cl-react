@@ -126,3 +126,14 @@ albums.forEach((x) => _touhouAlbum[x.album] = {...x, songs: {}});
 songs.forEach((x) => _touhouAlbum[x.album].songs[x.song] = {...x});
 
 export const touhouAlbum = _touhouAlbum;
+
+export const ROLE_MIDI_MOD = 'midi-mod';
+export const ROLE_MIDI_ADMIN = 'midi-admin';
+export const ROLE_SITE_OWNER = 'site-owner';
+export const ROLE_ROOT = 'root';
+
+export const ROLE_PARENT_DICT = {
+  'midi-mod': ROLE_MIDI_ADMIN,
+  'midi-admin': ROLE_SITE_OWNER,
+  'site-owner': ROLE_ROOT,
+};
