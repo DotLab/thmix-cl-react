@@ -27,6 +27,7 @@ export default class MidiDetailEdit extends React.Component {
     this.onCoverChange = this.onCoverChange.bind(this);
     this.changeAlbum = this.changeAlbum.bind(this);
     this.changeSong = this.changeSong.bind(this);
+    this.changeAuthor = this.changeAuthor.bind(this);
 
     this.state = {
       id: null,
@@ -47,8 +48,8 @@ export default class MidiDetailEdit extends React.Component {
       albumId: null,
       songs: [],
       songId: null,
-      artists: [],
-
+      authors: [],
+      authorId: null,
     };
   }
 
@@ -56,25 +57,25 @@ export default class MidiDetailEdit extends React.Component {
     await Promise.all([
       this.app.midiGet({id: this.props.match.params.id}),
       this.app.albumList(),
-      this.app.artistList(),
+      this.app.authorList(),
     ]).then((value) => {
       this.setState({albums: value[1]});
-      this.setState({artists: value[2]});
+      this.setState({authors: value[2]});
       this.setState(value[0]);
     });
   }
 
   updateMeta() {
-    const {id, name, desc, artistName, artistUrl} = this.state;
-    this.app.midiUpdate({id, name, desc, artistName, artistUrl});
+    const {id, name, desc, artistName, artistUrl, authorId} = this.state;
+    this.app.midiUpdate({id, name, desc, artistName, artistUrl, authorId});
   }
 
   updateSource() {
-    const {id, sourceArtistName, sourceAlbumName, sourceSongName, touhouAlbumIndex, touhouSongIndex} = this.state;
+    const {id, sourceArtistName, sourceAlbumName, sourceSongName, albumId, songId} = this.state;
     this.app.midiUpdate({
       id,
       sourceArtistName, sourceAlbumName, sourceSongName,
-      touhouAlbumIndex: parseInt(touhouAlbumIndex), touhouSongIndex: parseInt(touhouSongIndex),
+      albumId, songId,
     });
   }
 
@@ -116,6 +117,16 @@ export default class MidiDetailEdit extends React.Component {
     this.setState({sourceSongName: sourceSong.name});
   }
 
+  async changeAuthor(e) {
+    if (e.target.value === '-1') {
+      this.setState({authorId: null, artistName: '', artistUrl: ''});
+      return;
+    }
+    this.setState({authorId: e.target.value});
+    const author = await this.app.personGet({id: e.target.value});
+    this.setState({artistName: author.name, artistUrl: author.url});
+  }
+
   render() {
     const s = this.state;
     return <div>
@@ -151,12 +162,19 @@ export default class MidiDetailEdit extends React.Component {
           <hr/>
           <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">midi artist name</label>
-            <div className="col-sm-9"><input className="form-control" type="text" name="artistName" value={s.artistName} onChange={this.onChange}/></div>
+            <div className="col-sm-9">
+              <select className="form-control" name="artistName" value={s.authorId} onChange={this.changeAuthor}>
+                <option value="-1">not yet included</option>
+                {s.authors.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
+              </select>
+              {!s.authorId && <input className="form-control mt-3" type="text" name="artistName" value={s.artistName} onChange={this.onChange}/>}
+            </div>
+            {/* <div className="col-sm-9"><input className="form-control" type="text" name="artistName" value={s.artistName} onChange={this.onChange}/></div> */}
           </div>
-          <div className="form-group row">
+          {!s.authorId && <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">midi artist url</label>
             <div className="col-sm-9"><input className="form-control" type="text" name="artistUrl" value={s.artistUrl} onChange={this.onChange}/></div>
-          </div>
+          </div>}
           <hr/>
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updateMeta}>Update</button></div>
@@ -166,10 +184,6 @@ export default class MidiDetailEdit extends React.Component {
       <Block>
         <Block.Left><h2 className="h5 m-0">Source</h2></Block.Left>
         <Block.Right>
-          <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">source artist name</label>
-            <div className="col-sm-9"><input className="form-control" type="text" name="sourceArtistName" value={s.sourceArtistName} onChange={this.onChange}/></div>
-          </div>
           <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">source album name</label>
             <div className="col-sm-9">
@@ -194,6 +208,10 @@ export default class MidiDetailEdit extends React.Component {
             <div className="col-sm-9">
               <input className="form-control" type="text" name="sourceSongName" value={s.sourceSongName} onChange={this.onChange}/>
             </div>
+          </div>}
+          {!s.albumId && <div className="form-group row">
+            <label className="col-sm-3 col-form-label text-right">source artist name</label>
+            <div className="col-sm-9"><input className="form-control" type="text" name="sourceArtistName" value={s.sourceArtistName} onChange={this.onChange}/></div>
           </div>}
           <hr/>
           <div className="form-group row">

@@ -336,9 +336,9 @@ export default class App extends React.Component {
     return song;
   }
 
-  async artistList() {
-    const artists = await this.genericApi0('cl_web_artist_list');
-    return artists;
+  async authorList() {
+    const authors = await this.genericApi0('cl_web_person_list');
+    return authors;
   }
 
   render() {
