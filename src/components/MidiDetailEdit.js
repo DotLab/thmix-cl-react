@@ -56,8 +56,7 @@ export default class MidiDetailEdit extends React.Component {
       this.app.albumList(),
       this.app.authorList(),
     ]).then((value) => {
-      this.setState({albums: value[1]});
-      this.setState({authors: value[2]});
+      this.setState({albums: value[1], authors: value[2]});
       this.setState(value[0]);
     });
   }
@@ -103,8 +102,7 @@ export default class MidiDetailEdit extends React.Component {
       this.app.albumGet({id: e.target.value}),
       this.app.songList({albumId: e.target.value}),
     ]).then((value) => {
-      this.setState({sourceAlbumName: value[0].name});
-      this.setState({songs: value[1]});
+      this.setState({sourceAlbumName: value[0].name, songs: value[1]});
     });
   }
 
