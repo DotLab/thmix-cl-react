@@ -113,8 +113,8 @@ export default class MidiDetailEdit extends React.Component {
 
   async changeSong(e) {
     this.setState({songId: e.target.value});
-    const sourceSong = await this.app.songName({songId: e.target.value});
-    this.setState({sourceSongName: sourceSong.name});
+    const sourceSongName = await this.app.songName({songId: e.target.value});
+    this.setState({sourceSongName: sourceSongName});
   }
 
   async changeAuthor(e) {
