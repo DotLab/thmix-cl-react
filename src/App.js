@@ -228,6 +228,11 @@ export default class App extends React.Component {
     return build;
   }
 
+  async midiBestPerformance() {
+    const bestPerformance = await this.genericApi0('cl_web_midi_best_performance');
+    return bestPerformance;
+  }
+
   render() {
     const s = this.state;
 
