@@ -45,11 +45,11 @@ export default class MidiDetailEdit extends React.Component {
       touhouSongIndex: '-1',
 
       albums: [],
-      albumId: null,
+      albumId: '',
       songs: [],
-      songId: null,
+      songId: '',
       authors: [],
-      authorId: null,
+      authorId: '',
     };
   }
 
@@ -98,23 +98,23 @@ export default class MidiDetailEdit extends React.Component {
 
   async changeAlbum(e) {
     if (e.target.value === '-1') {
-      this.setState({albumId: null, sourceAlbumName: ''});
+      this.setState({albumId: null, sourceAlbumName: '', sourceSongName: ''});
       return;
     }
     this.setState({albumId: e.target.value});
     await Promise.all([
-      this.app.albumName({albumId: e.target.value}),
+      this.app.albumGet({id: e.target.value}),
       this.app.songList({albumId: e.target.value}),
     ]).then((value) => {
-      this.setState({sourceAlbumName: value[0]});
+      this.setState({sourceAlbumName: value[0].name});
       this.setState({songs: value[1]});
     });
   }
 
   async changeSong(e) {
     this.setState({songId: e.target.value});
-    const sourceSongName = await this.app.songName({songId: e.target.value});
-    this.setState({sourceSongName: sourceSongName});
+    const sourceSong = await this.app.songGet({id: e.target.value});
+    this.setState({sourceSongName: sourceSong.name});
   }
 
   async changeAuthor(e) {
@@ -199,7 +199,7 @@ export default class MidiDetailEdit extends React.Component {
             <div className="col-sm-9">
               <select className="form-control" name="sourceSongName" value={s.songId} onChange={this.changeSong} >
                 <option value="-1">---</option>
-                {s.songs.map((x) => <option key={x.id} value={x._id}>{x.track}: {x.name}</option>)}
+                {s.songs.map((x) => <option key={x._id} value={x._id}>{x.track}: {x.name}</option>)}
               </select>
             </div>
           </div>}

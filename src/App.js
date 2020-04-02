@@ -326,16 +326,6 @@ export default class App extends React.Component {
     return songs;
   }
 
-  async albumName({albumId}) {
-    const album = await this.genericApi1('cl_web_album_name', {albumId});
-    return album;
-  }
-
-  async songName({songId}) {
-    const song = await this.genericApi1('cl_web_song_name', {songId});
-    return song;
-  }
-
   async authorList() {
     const authors = await this.genericApi0('cl_web_person_list');
     return authors;
