@@ -3,10 +3,7 @@ import React from 'react';
 import {onTextareaChange, onChange, onCheckboxChange} from '../utils';
 import NoImageAvailable from './NoImageAvailable.jpg';
 
-// // @ts-ignore
-// import {albums} from '../json/albums';
-// // @ts-ignore
-// import {songs} from '../json/songs';
+const INVALID = '-1';
 
 const Block = ({children}) => (<section className="container px-md-5 mb-2"><div className="row text-light">{children}</div></section>);
 Block.Left = ({children}) => (<div className="Bgc($gray-700) shadow col-lg-3 py-3 pl-4 font-italic">{children}</div>);
@@ -97,7 +94,7 @@ export default class MidiDetailEdit extends React.Component {
   }
 
   async changeAlbum(e) {
-    if (e.target.value === '-1') {
+    if (e.target.value === INVALID) {
       this.setState({albumId: null, sourceAlbumName: '', sourceSongName: ''});
       return;
     }
@@ -118,7 +115,7 @@ export default class MidiDetailEdit extends React.Component {
   }
 
   async changeAuthor(e) {
-    if (e.target.value === '-1') {
+    if (e.target.value === INVALID) {
       this.setState({authorId: null, artistName: '', artistUrl: ''});
       return;
     }
@@ -164,7 +161,7 @@ export default class MidiDetailEdit extends React.Component {
             <label className="col-sm-3 col-form-label text-right">midi artist name</label>
             <div className="col-sm-9">
               <select className="form-control" name="artistName" value={s.authorId} onChange={this.changeAuthor}>
-                <option value="-1">not yet included</option>
+                <option value={INVALID}>not yet included</option>
                 {s.authors.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
               </select>
               {!s.authorId && <input className="form-control mt-3" type="text" name="artistName" value={s.artistName} onChange={this.onChange}/>}
@@ -188,7 +185,7 @@ export default class MidiDetailEdit extends React.Component {
             <label className="col-sm-3 col-form-label text-right">source album name</label>
             <div className="col-sm-9">
               <select className="form-control" name="sourceAlbumName" value={s.albumId} onChange={this.changeAlbum}>
-                <option value="-1">not yet included</option>
+                <option value={INVALID}>not yet included</option>
                 {s.albums.map((x) => <option key={x.id} value={x.id}>{x.abbr}: {x.name}</option>)}
               </select>
               {!s.albumId && <input className="form-control mt-3" type="text" name="sourceAlbumName" value={s.sourceAlbumName} onChange={this.onChange}/>}
@@ -198,7 +195,7 @@ export default class MidiDetailEdit extends React.Component {
             <label className="col-sm-3 col-form-label text-right">source song name</label>
             <div className="col-sm-9">
               <select className="form-control" name="sourceSongName" value={s.songId} onChange={this.changeSong} >
-                <option value="-1">---</option>
+                <option value={INVALID}>---</option>
                 {s.songs.map((x) => <option key={x._id} value={x._id}>{x.track}: {x.name}</option>)}
               </select>
             </div>
