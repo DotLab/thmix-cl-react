@@ -59,6 +59,9 @@ export default class MidiDetail extends React.Component {
       path: '',
       artistName: '',
       artistUrl: '',
+      audio: null,
+      mp3Url: '',
+      playing: false,
       // meta
       uploadedDate: null,
       approvedDate: null,
@@ -93,15 +96,42 @@ export default class MidiDetail extends React.Component {
       cCutoff: 0,
       dCutoff: 0,
     };
+
+    this.play = this.play.bind(this);
   }
 
   async componentDidMount() {
     const midi = await this.app.midiGet({id: this.props.match.params.id});
     this.setState(midi);
+    const audio = new Audio(this.state.mp3Url);
+    audio.addEventListener('loadeddata', () => {
+      this.setState({audio});
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.state.audio) {
+      this.state.audio.pause();
+      this.setState({audio: null});
+    }
   }
 
   startEdit() {
-    this.app.history.push(`/midis/${this.state.id}/edit`);
+    this.app.history.push(`/midis/${this.props.match.params.id}/edit`);
+  }
+
+  async play() {
+    if (!this.state.audio) {
+      return;
+    }
+
+    if (!this.state.playing) {
+      this.state.audio.play();
+    } else {
+      this.state.audio.pause();
+    }
+    const playing = !(this.state.playing);
+    this.setState({playing});
   }
 
   render() {
@@ -116,7 +146,11 @@ export default class MidiDetail extends React.Component {
             <div className="py-2 py-md-4">
               <div><i className="fa-fw fas fa-play"></i> {formatNumber(s.trialCount)} <i className="fa-fw fas fa-chevron-up"></i> {formatNumber(s.upCount - s.downCount)} <i className="fa-fw fas fa-heart"></i> {formatNumber(s.loveCount)}</div>
               <div className="Lh(1.15) font-italic">
-                <h2 className="h4 m-0 mt-4 ">{s.name}</h2>
+                <div className="D(f) Ai(c) mt-4"><h2 className="h4 m-0 D(ib)">{s.name}</h2>
+                  {!s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i class="far fa-play-circle"></i></span>}
+                  {s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i class="fas fa-pause-circle"></i></span>}
+                </div>
+
                 <div className="h5 m-0">by <a className="text-light" href={s.artistUrl}>{s.artistName}</a></div>
               </div>
               <div className="Cf mt-4">
