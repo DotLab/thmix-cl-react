@@ -78,6 +78,7 @@ export default class App extends React.Component {
       this.app.userGet({id: this.props.match.params.id}),
       this.app.midiBestPerformance(),
     ]).then((value) => {
+      console.log(value);
       this.setState({user: value[0], bestPerformance: value[1]});
     });
   }
