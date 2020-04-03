@@ -56,6 +56,7 @@ export default class MidiDetailEdit extends React.Component {
       this.app.albumList(),
       this.app.authorList(),
     ]).then((value) => {
+      console.log(value);
       this.setState({albums: value[1]});
       this.setState({authors: value[2]});
       this.setState(value[0]);
@@ -109,9 +110,11 @@ export default class MidiDetailEdit extends React.Component {
   }
 
   async changeSong(e) {
-    this.setState({songId: e.target.value});
-    const sourceSong = await this.app.songGet({id: e.target.value});
-    this.setState({sourceSongName: sourceSong.name});
+    console.log(this.state.songs);
+    this.setState({
+      songId: e.target.value,
+      sourceSongName: this.state.songs.find((x) => x.id === e.target.value).name,
+    });
   }
 
   async changeAuthor(e) {
@@ -119,9 +122,13 @@ export default class MidiDetailEdit extends React.Component {
       this.setState({authorId: null, artistName: '', artistUrl: ''});
       return;
     }
-    this.setState({authorId: e.target.value});
-    const author = await this.app.personGet({id: e.target.value});
-    this.setState({artistName: author.name, artistUrl: author.url});
+    console.log(this.state.authors);
+    const author = this.state.authors.find((x) => x.id === e.target.value);
+    this.setState({
+      authorId: e.target.value,
+      artistName: author.name,
+      artistUrl: author.url,
+    });
   }
 
   render() {
@@ -196,7 +203,7 @@ export default class MidiDetailEdit extends React.Component {
             <div className="col-sm-9">
               <select className="form-control" name="sourceSongName" value={s.songId} onChange={this.changeSong} >
                 <option value={INVALID}>---</option>
-                {s.songs.map((x) => <option key={x._id} value={x._id}>{x.track}: {x.name}</option>)}
+                {s.songs.map((x) => <option key={x.id} value={x.id}>{x.track}: {x.name}</option>)}
               </select>
             </div>
           </div>}
