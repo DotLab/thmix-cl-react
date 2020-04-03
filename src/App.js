@@ -10,6 +10,12 @@ import MidiListing from './components/MidiListing';
 import MidiDetail from './components/MidiDetail';
 import MidiDetailEdit from './components/MidiDetailEdit';
 import MidiUpload from './components/MidiUpload';
+
+import SoundfontListing from './components/SoundfontListing';
+import SoundfontDetail from './components/SoundfontDetail';
+import SoundfontDetailEdit from './components/SoundfontDetailEdit';
+import SoundfontUpload from './components/SoundfontUpload';
+
 import UserListing from './components/UserListing';
 import UserDetail from './components/UserDetail';
 import UserDetailEdit from './components/UserDetailEdit';
@@ -198,6 +204,41 @@ export default class App extends React.Component {
     return midi;
   }
 
+  async soundfontUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_soundfont_upload', {name, size, buffer});
+    this.success('soundfont uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/soundfonts/${res.id}`);
+    } else {
+      this.history.push(`/soundfonts/${res.id}/edit`);
+    }
+  }
+
+  async soundfontUploadCover({id, size, buffer}) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_upload_cover', {id, size, buffer});
+    this.success('cover uploaded');
+
+    return soundfont;
+  }
+
+  async soundfontGet({id}) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_get', {id});
+    return soundfont;
+  }
+
+  async soundfontUpdate(update) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_update', update);
+    this.success('soundfont updated');
+
+    return soundfont;
+  }
+
+  async soundfontList({status, sort, page}) {
+    const soundfonts = await this.genericApi1('cl_web_soundfont_list', {status, sort, page});
+    return soundfonts;
+  }
+
   async boardGetMessages() {
     const messages = await this.genericApi0('cl_web_board_get_messages');
     return messages;
@@ -381,6 +422,7 @@ export default class App extends React.Component {
             <ul className="navbar-nav mr-auto">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources">resources</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs">songs</NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
@@ -396,6 +438,7 @@ export default class App extends React.Component {
                 <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i className="fas fa-plus"></i></span>
                 <div className="dropdown-menu dropdown-menu-right">
                   <Link className="dropdown-item" to="/midis/upload">Upload midi</Link>
+                  <Link className="dropdown-item" to="/soundfonts/upload">soundfont</Link>
                   <Link className="dropdown-item" to="/resources/upload">Upload resource</Link>
                   <Link className="dropdown-item" to="/midis/upload">Create story</Link>
                   <Link className="dropdown-item" to="/builds/upload">Upload build</Link>
@@ -443,6 +486,11 @@ export default class App extends React.Component {
         <PropsRoute exact path="/persons/:id/edit" component={PersonDetailEdit} app={this} />
 
         <PropsRoute exact path="/board" component={Board} app={this} />
+
+        <PropsRoute exact path="/soundfonts" component={SoundfontListing} app={this} />
+        <PropsRoute exact path="/soundfonts/upload" component={SoundfontUpload} app={this} />
+        <PropsRoute exact path="/soundfonts/:id" component={SoundfontDetail} app={this} />
+        <PropsRoute exact path="/soundfonts/:id/edit" component={SoundfontDetailEdit} app={this} />
 
         <PropsRoute exact path="/help" component={Help} />
         <PropsRoute exact path="/terms" component={Terms} />
