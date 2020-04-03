@@ -59,14 +59,11 @@ export default class MidiDetailEdit extends React.Component {
       this.setState({
         ...value[0],
         albums: value[1], authors: value[2],
+        albumId: value[0].album && value[0].album._id,
+        songId: value[0].song && value[0].song._id,
       });
-      if (value[0].album) {
-        this.setState({albumId: value[0].album._id});
-      }
-      if (value[0].song) {
-        this.setState({songId: value[0].song._id});
-      }
     });
+
     if (this.state.albumId) {
       const songs = await this.app.songList({albumId: this.state.albumId});
       this.setState({songs});
