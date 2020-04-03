@@ -27,7 +27,7 @@ export default class MidiDetailEdit extends React.Component {
     this.changeAuthor = this.changeAuthor.bind(this);
 
     this.state = {
-      id: this.props.match.params.id,
+      id: null,
 
       name: '',
       desc: '',
