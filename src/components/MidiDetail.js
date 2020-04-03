@@ -117,7 +117,7 @@ export default class MidiDetail extends React.Component {
   }
 
   startEdit() {
-    this.app.history.push(`/midis/${this.props.match.params.id}/edit`);
+    this.app.history.push(`/midis/${this.state.id}/edit`);
   }
 
   async play() {
