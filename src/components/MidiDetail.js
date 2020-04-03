@@ -47,7 +47,7 @@ export default class MidiDetail extends React.Component {
     this.startEdit = this.startEdit.bind(this);
 
     this.state = {
-      id: null,
+      id: this.props.match.params.id,
 
       uploaderId: null,
       uploaderName: '',
@@ -117,7 +117,7 @@ export default class MidiDetail extends React.Component {
   }
 
   startEdit() {
-    this.app.history.push(`/midis/${this.state.id}/edit`);
+    this.app.history.push(`/midis/${this.props.match.params.id}/edit`);
   }
 
   async play() {

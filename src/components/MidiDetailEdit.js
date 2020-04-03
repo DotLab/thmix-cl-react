@@ -27,7 +27,7 @@ export default class MidiDetailEdit extends React.Component {
     this.changeAuthor = this.changeAuthor.bind(this);
 
     this.state = {
-      id: null,
+      id: this.props.match.params.id,
 
       name: '',
       desc: '',
@@ -56,11 +56,13 @@ export default class MidiDetailEdit extends React.Component {
       this.app.albumList(),
       this.app.authorList(),
     ]).then((value) => {
-      console.log(value);
-      this.setState({albums: value[1]});
-      this.setState({authors: value[2]});
+      this.setState({albums: value[1], authors: value[2]});
       this.setState(value[0]);
     });
+    if (this.state.albumId) {
+      const songs = await this.app.songList({albumId: this.state.albumId});
+      this.setState({songs});
+    }
   }
 
   updateMeta() {
@@ -110,7 +112,6 @@ export default class MidiDetailEdit extends React.Component {
   }
 
   async changeSong(e) {
-    console.log(this.state.songs);
     this.setState({
       songId: e.target.value,
       sourceSongName: this.state.songs.find((x) => x.id === e.target.value).name,
@@ -122,7 +123,6 @@ export default class MidiDetailEdit extends React.Component {
       this.setState({authorId: null, artistName: '', artistUrl: ''});
       return;
     }
-    console.log(this.state.authors);
     const author = this.state.authors.find((x) => x.id === e.target.value);
     this.setState({
       authorId: e.target.value,
