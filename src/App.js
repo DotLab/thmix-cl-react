@@ -10,9 +10,18 @@ import MidiListing from './components/MidiListing';
 import MidiDetail from './components/MidiDetail';
 import MidiDetailEdit from './components/MidiDetailEdit';
 import MidiUpload from './components/MidiUpload';
+
+import SoundfontListing from './components/SoundfontListing';
+import SoundfontDetail from './components/SoundfontDetail';
+import SoundfontDetailEdit from './components/SoundfontDetailEdit';
+import SoundfontUpload from './components/SoundfontUpload';
+
 import UserListing from './components/UserListing';
 import UserDetail from './components/UserDetail';
 import UserDetailEdit from './components/UserDetailEdit';
+import ResourceListing from './components/ResourceListing';
+import ResourceDetailEdit from './components/ResourceDetailEdit';
+import ResourceUpload from './components/ResourceUpload';
 import BuildUpload from './components/BuildUpload';
 import BuildDetailEdit from './components/BuildDetailEdit';
 import AlbumDetailEdit from './components/AlbumDetailEdit';
@@ -195,6 +204,41 @@ export default class App extends React.Component {
     return midi;
   }
 
+  async soundfontUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_soundfont_upload', {name, size, buffer});
+    this.success('soundfont uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/soundfonts/${res.id}`);
+    } else {
+      this.history.push(`/soundfonts/${res.id}/edit`);
+    }
+  }
+
+  async soundfontUploadCover({id, size, buffer}) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_upload_cover', {id, size, buffer});
+    this.success('cover uploaded');
+
+    return soundfont;
+  }
+
+  async soundfontGet({id}) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_get', {id});
+    return soundfont;
+  }
+
+  async soundfontUpdate(update) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_update', update);
+    this.success('soundfont updated');
+
+    return soundfont;
+  }
+
+  async soundfontList({status, sort, page}) {
+    const soundfonts = await this.genericApi1('cl_web_soundfont_list', {status, sort, page});
+    return soundfonts;
+  }
+
   async boardGetMessages() {
     const messages = await this.genericApi0('cl_web_board_get_messages');
     return messages;
@@ -210,6 +254,34 @@ export default class App extends React.Component {
 
   boardSendMessage({recaptcha, text}) {
     this.genericApi1('cl_web_board_send_message', {recaptcha, text});
+  }
+
+  async resourceUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_resource_upload', {name, size, buffer});
+    this.success('resource uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/resources/${res.id}`);
+    } else {
+      this.history.push(`/resources/${res.id}/edit`);
+    }
+  }
+
+  async resourceGet({id}) {
+    const resource = await this.genericApi1('cl_web_resource_get', {id});
+    return resource;
+  }
+
+  async resourceUpdate(update) {
+    const resource = await this.genericApi1('cl_web_resource_update', update);
+    this.success('resource updated');
+
+    return resource;
+  }
+
+  async resourceList({type, status, sort, page}) {
+    const resources = await this.genericApi1('cl_web_resource_list', {type, status, sort, page});
+    return resources;
   }
 
   async buildUpload({name, size, buffer}) {
@@ -355,6 +427,8 @@ export default class App extends React.Component {
             <ul className="navbar-nav mr-auto">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources">resources</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs">songs</NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
@@ -366,9 +440,12 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
             </ul> : <ul className="navbar-nav align-items-center">
               <li className="nav-item dropdown">
-                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i class="fas fa-plus"></i></span>
+                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i className="fas fa-plus"></i></span>
                 <div className="dropdown-menu dropdown-menu-right">
                   <Link className="dropdown-item" to="/midis/upload">Upload midi</Link>
+                  <Link className="dropdown-item" to="/soundfonts/upload">soundfont</Link>
+                  <Link className="dropdown-item" to="/resources/upload">Upload resource</Link>
+                  <Link className="dropdown-item" to="/midis/upload">Create story</Link>
                   <Link className="dropdown-item" to="/builds/upload">Upload build</Link>
                   <div className="dropdown-item Cur(p)" onClick={this.albumCreate}>Create album</div>
                   <div className="dropdown-item Cur(p)" onClick={this.songCreate}>Create song</div>
@@ -395,6 +472,10 @@ export default class App extends React.Component {
         <PropsRoute exact path="/midis/:id" component={MidiDetail} app={this} />
         <PropsRoute exact path="/midis/:id/edit" component={MidiDetailEdit} app={this} />
 
+        <PropsRoute exact path="/resources" component={ResourceListing} app={this} />
+        <PropsRoute exact path="/resources/upload" component={ResourceUpload} app={this} />
+        <PropsRoute exact path="/resources/:id/edit" component={ResourceDetailEdit} app={this} />
+
         <PropsRoute exact path="/users" component={UserListing} app={this} />
         <PropsRoute exact path="/users/:id" component={UserDetail} app={this} />
         <PropsRoute exact path="/users/:id/edit" component={UserDetailEdit} app={this} />
@@ -410,6 +491,11 @@ export default class App extends React.Component {
         <PropsRoute exact path="/persons/:id/edit" component={PersonDetailEdit} app={this} />
 
         <PropsRoute exact path="/board" component={Board} app={this} />
+
+        <PropsRoute exact path="/soundfonts" component={SoundfontListing} app={this} />
+        <PropsRoute exact path="/soundfonts/upload" component={SoundfontUpload} app={this} />
+        <PropsRoute exact path="/soundfonts/:id" component={SoundfontDetail} app={this} />
+        <PropsRoute exact path="/soundfonts/:id/edit" component={SoundfontDetailEdit} app={this} />
 
         <PropsRoute exact path="/help" component={Help} />
         <PropsRoute exact path="/terms" component={Terms} />
