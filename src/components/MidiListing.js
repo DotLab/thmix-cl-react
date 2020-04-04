@@ -2,12 +2,9 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import QueryString from 'query-string';
 
-import {onChange, formatNumber, touhouAlbum} from '../utils';
+import {onChange, formatNumber, touhouAlbum, pushHistory} from '../utils';
 
-// @ts-ignore
-import {albums} from '../json/albums';
-// @ts-ignore
-import {songs} from '../json/songs';
+const INVALID = '-1';
 
 const Card = (s) => (<div className="col-md-6 mb-2 px-1">
   <div className="H(190px) bg-light rounded shadow-sm border">
@@ -57,14 +54,26 @@ export default class MidiListing extends React.Component {
     /** @type {import('../App').default} */
     this.app = props.app;
 
+    this.query = QueryString.parse(props.location.search);
+
     this.onChange = onChange.bind(this);
+    this.pushHistory = pushHistory.bind(this);
+
     this.search = this.search.bind(this);
+    this.changeAlbum = this.changeAlbum.bind(this);
+    this.changeSong = this.changeSong.bind(this);
 
     this.state = {
       query: {},
       midis: [],
       touhouAlbumIndex: '-2',
       touhouSongIndex: '-2',
+      albums: [],
+      songs: [],
+      albumId: '',
+      songId: '',
+      albumName: '',
+      songName: '',
     };
   }
 
@@ -75,9 +84,17 @@ export default class MidiListing extends React.Component {
   async componentDidMount() {
     const query = this.getQuery(this.props);
     // @ts-ignore
-    const midis = await this.app.midiList(query);
+    await Promise.all([
+      this.app.midiList(query),
+      this.app.albumList(),
+    ]).then((value) => {
+      this.setState({
+        midis: value[0],
+        albums: value[1],
+      });
+    });
 
-    this.setState({query, midis});
+    this.setState({query});
   }
 
   async componentWillReceiveProps(props) {
@@ -100,21 +117,44 @@ export default class MidiListing extends React.Component {
     }
   }
 
+  async changeAlbum(e) {
+    if (e.target.value === INVALID) {
+      this.query.songId = null;
+      this.query.albumId = null;
+      this.setState({albumId: '', albumName: '', songName: '', query: this.query});
+      this.pushHistory();
+      return;
+    }
+    const albumId = e.target.value;
+    this.query.albumId = albumId;
+    const albumName = this.state.albums.find((x) => x.id === albumId).name;
+    const songs = await this.app.songList({albumId});
+    this.setState({albumId, albumName, songs, query: this.query});
+    this.pushHistory();
+  }
+
+  async changeSong(e) {
+    if (e.target.value === INVALID) {
+      this.query.songId = null;
+      this.setState({songId: '', songName: '', query: this.query});
+      this.pushHistory();
+      return;
+    }
+    const songId = e.target.value;
+    this.query.songId = songId;
+    this.setState({
+      songId,
+      songName: this.state.songs.find((x) => x.id === songId).name,
+      query: this.query,
+    });
+    this.pushHistory();
+  }
+
   render() {
     const s = this.state;
 
     return <div className="container">
       <section className="Bgc($gray-700) P(30px) text-light shadow">
-        <div className="Mt(40px) row">
-          <select className="form-control col-sm-6" name="touhouAlbumIndex" value={s.touhouAlbumIndex} onChange={this.onChange} onBlur={this.search}>
-            <option value="-2">ANY: Any</option>
-            {albums.map((x) => <option key={x.album} value={x.album}>{x.tag}: {x.name}</option>)}
-          </select>
-          <select className="form-control col-sm-6" name="touhouSongIndex" value={s.touhouSongIndex} onChange={this.onChange} onBlur={this.search}>
-            <option value="-2">ANY: Any</option>
-            {songs.filter((x) => x.album.toString() === s.touhouAlbumIndex).map((x) => <option key={x.song} value={x.song}>{x.song}: {x.name}</option>)}
-          </select>
-        </div>
         <div className="row small mt-3">
           <div className="col-md-2">STATUS</div>
           <div className="col-md-10">
@@ -122,6 +162,27 @@ export default class MidiListing extends React.Component {
             <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'APPROVED' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'APPROVED'})}>Approved</Link>
             <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'PENDING' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'PENDING'})}>Pending</Link>
             <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'DEAD' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'DEAD'})}>Dead</Link>
+          </div>
+        </div>
+
+        <div className="row small mt-3">
+          <div className="col-md-2">ALBUM</div>
+          <div className="col-md-10">
+            <div className='Pos(r) Cur(p) text-light d-inline-block text-nowrap mr-3'>{s.albumName || 'Album'}</div>
+            <select className="form-control col-sm-6 Pos(a) Cur(p) T(0) H(20px) Op(0)" name="touhouAlbumIndex" value={s.albumId} onChange={this.changeAlbum} onBlur={this.search}>
+              <option value={INVALID}>ANY: Any</option>
+              {s.albums.map((x) => <option key={x.id} value={x.id}>{x.abbr}: {x.name}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className="row small mt-3">
+          <div className="col-md-2">SONG</div>
+          <div className="col-md-10">
+            <div className='Pos(r) Cur(p) text-light d-inline-block text-nowrap mr-3'>{s.songName || 'Song'}</div>
+            <select className="form-control col-sm-6 Pos(a) Cur(p) T(0) H(20px) Op(0)" name="touhouSongIndex" value={s.songId} onChange={this.changeSong} onBlur={this.search}>
+              <option value={INVALID}>ANY: Any</option>
+              {s.songs.map((x) => <option key={x.id} value={x.id}>{x.track}: {x.name}</option>)}
+            </select>
           </div>
         </div>
       </section>
