@@ -1,7 +1,9 @@
 import React from 'react';
 import DefaultAvatar from './DefaultAvatar.jpg';
 import SampleListCover from './SampleListCover.jpg';
+import ReactEcharts from 'echarts-for-react';
 
+import {xData, getYData} from './xData';
 import {formatDate, formatNumber, getTimeSpan, getTimeSpanBetween, formatTimeSpan} from '../utils';
 
 const Rank = (s) => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) px-3 rounded mt-1">
@@ -34,6 +36,46 @@ const Played = (s) => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) 
   </div>
 </div>);
 
+
+function buildOption(yData) {
+  return {
+    tooltip: {
+      trigger: 'axis',
+      showContent: true,
+    },
+    dataZoom: [{
+      type: 'inside',
+    }],
+    legend: {
+      orient: 'vertical',
+      top: 40,
+      textStyle: {
+        color: '#ffffff',
+      },
+    },
+    xAxis: {
+      boundaryGap: false,
+      data: xData,
+    },
+    yAxis: {
+      type: 'value',
+    },
+    textStyle: {
+      color: '#ffffff',
+    },
+    series: [
+      {
+        name: 'play count',
+        type: 'line',
+        animation: false,
+        lineStyle: {
+          width: 1,
+        },
+        data: yData,
+      },
+    ],
+  };
+}
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -73,6 +115,7 @@ export default class App extends React.Component {
       bestPerformance: [],
       mostPlayed: [],
       recentlyPlayed: [],
+      playHistory: [],
     };
   }
 
@@ -82,12 +125,14 @@ export default class App extends React.Component {
       this.app.midiBestPerformance(),
       this.app.midiMostPlayed(),
       this.app.midiRecentlyPlayed(),
+      this.app.midiPlayHistory(),
     ]).then((value) => {
       this.setState({
         user: value[0],
         bestPerformance: value[1],
         mostPlayed: value[2],
         recentlyPlayed: value[3],
+        playHistory: getYData(value[4]),
       });
     });
   }
@@ -210,11 +255,12 @@ export default class App extends React.Component {
         <section className="container Bgc($gray-900) mt-2 px-5 py-3 text-light">
           <h3 className="h5"><span className="Bdc(springgreen) Bdbs(s) Bdbw(2px)">Historical</span></h3>
           <h4 className="h6 mt-3">Play History</h4>
-          <div>None... yet.</div>
+          {s.playHistory.length === 0 && <div>None... yet.</div>}
+          {s.playHistory.length !== 0 && <ReactEcharts option={buildOption(s.playHistory)} style={{height: '300px', width: '100%'}}/>}
           <h4 className="h6 mt-3">Most Played Midis</h4>
           <div>
             {s.mostPlayed.length === 0 && <span>No performance records. :(</span>}
-            {s.mostPlayed.map((x) => <Played {...x} key={x.id}/>)}
+            {s.mostPlayed.map((x) => <Played {...x} key={x._id}/>)}
           </div>
           <h4 className="h6 mt-3">Recent Plays</h4>
           <div>

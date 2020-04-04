@@ -322,6 +322,11 @@ export default class App extends React.Component {
     return recent;
   }
 
+  async midiPlayHistory() {
+    const hist = await this.genericApi0('cl_web_midi_play_history');
+    return hist;
+  }
+
   async albumCreate() {
     const res = await this.genericApi0('cl_web_album_create');
     this.success('album created');
