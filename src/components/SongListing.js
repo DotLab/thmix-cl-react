@@ -11,20 +11,19 @@ export default class SongListing extends React.Component {
   render() {
     const p = this.props;
 
-    return <div className="container Mb(40px)">
-      <div className="row">
-        <div className="col-4">
-          <img className="img-fluid rounded" src={this.props.coverUrl} alt=""/>
+    return <div className="container">
+      <div className="row shadow" style={{background: `linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url(${this.props.coverBlurUrl})`, backgroundSize: 'cover'}}>
+        <div className="col-md-5">
+          <div className="badge badge-pill badge-primary">{formatDate(this.props.date)}</div>
+          <img className="img-fluid rounded shadow-sm" src={this.props.coverUrl} alt=""/>
           <div>{this.props.abbr}: {this.props.name}</div>
-          <div>{formatDate(this.props.date)}</div>
           <div>{this.props.desc}</div>
-          <Link className="btn btn-primary btn-sm" to={{pathname: `/albums/${this.props._id}/edit`}}>edit</Link>
+          <Link className="btn btn-outline-primary btn-sm" to={{pathname: `/albums/${this.props._id}/edit`}}>edit</Link>
         </div>
-        <div className="col-8">
-          <ul>
+        <div className="col-md-7">
+          <ul className="mt-2">
             {p.songs.map((song) => <li className="" key={song._id}>
-              {song.track}: {song.name} by {song.composer.name}
-              <Link className="btn btn-primary btn-sm Mstart(10px)" to={{pathname: `/songs/${song._id}/edit`}}>edit</Link>
+              <Link className="btn btn-outline-secondary btn-sm" to={{pathname: `/songs/${song._id}/edit`}}>edit</Link> {song.track}: {song.name} by {song.composer.name}
             </li>)}
           </ul>
         </div>
