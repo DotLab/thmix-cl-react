@@ -312,6 +312,16 @@ export default class App extends React.Component {
     return bestPerformance;
   }
 
+  async midiMostPlayed() {
+    const mostPlayed = await this.genericApi0('cl_web_midi_most_played');
+    return mostPlayed;
+  }
+
+  async midiRecentlyPlayed() {
+    const recent = await this.genericApi0('cl_web_midi_recently_played');
+    return recent;
+  }
+
   async albumCreate() {
     const res = await this.genericApi0('cl_web_album_create');
     this.success('album created');

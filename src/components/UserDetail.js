@@ -4,32 +4,33 @@ import SampleListCover from './SampleListCover.jpg';
 
 import {formatDate, formatNumber, getTimeSpan, getTimeSpanBetween, formatTimeSpan} from '../utils';
 
-const Rank = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) px-3 rounded mt-1">
+const Rank = (s) => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) px-3 rounded mt-1">
   <span className="my-2 badge badge-warning badge-pill">A+</span>
   <div className="d-inline-block my-2 align-middle ml-2">
-    <div className="font-italic">Songs Compilation <small>by Foreground Eclipse</small></div>
-    <div className="text-warning small">I Won't Say "Farewell"; Someday, We'll Meet Again <span className="C($gray-500)">22 days ago</span></div>
+    <div className="font-italic">{s.midi.sourceSongName} <small>by {s.midi.artistName}</small></div>
+    <div className="text-warning small">{s.midi.sourceAlbumName} <span className="C($gray-500)">{formatDate(s.date)}</span></div>
   </div>
   <div className="d-inline-block my-2 align-middle ml-4 ml-md-5">
-    <div className="text-warning font-italic font-weight-bold">98.34%</div>
+    <div className="text-warning font-italic font-weight-bold">{formatNumber(s.accuracy, 1)}%</div>
   </div>
   <div className="d-inline-block my-2 align-middle ml-4">
-    <div className="font-italic font-weight-bold">453perf</div>
+    <div className="font-italic font-weight-bold">{formatNumber(s.performance, 1)}perf</div>
     <div className="small">weighted 100%</div>
   </div>
   <div className="d-inline-block my-2 align-middle ml-4">
-    <div className="C(lightgreen) font-weight-bold">453perf</div>
+    <div className="C(lightgreen) font-weight-bold">{formatNumber(s.performance, 1)}perf</div>
   </div>
 </div>);
 
-const Played = () => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) pr-3 rounded mt-1">
-  <img className="d-inline-block rounded-left" src={SampleListCover} alt=""/>
+const Played = (s) => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) pr-3 rounded mt-1">
+  {!s.coverUrl && <img className="d-inline-block rounded-left" src={SampleListCover} alt=""/>}
+  {s.coverUrl && <img className="d-inline-block rounded-left H(40px)" src={s.coverUrl} alt=""/>}
   <div className="d-inline-block my-2 align-middle ml-2">
-    <div><strong>Songs Compilation</strong> <small>by Foreground Eclipse</small></div>
-    <div className="C($gray-500) small">mapped by <strong>Kite</strong></div>
+    <div><strong>{s.name}</strong> <small>by {s.composer.name}</small></div>
+    <div className="C($gray-500) small">mapped by <strong>{s.midi.artistName}</strong></div>
   </div>
   <div className="d-inline-block my-2 align-middle ml-4 ml-md-5">
-    <div className="text-warning font-weight-bold"><i className="fas fa-play"></i> 345</div>
+    <div className="text-warning font-weight-bold"><i className="fas fa-play"></i> {s.count}</div>
   </div>
 </div>);
 
@@ -69,7 +70,9 @@ export default class App extends React.Component {
       cCount: 0,
       dCount: 0,
       fCount: 0,
-      bestPerformance: null,
+      bestPerformance: [],
+      mostPlayed: [],
+      recentlyPlayed: [],
     };
   }
 
@@ -77,9 +80,15 @@ export default class App extends React.Component {
     await Promise.all([
       this.app.userGet({id: this.props.match.params.id}),
       this.app.midiBestPerformance(),
+      this.app.midiMostPlayed(),
+      this.app.midiRecentlyPlayed(),
     ]).then((value) => {
-      console.log(value);
-      this.setState({user: value[0], bestPerformance: value[1]});
+      this.setState({
+        user: value[0],
+        bestPerformance: value[1],
+        mostPlayed: value[2],
+        recentlyPlayed: value[3],
+      });
     });
   }
 
@@ -184,19 +193,17 @@ export default class App extends React.Component {
           <h3 className="h5"><span className="Bdc(springgreen) Bdbs(s) Bdbw(2px)">Ranks</span></h3>
           <h4 className="h6 mt-3">Best Performances</h4>
           <div>
-            No performance records. :(
-            <Rank />
-            <Rank />
-            <Rank />
-            <Rank />
+            {s.bestPerformance.length === 0 && <span> No performance records. :(</span>}
+            {s.bestPerformance.map((x) => <Rank {...x} key={x.midiId}/>)}
+
           </div>
           <h4 className="h6 mt-3">First Place Ranks <span className="badge badge-pill badge-dark">0</span></h4>
           <div>
             No awesome performance records yet. :(
+            {/* <Rank />
             <Rank />
             <Rank />
-            <Rank />
-            <Rank />
+            <Rank /> */}
           </div>
         </section>
         {/* historical */}
@@ -206,19 +213,14 @@ export default class App extends React.Component {
           <div>None... yet.</div>
           <h4 className="h6 mt-3">Most Played Midis</h4>
           <div>
-            No performance records. :(
-            <Played />
-            <Played />
-            <Played />
-            <Played />
+            {s.mostPlayed.length === 0 && <span>No performance records. :(</span>}
+            {s.mostPlayed.map((x) => <Played {...x} key={x.id}/>)}
           </div>
           <h4 className="h6 mt-3">Recent Plays</h4>
           <div>
-            No performance records. :(
-            <Rank />
-            <Rank />
-            <Rank />
-            <Rank />
+            {s.recentlyPlayed.length === 0 && <span> No performance records. :(</span>}
+            {s.recentlyPlayed.length === 0 && <span> No performance records. :(</span>}
+            {s.recentlyPlayed.map((x) => <Rank {...x} key={x.midiId}/>)}
           </div>
         </section>
       </div>
