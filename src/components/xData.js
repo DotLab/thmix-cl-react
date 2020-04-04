@@ -1,4 +1,3 @@
-
 const currMonth = new Date().getMonth();
 const currYear = new Date().getFullYear();
 
