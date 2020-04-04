@@ -14,7 +14,7 @@ export default class SongListing extends React.Component {
     return <div className="container Mb(40px)">
       <div className="row">
         <div className="col-4">
-          <img src={this.props.coverUrl} alt=""/>
+          <img className="img-fluid rounded" src={this.props.coverUrl} alt=""/>
           <div>{this.props.abbr}: {this.props.name}</div>
           <div>{formatDate(this.props.date)}</div>
           <div>{this.props.desc}</div>
