@@ -12,18 +12,11 @@ export default class AlbumListing extends React.Component {
     this.state = {
       albums: [],
     };
-
-    this.songList = this.songList.bind(this);
   }
 
   async componentDidMount() {
     const albums = await this.app.albumList();
     this.setState({albums});
-  }
-
-  async songList(albumId) {
-    const songs = await this.app.songList({albumId});
-    return songs;
   }
 
   render() {
