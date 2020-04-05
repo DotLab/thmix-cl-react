@@ -76,6 +76,7 @@ function buildOption(yData) {
     ],
   };
 }
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -122,11 +123,10 @@ export default class App extends React.Component {
   async componentDidMount() {
     await Promise.all([
       this.app.userGet({id: this.props.match.params.id}),
-      this.app.midiBestPerformance(),
-      this.app.midiMostPlayed(),
-      this.app.midiRecentlyPlayed(),
-      this.app.midiPlayHistory({startDate: formatPrevDate0(9), endDate: formatPrevDate0(-1)}),
-      // this.app.midiPlayHistory(),
+      this.app.midiBestPerformance({id: this.props.match.params.id}),
+      this.app.midiMostPlayed({id: this.props.match.params.id}),
+      this.app.midiRecentlyPlayed({id: this.props.match.params.id}),
+      this.app.midiPlayHistory({id: this.props.match.params.id, startDate: formatPrevDate0(9), endDate: formatPrevDate0(-1)}),
     ]).then((value) => {
       this.setState({
         user: value[0],

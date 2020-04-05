@@ -307,28 +307,23 @@ export default class App extends React.Component {
     return build;
   }
 
-  async midiBestPerformance() {
-    const bestPerformance = await this.genericApi0('cl_web_midi_best_performance');
+  async midiBestPerformance({id}) {
+    const bestPerformance = await this.genericApi1('cl_web_midi_best_performance', {id});
     return bestPerformance;
   }
 
-  async midiMostPlayed() {
-    const mostPlayed = await this.genericApi0('cl_web_midi_most_played');
+  async midiMostPlayed({id}) {
+    const mostPlayed = await this.genericApi1('cl_web_midi_most_played', {id});
     return mostPlayed;
   }
 
-  async midiRecentlyPlayed() {
-    const recent = await this.genericApi0('cl_web_midi_recently_played');
+  async midiRecentlyPlayed({id}) {
+    const recent = await this.genericApi1('cl_web_midi_recently_played', {id});
     return recent;
   }
 
-  // async midiPlayHistory() {
-  //   const hist = await this.genericApi0('cl_web_midi_play_history');
-  //   return hist;
-  // }
-
-  async midiPlayHistory({startDate, endDate}) {
-    const hist = await this.genericApi1('cl_web_midi_play_history', {startDate, endDate});
+  async midiPlayHistory({id, startDate, endDate}) {
+    const hist = await this.genericApi1('cl_web_midi_play_history', {id, startDate, endDate});
     return hist;
   }
 
