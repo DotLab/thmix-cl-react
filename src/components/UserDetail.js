@@ -47,7 +47,7 @@ function calculateMA(data, dayCount) {
 
     let sum = 0;
     for (let j = 0; j < dayCount; j++) {
-      if (data[i - j][0] != '-') lastValid = data[i - j][1];
+      if (data[i - j][0] !== '-') lastValid = data[i - j][1];
       sum += lastValid;
     }
     result.push(sum / dayCount);
@@ -58,7 +58,7 @@ function calculateMA(data, dayCount) {
 function compileHistory(ohlc) {
   return {
     data: ohlc.map((a) => ([a.o, a.c, a.l, a.h])),
-    volume: ohlc.map((a, i) => ([i, a.v, (i == 0 ? 0 : Math.sign(a.c - ohlc[i - 1].c))])),
+    volume: ohlc.map((a, i) => ([i, a.v, (i === 0 ? 0 : Math.sign(a.c - ohlc[i - 1].c))])),
     xAxis: ohlc.map((a) => formatDateTime(a.t)),
   };
 }
@@ -351,7 +351,6 @@ export default class App extends React.Component {
             <div className="Lh(1.15) d-inline-block align-middle ml-3">
               <h3 className="h4 mb-1">{s.name}</h3>
               <div>Joined <strong>{formatDate(s.joinedDate)}</strong></div>
-              {/* <div>Last seen <strong>{formatDate(s.seenDate)}</strong></div> */}
               <div>Last seen <strong>{formatTimeSpan(getTimeSpanBetween(new Date(), s.seenDate))} ago</strong></div>
             </div>
           </div>
@@ -360,8 +359,8 @@ export default class App extends React.Component {
               <tbody>
                 <tr><td>Play Count</td><td className="text-right font-weight-bold">{formatNumber(s.trialCount)}</td></tr>
                 <tr><td>Total Scores</td><td className="text-right font-weight-bold">{formatNumber(s.score)}</td></tr>
-                <tr><td>Max Combo</td><td className="text-right font-weight-bold">{formatNumber(s.combo)}x</td></tr>
-                <tr><td>Accuracy</td><td className="text-right font-weight-bold">{formatNumber(s.accuracy * 100, 2)}%</td></tr>
+                <tr><td>Average Combo</td><td className="text-right font-weight-bold">{formatNumber(s.avgCombo, 0)}x</td></tr>
+                <tr><td>Average Accuracy</td><td className="text-right font-weight-bold">{formatNumber(s.avgAccuracy * 100, 2)}%</td></tr>
               </tbody>
             </table>
           </div>
@@ -468,7 +467,7 @@ export default class App extends React.Component {
           <div>
             {s.recentlyPlayed.length === 0 && <span> No performance records. :(</span>}
             {s.recentlyPlayed.length === 0 && <span> No performance records. :(</span>}
-            {s.recentlyPlayed.map((x) => <Rank {...x} key={x.midiId}/>)}
+            {s.recentlyPlayed.map((x, i) => <Rank {...x} key={i}/>)}
           </div>
         </section>
       </div>

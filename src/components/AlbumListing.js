@@ -1,6 +1,28 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 
-import SongListing from './SongListing';
+import {formatDate} from '../utils';
+
+function SongListing(p) {
+  return <div className="container">
+    <div className="row shadow" style={{background: `linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url(${p.coverBlurUrl})`, backgroundSize: 'cover'}}>
+      <div className="col-md-5">
+        <div className="badge badge-pill badge-primary">{formatDate(p.date)}</div>
+        <img className="img-fluid rounded shadow-sm" src={p.coverUrl} alt=""/>
+        <div>{p.abbr}: {p.name}</div>
+        <div>{p.desc}</div>
+        <Link className="btn btn-outline-primary btn-sm" to={{pathname: `/albums/${p._id}/edit`}}>edit</Link>
+      </div>
+      <div className="col-md-7">
+        <ul className="mt-2">
+          {p.songs.map((song) => <li className="" key={song._id}>
+            <Link className="btn btn-outline-secondary btn-sm" to={{pathname: `/songs/${song._id}/edit`}}>edit</Link> {song.track}: {song.name} by {song.composer.name}
+          </li>)}
+        </ul>
+      </div>
+    </div>
+  </div>;
+}
 
 export default class AlbumListing extends React.Component {
   constructor(props) {

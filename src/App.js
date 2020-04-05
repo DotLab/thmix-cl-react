@@ -506,7 +506,7 @@ export default class App extends React.Component {
             </ul> : <ul className="navbar-nav align-items-center">
               <li className="nav-item">
                 <select className="Bdrs(10px)" onChange={this.onLangChange} value={this.state.lang}>
-                  {langs.map((x) => <option value={x.lang}>{x.name}</option>)}
+                  {langs.map((x) => <option value={x.lang} key={x.lang}>{x.name}</option>)}
                 </select>
               </li>
               <li className="nav-item dropdown">

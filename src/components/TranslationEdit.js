@@ -99,7 +99,7 @@ export default class TranslationEdit extends React.Component {
               </tr>
             </thead>
             <tbody>
-              {s.translations.map((x) => <Row {...x} onApply={this.onApplyTranslation}/>)}
+              {s.translations.map((x) => <Row {...x} key={x.src} onApply={this.onApplyTranslation}/>)}
             </tbody>
           </table>
         </div>

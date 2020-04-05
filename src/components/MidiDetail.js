@@ -199,8 +199,8 @@ export default class MidiDetail extends React.Component {
               <div className="Lh(1.15) font-italic">
                 <div className="D(f) Ai(c) mt-4">
                   <h2 className="h4 m-0 D(ib)">{s.name}</h2>
-                  {!s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i class="far fa-play-circle"></i></span>}
-                  {s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i class="fas fa-pause-circle"></i></span>}
+                  {!s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i className="far fa-play-circle"></i></span>}
+                  {s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i className="fas fa-pause-circle"></i></span>}
                 </div>
 
                 <div className="h5 m-0">by <a className="text-light" href={s.artistUrl}>{s.artistName}</a></div>
@@ -297,7 +297,7 @@ export default class MidiDetail extends React.Component {
                 </tr>
               </thead>
               <tbody>
-                {s.records.map((x, i) => <RankRow {...x} i={i} />)}
+                {s.records.map((x, i) => <RankRow {...x} i={i} key={i} />)}
               </tbody>
             </table>
           </div>

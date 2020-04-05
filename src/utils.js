@@ -30,7 +30,7 @@ export function formatNumber(number, digitCount) {
   if (typeof number === 'string') {
     number = parseFloat(number);
   }
-  if (digitCount !== undefined) number = number.toFixed(digitCount);
+  if (digitCount !== undefined) number = parseFloat(number.toFixed(digitCount));
   return number.toLocaleString();
 }
 
