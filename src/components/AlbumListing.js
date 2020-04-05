@@ -3,12 +3,12 @@ import {Link} from 'react-router-dom';
 
 import {formatDate} from '../utils';
 
-function SongListing(p) {
+function AlbumRow(p) {
   return <div className="container">
     <div className="row shadow" style={{background: `linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url(${p.coverBlurUrl})`, backgroundSize: 'cover'}}>
       <div className="col-md-5">
         <div className="badge badge-pill badge-primary">{formatDate(p.date)}</div>
-        <img className="img-fluid rounded shadow-sm" src={p.coverUrl} alt=""/>
+        <img className="W(100%) rounded shadow-sm" src={p.coverUrl} alt=""/>
         <div>{p.abbr}: {p.name}</div>
         <div>{p.desc}</div>
         <Link className="btn btn-outline-primary btn-sm" to={{pathname: `/albums/${p._id}/edit`}}>edit</Link>
@@ -51,7 +51,7 @@ export default class AlbumListing extends React.Component {
       <section className="mt-2 mb-3 shadow border">
         <div className="Bgc($gray-100)">
           <div className="row">
-            {s.albums.map((album) => <SongListing {...album} key={album.id} songList={this.songList}/>)}
+            {s.albums.map((album) => <AlbumRow {...album} key={album.id} songList={this.songList}/>)}
           </div>
         </div>
       </section>
