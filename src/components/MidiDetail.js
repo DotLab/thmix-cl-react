@@ -6,18 +6,64 @@ import {formatNumber, formatDate, touhouAlbum} from '../utils';
 
 import DefaultAvatar from './DefaultAvatar.jpg';
 
-const Row = () => (<tr className="Bgc($gray-200) Bgc($gray-300):h mb-1">
-  <td className="px-2 py-1 rounded-left font-weight-bold">#1</td>
+const FirstRank = (p) => (<div className="rounded border shadow-sm px-3">
+  <div className="D(ib) Lh(1) text-center align-middle">
+    <div className="Fz(1.2em) font-weight-bold m-0">#1</div>
+    <div className="badge badge-success badge-pill mt-1">A+</div>
+  </div>
+  <div className="D(ib) ml-3">
+    <img className="H(80px) my-2 rounded shadow-sm" src={p.userAvatarUrl || DefaultAvatar} alt=""/>
+  </div>
+  <div className="Mend(120px)--xl Mend(20px)--lg D(ib) ml-2 align-middle">
+    <h4 className="h6 m-0 font-italic">{p.userName}</h4>
+    <div className="small">achieved {formatDate(p.date)}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">TOTAL SUNSHINE</div>
+    <div className="Fz(1.25em)">{formatNumber(p.score)}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">MAX COMBO</div>
+    <div className="Fz(1.25em)">{formatNumber(p.combo)}x</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">ACCURACY</div>
+    <div className="Fz(1.25em)">{formatNumber(p.accuracy * 100)}%</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">PERF</div>
+    <div className="Fz(1.25em)">{formatNumber(Math.log(p.score).toFixed())}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">PERFECT</div>
+    <div className="Fz(1em)">{formatNumber(p.perfectCount)}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">GREAT</div>
+    <div className="Fz(1em)">{formatNumber(p.greatCount)}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">GOOD</div>
+    <div className="Fz(1em)">{formatNumber(p.goodCount)}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">MISS</div>
+    <div className="Fz(1em)">{formatNumber(p.missCount)}</div>
+  </div>
+</div>);
+
+const RankRow = (p) => (<tr className="Bgc($gray-200) Bgc($gray-300):h mb-1">
+  <td className="px-2 py-1 rounded-left font-weight-bold">#{p.i + 1}</td>
   <td className="px-2 py-1"><span className="badge badge-primary badge-pill">A+</span></td>
-  <td className="px-2 py-1 text-left"><img className="H(1em) rounded" src={DefaultAvatar} alt="avatar"/> <Link className="text-dark" to="/users/idke">idke</Link></td>
-  <td className="px-2 py-1 C($gray-600)">342,234,444</td>
-  <td className="px-2 py-1 C($gray-600)">34,342x</td>
-  <td className="px-2 py-1 C($gray-600)">84%</td>
-  <td className="px-2 py-1">1,334</td>
-  <td className="px-2 py-1 C($gray-600)">23</td>
-  <td className="px-2 py-1 C($gray-600)">23</td>
-  <td className="px-2 py-1 C($gray-600)">644</td>
-  <td className="px-2 py-1 C($gray-600) rounded-right">583</td>
+  <td className="px-2 py-1 text-left"><img className="H(1em) rounded" src={DefaultAvatar} alt="avatar"/> <Link className="text-dark" to={'/users/' + p.userId}>{p.userName}</Link></td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.score)}</td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.combo)}x</td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.accuracy * 100)}%</td>
+  <td className="px-2 py-1">{formatNumber(Math.log(p.score).toFixed())}</td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.perfectCount)}</td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.greatCount)}</td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.goodCount)}</td>
+  <td className="px-2 py-1 C($gray-600) rounded-right">{formatNumber(p.missCount)}</td>
 </tr>);
 
 const Reply = () => (<div className="Bdc($gray-400)! border-bottom">
@@ -103,10 +149,15 @@ export default class MidiDetail extends React.Component {
   async componentDidMount() {
     const midi = await this.app.midiGet({id: this.props.match.params.id});
     this.setState(midi);
-    const audio = new Audio(this.state.mp3Url);
-    audio.addEventListener('loadeddata', () => {
-      this.setState({audio});
-    });
+    if (this.state.mp3Url) {
+      const audio = new Audio(this.state.mp3Url);
+      audio.addEventListener('loadeddata', () => {
+        this.setState({audio});
+      });
+    }
+
+    const records = await this.app.genericApi1('cl_web_midi_record_list', {id: this.props.match.params.id});
+    this.setState({records});
   }
 
   componentWillUnmount() {
@@ -146,9 +197,10 @@ export default class MidiDetail extends React.Component {
             <div className="py-2 py-md-4">
               <div><i className="fa-fw fas fa-play"></i> {formatNumber(s.trialCount)} <i className="fa-fw fas fa-chevron-up"></i> {formatNumber(s.upCount - s.downCount)} <i className="fa-fw fas fa-heart"></i> {formatNumber(s.loveCount)}</div>
               <div className="Lh(1.15) font-italic">
-                <div className="D(f) Ai(c) mt-4"><h2 className="h4 m-0 D(ib)">{s.name}</h2>
-                  {!s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i class="far fa-play-circle"></i></span>}
-                  {s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i class="fas fa-pause-circle"></i></span>}
+                <div className="D(f) Ai(c) mt-4">
+                  <h2 className="h4 m-0 D(ib)">{s.name}</h2>
+                  {!s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i className="far fa-play-circle"></i></span>}
+                  {s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i className="fas fa-pause-circle"></i></span>}
                 </div>
 
                 <div className="h5 m-0">by <a className="text-light" href={s.artistUrl}>{s.artistName}</a></div>
@@ -223,53 +275,9 @@ export default class MidiDetail extends React.Component {
 
       <section className="Bgc($gray-800) pt-2 pb-3">
         {/* rank */}
-        {s.records.length ? <div className="container bg-white shadow p-3 mb-3">
+        {s.records && s.records.length ? <div className="container bg-white shadow p-3 mb-3">
           {/* 1st */}
-          <div className="rounded border shadow-sm px-3">
-            <div className="D(ib) Lh(1) text-center align-middle">
-              <div className="Fz(1.2em) font-weight-bold m-0">#1</div>
-              <div className="badge badge-success badge-pill mt-1">A+</div>
-            </div>
-            <div className="D(ib) ml-3">
-              <img className="H(80px) my-2 rounded shadow-sm" src={DefaultAvatar} alt=""/>
-            </div>
-            <div className="Mend(120px)--xl Mend(20px)--lg D(ib) ml-2 align-middle">
-              <h4 className="h6 m-0 font-italic">Alchyr</h4>
-              <div className="small">achieved about 2 hour ago</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">TOTAL SUNSHINE</div>
-              <div className="Fz(1.25em)">453,432,435</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">MAX COMBO</div>
-              <div className="Fz(1.25em)">445x</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">ACCURACY</div>
-              <div className="Fz(1.25em)">90.4%</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">PERF</div>
-              <div className="Fz(1.25em)">453</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">PERFECT</div>
-              <div className="Fz(1em)">453</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">GREAT</div>
-              <div className="Fz(1em)">453</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">GOOD</div>
-              <div className="Fz(1em)">453</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">MISS</div>
-              <div className="Fz(1em)">453</div>
-            </div>
-          </div>
+          <FirstRank {...s.records[0]} />
           {/* ranking */}
           <div className="table-responsive">
             <table className="Bdcl(s) Bdsp(0,.25em) text-nowrap text-center">
@@ -289,12 +297,7 @@ export default class MidiDetail extends React.Component {
                 </tr>
               </thead>
               <tbody>
-                <Row/>
-                <Row/>
-                <Row/>
-                <Row/>
-                <Row/>
-                <Row/>
+                {s.records.map((x, i) => <RankRow {...x} i={i} key={i} />)}
               </tbody>
             </table>
           </div>
@@ -316,8 +319,8 @@ export default class MidiDetail extends React.Component {
                 <button className="btn btn-primary mt-2 ml-2" type="submit">Post</button>
               </form>
             </div>
-          </div> */}
-        {/* </div> */}
+          </div>
+        </div> */}
         {s.comments.length && <div className="Bgc($gray-200) container">
           <div className="">
             <Reply />

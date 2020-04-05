@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter, withRouter} from 'react-router-dom';
+import echarts from 'echarts';
 
 import './atomic.css';
 
@@ -8,6 +9,8 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import io from 'socket.io-client';
+
+import {echartsDarkTheme} from './utils';
 
 // @ts-ignore
 window.recaptchaOptions = {
@@ -23,6 +26,8 @@ if (env === 'development') {
 } else {
   socket = io();
 }
+
+echartsDarkTheme(echarts);
 
 const RoutedApp = withRouter(App);
 
