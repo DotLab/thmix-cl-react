@@ -31,6 +31,8 @@ import PersonDetailEdit from './components/PersonDetailEdit';
 
 import Board from './components/Board';
 
+import TranslationEdit from './components/TranslationEdit';
+
 import Help from './components/posts/Help';
 import Terms from './components/posts/Terms';
 import Privacy from './components/posts/Privacy';
@@ -463,6 +465,14 @@ export default class App extends React.Component {
     return authors;
   }
 
+  async translationList() {
+    return await this.genericApi1('cl_web_translation_list', {lang: this.state.lang});
+  }
+
+  async translationUpdate({src, lang, text}) {
+    return await this.genericApi1('cl_web_translation_update', {lang, src, text});
+  }
+
   render() {
     const s = this.state;
 
@@ -484,6 +494,7 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs">songs</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit">translations</NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources">resources</NavLink></li> */}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
@@ -555,6 +566,8 @@ export default class App extends React.Component {
         <PropsRoute exact path="/soundfonts/upload" component={SoundfontUpload} app={this} />
         <PropsRoute exact path="/soundfonts/:id" component={SoundfontDetail} app={this} />
         <PropsRoute exact path="/soundfonts/:id/edit" component={SoundfontDetailEdit} app={this} />
+
+        <PropsRoute exact path="/translations/edit" component={TranslationEdit} app={this} />
 
         <PropsRoute exact path="/help" component={Help} />
         <PropsRoute exact path="/terms" component={Terms} />
