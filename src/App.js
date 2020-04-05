@@ -185,8 +185,8 @@ export default class App extends React.Component {
     return midi;
   }
 
-  async midiList({albumId, songId, status, sort, page}) {
-    const midis = await this.genericApi1('cl_web_midi_list', {albumId, songId, status, sort, page});
+  async midiList({albumId, songId, status, sort, page, search}) {
+    const midis = await this.genericApi1('cl_web_midi_list', {albumId, songId, status, sort, page, search});
     return midis;
   }
 

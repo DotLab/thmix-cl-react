@@ -101,20 +101,15 @@ export default class MidiListing extends React.Component {
     const query = this.getQuery(props);
     // @ts-ignore
     const midis = await this.app.midiList(query);
-
-    this.setState({query, midis});
+    const search = query.search;
+    this.setState({query, midis, search});
   }
 
   search() {
     const s = this.state;
-    const touhouAlbumIndex = parseInt(s.touhouAlbumIndex);
-    if (touhouAlbumIndex === -1) {
-      this.app.history.push('?' + QueryString.stringify({...s.query, touhouAlbumIndex: -1, touhouSongIndex: undefined}));
-    } else if (touhouAlbumIndex > 0) {
-      this.app.history.push('?' + QueryString.stringify({...s.query, touhouAlbumIndex, touhouSongIndex: s.touhouSongIndex === '-2' ? undefined : s.touhouSongIndex}));
-    } else {
-      this.app.history.push('?' + QueryString.stringify({...s.query, touhouAlbumIndex: undefined, touhouSongIndex: undefined}));
-    }
+    this.query.search = s.search;
+    this.setState({query: this.query});
+    this.pushHistory();
   }
 
   async changeAlbum(e) {
@@ -155,6 +150,12 @@ export default class MidiListing extends React.Component {
 
     return <div className="container">
       <section className="Bgc($gray-700) P(30px) text-light shadow">
+
+        <form onSubmit={this.search} className="form-inline row Pos(r)">
+          <input className="form-control W(80%)! Mstart(15px) Pend(50px) Pos(r)" type="text" name="search" value={s.search} onChange={this.onChange}/>
+          <span type="submit" className="Pos(a) Start(78%) text-dark"><i className="fas fa-search"></i></span>
+        </form>
+
         <div className="row small mt-3">
           <div className="col-md-2">STATUS</div>
           <div className="col-md-10">
@@ -165,21 +166,21 @@ export default class MidiListing extends React.Component {
           </div>
         </div>
 
-        <div className="row small mt-3">
+        <div className="row small mt-1">
           <div className="col-md-2">ALBUM</div>
           <div className="col-md-10">
             <div className='Pos(r) Cur(p) text-light d-inline-block text-nowrap mr-3'>{s.albumName || 'Album'}</div>
-            <select className="form-control col-sm-6 Pos(a) Cur(p) T(0) H(20px) Op(0)" name="touhouAlbumIndex" value={s.albumId} onChange={this.changeAlbum} onBlur={this.search}>
+            <select className="form-control col-sm-6 Pos(a) Cur(p) T(0) H(20px) Op(0)" name="touhouAlbumIndex" value={s.albumId} onChange={this.changeAlbum}>
               <option value={INVALID}>ANY: Any</option>
               {s.albums.map((x) => <option key={x.id} value={x.id}>{x.abbr}: {x.name}</option>)}
             </select>
           </div>
         </div>
-        <div className="row small mt-3">
+        <div className="row small mt-1">
           <div className="col-md-2">SONG</div>
           <div className="col-md-10">
             <div className='Pos(r) Cur(p) text-light d-inline-block text-nowrap mr-3'>{s.songName || 'Song'}</div>
-            <select className="form-control col-sm-6 Pos(a) Cur(p) T(0) H(20px) Op(0)" name="touhouSongIndex" value={s.songId} onChange={this.changeSong} onBlur={this.search}>
+            <select className="form-control col-sm-6 Pos(a) Cur(p) T(0) H(20px) Op(0)" name="touhouSongIndex" value={s.songId} onChange={this.changeSong}>
               <option value={INVALID}>ANY: Any</option>
               {s.songs.map((x) => <option key={x.id} value={x.id}>{x.track}: {x.name}</option>)}
             </select>
