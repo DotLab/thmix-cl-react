@@ -40,6 +40,8 @@ import DefaultAvatar from './components/DefaultAvatar.jpg';
 
 import {TEST_EMAIL, TEST_PASSWORD} from './secrets';
 
+import {getCurrentDay} from './utils';
+
 // const debug = require('debug')('thmix:App');
 
 const VERSION = 0;
@@ -307,19 +309,53 @@ export default class App extends React.Component {
     return build;
   }
 
-  async midiBestPerformance() {
-    const bestPerformance = await this.genericApi0('cl_web_midi_best_performance');
+  async midiBestPerformance({id}) {
+    const bestPerformance = await this.genericApi1('cl_web_midi_best_performance', {id});
     return bestPerformance;
   }
 
-  async midiMostPlayed() {
-    const mostPlayed = await this.genericApi0('cl_web_midi_most_played');
+  async midiMostPlayed({id}) {
+    const mostPlayed = await this.genericApi1('cl_web_midi_most_played', {id});
     return mostPlayed;
   }
 
-  async midiRecentlyPlayed() {
-    const recent = await this.genericApi0('cl_web_midi_recently_played');
+  async midiRecentlyPlayed({id}) {
+    const recent = await this.genericApi1('cl_web_midi_recently_played', {id});
     return recent;
+  }
+
+  // async midiPlayHistory({id, startDate, endDate}) {
+  //   const hist = await this.genericApi1('cl_web_midi_play_history', {id, startDate, endDate});
+  //   return hist;
+  // }
+
+  async midiPlayHistory({id, startDate, endDate, interval}) {
+    switch (interval) {
+      case '1m':
+        interval = 1 * 60 * 1000;
+        break;
+      case '2m':
+        interval = 2 * 60 * 1000;
+        break;
+      case '5m':
+        interval = 5 * 60 * 1000;
+        break;
+      case '15m':
+        interval = 15 * 60 * 1000;
+        break;
+      case '30m':
+        interval = 30 * 60 * 1000;
+        break;
+      case '1h':
+        interval = 60 * 60 * 1000;
+        break;
+      case '1d':
+        /* fall through */
+      default:
+        interval = 24 * 60 * 60 * 1000;
+    }
+    const hist = await this.genericApi1('cl_web_midi_play_history', {id, startDate: new Date(0), endDate: getCurrentDay(), interval});
+    return hist;
   }
 
   async albumCreate() {

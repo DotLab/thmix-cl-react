@@ -27,7 +27,7 @@ export default class AlbumListing extends React.Component {
         <h2 className="row Fw(n)">Songs</h2>
       </section>
       <section className="mt-2 mb-3 shadow border">
-        <div className="Bgc($gray-100) Px(1.25em) pt-2">
+        <div className="Bgc($gray-100)">
           <div className="row">
             {s.albums.map((album) => <SongListing {...album} key={album.id} songList={this.songList}/>)}
           </div>

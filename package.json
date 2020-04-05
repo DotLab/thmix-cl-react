@@ -5,6 +5,8 @@
   "dependencies": {
     "atomizer": "^3.5.3",
     "debug": "^4.1.1",
+    "echarts": "^4.7.0",
+    "echarts-for-react": "^2.0.15-beta.1",
     "eslint": "^5.15.1",
     "eslint-config-google": "^0.12.0",
     "immutability-helper": "^3.0.0",
