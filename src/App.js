@@ -42,6 +42,8 @@ import {TEST_EMAIL, TEST_PASSWORD} from './secrets';
 
 import {getCurrentDay} from './utils';
 
+import langs from './json/langs.json';
+
 // const debug = require('debug')('thmix:App');
 
 const VERSION = 0;
@@ -56,12 +58,14 @@ export default class App extends React.Component {
     this.history = props.history;
     this.socket = props.socket;
     this.isDevelopment = props.env === DEVELOPMENT;
+    this.onLangChange = this.onLangChange.bind(this);
 
     this.state = {
       isHandshakeSuccessful: false,
       user: null,
       error: null,
       success: null,
+      lang: 'en',
     };
 
     this.socket.on('disconnect', this.onDisconnect.bind(this));
@@ -71,6 +75,11 @@ export default class App extends React.Component {
     this.albumCreate = this.albumCreate.bind(this);
     this.songCreate = this.songCreate.bind(this);
     this.personCreate = this.personCreate.bind(this);
+  }
+
+  onLangChange(e) {
+    const lang = e.target.value;
+    this.setState({lang});
   }
 
   error(message) {
@@ -474,7 +483,7 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs">songs</NavLink></li>
-              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources">resources</NavLink></li> */}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
@@ -484,17 +493,22 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login">login</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
             </ul> : <ul className="navbar-nav align-items-center">
+              <li className="nav-item">
+                <select className="Bdrs(10px)" onChange={this.onLangChange} value={this.state.lang}>
+                  {langs.map((x) => <option value={x.lang}>{x.name}</option>)}
+                </select>
+              </li>
               <li className="nav-item dropdown">
                 <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i className="fas fa-plus"></i></span>
                 <div className="dropdown-menu dropdown-menu-right">
-                  <Link className="dropdown-item" to="/midis/upload">Upload midi</Link>
-                  <Link className="dropdown-item" to="/soundfonts/upload">soundfont</Link>
-                  <Link className="dropdown-item" to="/resources/upload">Upload resource</Link>
-                  <Link className="dropdown-item" to="/midis/upload">Create story</Link>
-                  <Link className="dropdown-item" to="/builds/upload">Upload build</Link>
-                  <div className="dropdown-item Cur(p)" onClick={this.albumCreate}>Create album</div>
-                  <div className="dropdown-item Cur(p)" onClick={this.songCreate}>Create song</div>
-                  <div className="dropdown-item Cur(p)" onClick={this.personCreate}>Create person</div>
+                  <Link className="dropdown-item" to="/midis/upload">upload midi</Link>
+                  <div className="dropdown-item Cur(p)" onClick={this.albumCreate}>create album</div>
+                  <div className="dropdown-item Cur(p)" onClick={this.songCreate}>create song</div>
+                  <div className="dropdown-item Cur(p)" onClick={this.personCreate}>create person</div>
+                  <Link className="dropdown-item" to="/soundfonts/upload">upload soundfont</Link>
+                  {/* <Link className="dropdown-item" to="/resources/upload">upload resource</Link> */}
+                  {/* <Link className="dropdown-item" to="/midis/upload">create story</Link> */}
+                  {/* <Link className="dropdown-item" to="/builds/upload">upload build</Link> */}
                   {/* <div className="dropdown-divider"></div>
                   <a className="dropdown-item" href=".">Something else here</a> */}
                 </div>
