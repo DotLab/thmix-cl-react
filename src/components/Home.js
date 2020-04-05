@@ -13,7 +13,11 @@ class App extends React.Component {
         <small className="C($pink)">Perform Touhou Project music on your device!</small>
         <div className="mt-3">
           <a className="btn btn-primary mr-2" href="https://itunes.apple.com/us/app/touhou-mix-a-touhou-game/id1454875483">App Store <i className="fab fa-app-store"></i></a>
-          <a className="btn btn-success     " href="https://play.google.com/store/apps/details?id=kailang.touhoumix">Google Play <i className="fab fa-google-play"></i></a>
+          <a className="btn btn-primary mr-2" href="https://testflight.apple.com/join/fM6ung3w">App Store Beta <i className="fab fa-app-store"></i></a>
+        </div>
+        <div className="mt-2">
+          <a className="btn btn-success mr-2" href="https://play.google.com/store/apps/details?id=kailang.touhoumix">Google Play <i className="fab fa-google-play"></i></a>
+          <a className="btn btn-success mr-2" href="https://play.google.com/apps/testing/kailang.touhoumix">Google Play Beta <i className="fab fa-google-play"></i></a>
         </div>
         <div className="Mt(100px) small text-center">peak at 2 online players</div>
       </div>

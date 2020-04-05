@@ -56,10 +56,18 @@ export default class MidiDetailEdit extends React.Component {
       this.app.albumList(),
       this.app.authorList(),
     ]).then((value) => {
-      this.setState({albums: value[1]});
-      this.setState({authors: value[2]});
-      this.setState(value[0]);
+      this.setState({
+        ...value[0],
+        albums: value[1], authors: value[2],
+        albumId: value[0].album && value[0].album._id,
+        songId: value[0].song && value[0].song._id,
+      });
     });
+
+    if (this.state.albumId) {
+      const songs = await this.app.songList({albumId: this.state.albumId});
+      this.setState({songs});
+    }
   }
 
   updateMeta() {
@@ -103,15 +111,15 @@ export default class MidiDetailEdit extends React.Component {
       this.app.albumGet({id: e.target.value}),
       this.app.songList({albumId: e.target.value}),
     ]).then((value) => {
-      this.setState({sourceAlbumName: value[0].name});
-      this.setState({songs: value[1]});
+      this.setState({sourceAlbumName: value[0].name, songs: value[1]});
     });
   }
 
   async changeSong(e) {
-    this.setState({songId: e.target.value});
-    const sourceSong = await this.app.songGet({id: e.target.value});
-    this.setState({sourceSongName: sourceSong.name});
+    this.setState({
+      songId: e.target.value,
+      sourceSongName: this.state.songs.find((x) => x.id === e.target.value).name,
+    });
   }
 
   async changeAuthor(e) {
@@ -119,9 +127,12 @@ export default class MidiDetailEdit extends React.Component {
       this.setState({authorId: null, artistName: '', artistUrl: ''});
       return;
     }
-    this.setState({authorId: e.target.value});
-    const author = await this.app.personGet({id: e.target.value});
-    this.setState({artistName: author.name, artistUrl: author.url});
+    const author = this.state.authors.find((x) => x.id === e.target.value);
+    this.setState({
+      authorId: e.target.value,
+      artistName: author.name,
+      artistUrl: author.url,
+    });
   }
 
   render() {
@@ -196,7 +207,7 @@ export default class MidiDetailEdit extends React.Component {
             <div className="col-sm-9">
               <select className="form-control" name="sourceSongName" value={s.songId} onChange={this.changeSong} >
                 <option value={INVALID}>---</option>
-                {s.songs.map((x) => <option key={x._id} value={x._id}>{x.track}: {x.name}</option>)}
+                {s.songs.map((x) => <option key={x.id} value={x.id}>{x.track}: {x.name}</option>)}
               </select>
             </div>
           </div>}
