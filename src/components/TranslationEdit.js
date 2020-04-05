@@ -1,6 +1,16 @@
 import React from 'react';
 import {onChange, formatDateTime} from '../utils';
 
+function correctLang(lang) {
+  if (lang === 'zh-CN') {
+    return 'zh-Hans';
+  }
+  if (lang === 'zh-TW') {
+    return 'zh-Hant';
+  }
+  return lang;
+}
+
 class Row extends React.Component {
   constructor(props) {
     super(props);
@@ -24,10 +34,11 @@ class Row extends React.Component {
 
     return <tr>
       <td className="">{p.src}</td>
-      <td>{p.lang}</td>
+      <td className="Whs(nw)">{correctLang(p.lang)}</td>
       <td className="W(500px)"><input className="Bdrs(10px) Bdw(1px) D(b) W(100%)" type="text" name="text" onChange={this.onChange} value={s.text}/></td>
       <td><button className="btn btn-primary btn-sm" disabled={s.text === p.text} onClick={() => p.onApply(p, s.text)}>apply</button></td>
       <td>{formatDateTime(p.date)}</td>
+      <td>{p.editorName || '?'}</td>
     </tr>;
   }
 }
@@ -84,6 +95,7 @@ export default class TranslationEdit extends React.Component {
                 <th>text</th>
                 <th>action</th>
                 <th>date</th>
+                <th>editor</th>
               </tr>
             </thead>
             <tbody>
