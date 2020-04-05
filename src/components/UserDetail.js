@@ -3,7 +3,7 @@ import DefaultAvatar from './DefaultAvatar.jpg';
 import SampleListCover from './SampleListCover.jpg';
 import ReactEcharts from 'echarts-for-react';
 
-import {xData, getYData} from './xData';
+import {xData, getYData, formatPrevDate0} from './xData';
 import {formatDate, formatNumber, getTimeSpan, getTimeSpanBetween, formatTimeSpan} from '../utils';
 
 const Rank = (s) => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) px-3 rounded mt-1">
@@ -125,7 +125,8 @@ export default class App extends React.Component {
       this.app.midiBestPerformance(),
       this.app.midiMostPlayed(),
       this.app.midiRecentlyPlayed(),
-      this.app.midiPlayHistory(),
+      this.app.midiPlayHistory({startDate: formatPrevDate0(9), endDate: formatPrevDate0(-1)}),
+      // this.app.midiPlayHistory(),
     ]).then((value) => {
       this.setState({
         user: value[0],

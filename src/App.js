@@ -322,8 +322,13 @@ export default class App extends React.Component {
     return recent;
   }
 
-  async midiPlayHistory() {
-    const hist = await this.genericApi0('cl_web_midi_play_history');
+  // async midiPlayHistory() {
+  //   const hist = await this.genericApi0('cl_web_midi_play_history');
+  //   return hist;
+  // }
+
+  async midiPlayHistory({startDate, endDate}) {
+    const hist = await this.genericApi1('cl_web_midi_play_history', {startDate, endDate});
     return hist;
   }
 

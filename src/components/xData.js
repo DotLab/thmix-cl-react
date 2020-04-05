@@ -9,6 +9,14 @@ function formatPrevDate1(gapMonth) {
   return Math.floor(prevYear) + '-' + prevMonth;
 }
 
+export function formatPrevDate0(gapMonth) {
+  const prevMonth = (currMonth - gapMonth) % 12 < 0 ? (currMonth - gapMonth) % 12 + 12 : (currMonth - gapMonth) % 12;
+  let prevYear;
+  if (gapMonth < currMonth) prevYear = currYear;
+  else prevYear = Math.floor(currYear - (gapMonth - currMonth) / 12);
+  return new Date(prevYear, prevMonth);
+}
+
 export const xData = [
   formatPrevDate1(8),
   formatPrevDate1(7),
@@ -23,14 +31,14 @@ export const xData = [
 ];
 
 export function getYData(query) {
-  const arr = new Array(9);
+  const arr = new Array(10);
   arr.fill(0);
 
   query.forEach((x) => {
     if (x.month && x.year) {
       let ind;
-      if (x.month <= currMonth) ind = currMonth - x.month;
-      else ind = 12 - x.month + currMonth;
+      if (x.month <= currMonth + 1) ind = currMonth + 1 - x.month;
+      else ind = 12 - x.month + currMonth + 1;
       arr[9 - ind] = x.count;
     }
   });
