@@ -10,11 +10,28 @@ import MidiListing from './components/MidiListing';
 import MidiDetail from './components/MidiDetail';
 import MidiDetailEdit from './components/MidiDetailEdit';
 import MidiUpload from './components/MidiUpload';
+
+import SoundfontListing from './components/SoundfontListing';
+import SoundfontDetail from './components/SoundfontDetail';
+import SoundfontDetailEdit from './components/SoundfontDetailEdit';
+import SoundfontUpload from './components/SoundfontUpload';
+
 import UserListing from './components/UserListing';
 import UserDetail from './components/UserDetail';
 import UserDetailEdit from './components/UserDetailEdit';
+import ResourceListing from './components/ResourceListing';
+import ResourceDetailEdit from './components/ResourceDetailEdit';
+import ResourceUpload from './components/ResourceUpload';
+import BuildUpload from './components/BuildUpload';
+import BuildDetailEdit from './components/BuildDetailEdit';
+import AlbumDetailEdit from './components/AlbumDetailEdit';
+import AlbumListing from './components/AlbumListing';
+import SongDetailEdit from './components/SongDetailEdit';
+import PersonDetailEdit from './components/PersonDetailEdit';
 
 import Board from './components/Board';
+
+import TranslationEdit from './components/TranslationEdit';
 
 import Help from './components/posts/Help';
 import Terms from './components/posts/Terms';
@@ -24,6 +41,10 @@ import Copyright from './components/posts/Copyright';
 import DefaultAvatar from './components/DefaultAvatar.jpg';
 
 import {TEST_EMAIL, TEST_PASSWORD} from './secrets';
+
+import {getCurrentDay} from './utils';
+
+import langs from './json/langs.json';
 
 // const debug = require('debug')('thmix:App');
 
@@ -39,18 +60,28 @@ export default class App extends React.Component {
     this.history = props.history;
     this.socket = props.socket;
     this.isDevelopment = props.env === DEVELOPMENT;
+    this.onLangChange = this.onLangChange.bind(this);
 
     this.state = {
       isHandshakeSuccessful: false,
       user: null,
       error: null,
       success: null,
+      lang: 'en',
     };
 
     this.socket.on('disconnect', this.onDisconnect.bind(this));
     this.socket.on('reconnect', this.onReconnect.bind(this));
 
     this.handshake();
+    this.albumCreate = this.albumCreate.bind(this);
+    this.songCreate = this.songCreate.bind(this);
+    this.personCreate = this.personCreate.bind(this);
+  }
+
+  onLangChange(e) {
+    const lang = e.target.value;
+    this.setState({lang});
   }
 
   error(message) {
@@ -186,6 +217,41 @@ export default class App extends React.Component {
     return midi;
   }
 
+  async soundfontUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_soundfont_upload', {name, size, buffer});
+    this.success('soundfont uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/soundfonts/${res.id}`);
+    } else {
+      this.history.push(`/soundfonts/${res.id}/edit`);
+    }
+  }
+
+  async soundfontUploadCover({id, size, buffer}) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_upload_cover', {id, size, buffer});
+    this.success('cover uploaded');
+
+    return soundfont;
+  }
+
+  async soundfontGet({id}) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_get', {id});
+    return soundfont;
+  }
+
+  async soundfontUpdate(update) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_update', update);
+    this.success('soundfont updated');
+
+    return soundfont;
+  }
+
+  async soundfontList({status, sort, page}) {
+    const soundfonts = await this.genericApi1('cl_web_soundfont_list', {status, sort, page});
+    return soundfonts;
+  }
+
   async boardGetMessages() {
     const messages = await this.genericApi0('cl_web_board_get_messages');
     return messages;
@@ -201,6 +267,210 @@ export default class App extends React.Component {
 
   boardSendMessage({recaptcha, text}) {
     this.genericApi1('cl_web_board_send_message', {recaptcha, text});
+  }
+
+  async resourceUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_resource_upload', {name, size, buffer});
+    this.success('resource uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/resources/${res.id}`);
+    } else {
+      this.history.push(`/resources/${res.id}/edit`);
+    }
+  }
+
+  async resourceGet({id}) {
+    const resource = await this.genericApi1('cl_web_resource_get', {id});
+    return resource;
+  }
+
+  async resourceUpdate(update) {
+    const resource = await this.genericApi1('cl_web_resource_update', update);
+    this.success('resource updated');
+
+    return resource;
+  }
+
+  async resourceList({type, status, sort, page}) {
+    const resources = await this.genericApi1('cl_web_resource_list', {type, status, sort, page});
+    return resources;
+  }
+
+  async buildUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_build_upload', {name, size, buffer});
+    this.success('build uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/builds/${res.id}`);
+    } else {
+      this.history.push(`/builds/${res.id}/edit`);
+    }
+  }
+
+  async buildGet({id}) {
+    const build = await this.genericApi1('cl_web_build_get', {id});
+    return build;
+  }
+
+  async buildUpdate(update) {
+    const build = await this.genericApi1('cl_web_build_update', update);
+    this.success('build updated');
+
+    return build;
+  }
+
+  async midiBestPerformance({id}) {
+    const bestPerformance = await this.genericApi1('cl_web_midi_best_performance', {id});
+    return bestPerformance;
+  }
+
+  async midiMostPlayed({id}) {
+    const mostPlayed = await this.genericApi1('cl_web_midi_most_played', {id});
+    return mostPlayed;
+  }
+
+  async midiRecentlyPlayed({id}) {
+    const recent = await this.genericApi1('cl_web_midi_recently_played', {id});
+    return recent;
+  }
+
+  // async midiPlayHistory({id, startDate, endDate}) {
+  //   const hist = await this.genericApi1('cl_web_midi_play_history', {id, startDate, endDate});
+  //   return hist;
+  // }
+
+  async midiPlayHistory({id, startDate, endDate, interval}) {
+    switch (interval) {
+      case '1m':
+        interval = 1 * 60 * 1000;
+        break;
+      case '2m':
+        interval = 2 * 60 * 1000;
+        break;
+      case '5m':
+        interval = 5 * 60 * 1000;
+        break;
+      case '15m':
+        interval = 15 * 60 * 1000;
+        break;
+      case '30m':
+        interval = 30 * 60 * 1000;
+        break;
+      case '1h':
+        interval = 60 * 60 * 1000;
+        break;
+      case '1d':
+        /* fall through */
+      default:
+        interval = 24 * 60 * 60 * 1000;
+    }
+    const hist = await this.genericApi1('cl_web_midi_play_history', {id, startDate: new Date(0), endDate: getCurrentDay(), interval});
+    return hist;
+  }
+
+  async albumCreate() {
+    const res = await this.genericApi0('cl_web_album_create');
+    this.success('album created');
+
+    if (res.duplicated === true) {
+      this.history.push(`/albums/${res.id}`);
+    } else {
+      this.history.push(`/albums/${res.id}/edit`);
+    }
+  }
+
+  async songCreate() {
+    const res = await this.genericApi0('cl_web_song_create');
+    this.success('song created');
+
+    if (res.duplicated === true) {
+      this.history.push(`/songs/${res.id}`);
+    } else {
+      this.history.push(`/songs/${res.id}/edit`);
+    }
+  }
+
+  async personCreate() {
+    const res = await this.genericApi0('cl_web_person_create');
+    this.success('person created');
+
+    if (res.duplicated === true) {
+      this.history.push(`/persons/${res.id}`);
+    } else {
+      this.history.push(`/persons/${res.id}/edit`);
+    }
+  }
+
+  async albumGet({id}) {
+    const album = await this.genericApi1('cl_web_album_get', {id});
+    return album;
+  }
+
+  async albumUploadCover({id, size, buffer}) {
+    const album = await this.genericApi1('cl_web_album_upload_cover', {id, size, buffer});
+    this.success('cover uploaded');
+    return album;
+  }
+
+  async albumUpdate(update) {
+    const album = await this.genericApi1('cl_web_album_update', update);
+    this.success('album updated');
+
+    return album;
+  }
+
+  async songGet({id}) {
+    const song = await this.genericApi1('cl_web_song_get', {id});
+    return song;
+  }
+
+  async songUpdate(update) {
+    const song = await this.genericApi1('cl_web_song_update', update);
+    this.success('song updated');
+
+    return song;
+  }
+
+  async personGet({id}) {
+    const person = await this.genericApi1('cl_web_person_get', {id});
+    return person;
+  }
+
+  async personUploadAvatar({id, size, buffer}) {
+    const person = await this.genericApi1('cl_web_person_upload_avatar', {id, size, buffer});
+    this.success('cover uploaded');
+    return person;
+  }
+
+  async personUpdate(update) {
+    const person = await this.genericApi1('cl_web_person_update', update);
+    this.success('person updated');
+
+    return person;
+  }
+
+  async albumList() {
+    const albums = await this.genericApi0('cl_web_album_list');
+    return albums;
+  }
+
+  async songList({albumId}) {
+    const songs = await this.genericApi1('cl_web_song_list', {albumId});
+    return songs;
+  }
+
+  async authorList() {
+    const authors = await this.genericApi0('cl_web_person_list');
+    return authors;
+  }
+
+  async translationList() {
+    return await this.genericApi1('cl_web_translation_list', {lang: this.state.lang});
+  }
+
+  async translationUpdate({src, lang, text}) {
+    return await this.genericApi1('cl_web_translation_update', {lang, src, text});
   }
 
   render() {
@@ -222,19 +492,34 @@ export default class App extends React.Component {
             <ul className="navbar-nav mr-auto">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
-              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs">songs</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit">translations</NavLink></li>
+              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources">resources</NavLink></li> */}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board">board</NavLink></li>
+              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board">board</NavLink></li> */}
             </ul>
             {!s.user ? <ul className="navbar-nav">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login">login</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
             </ul> : <ul className="navbar-nav align-items-center">
+              <li className="nav-item">
+                <select className="Bdrs(10px)" onChange={this.onLangChange} value={this.state.lang}>
+                  {langs.map((x) => <option value={x.lang} key={x.lang}>{x.name}</option>)}
+                </select>
+              </li>
               <li className="nav-item dropdown">
-                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown">upload</span>
+                <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i className="fas fa-plus"></i></span>
                 <div className="dropdown-menu dropdown-menu-right">
-                  <Link className="dropdown-item" to="/midis/upload">midi</Link>
+                  <Link className="dropdown-item" to="/midis/upload">upload midi</Link>
+                  <div className="dropdown-item Cur(p)" onClick={this.albumCreate}>create album</div>
+                  <div className="dropdown-item Cur(p)" onClick={this.songCreate}>create song</div>
+                  <div className="dropdown-item Cur(p)" onClick={this.personCreate}>create person</div>
+                  <Link className="dropdown-item" to="/soundfonts/upload">upload soundfont</Link>
+                  {/* <Link className="dropdown-item" to="/resources/upload">upload resource</Link> */}
+                  {/* <Link className="dropdown-item" to="/midis/upload">create story</Link> */}
+                  {/* <Link className="dropdown-item" to="/builds/upload">upload build</Link> */}
                   {/* <div className="dropdown-divider"></div>
                   <a className="dropdown-item" href=".">Something else here</a> */}
                 </div>
@@ -257,11 +542,32 @@ export default class App extends React.Component {
         <PropsRoute exact path="/midis/:id" component={MidiDetail} app={this} />
         <PropsRoute exact path="/midis/:id/edit" component={MidiDetailEdit} app={this} />
 
+        <PropsRoute exact path="/resources" component={ResourceListing} app={this} />
+        <PropsRoute exact path="/resources/upload" component={ResourceUpload} app={this} />
+        <PropsRoute exact path="/resources/:id/edit" component={ResourceDetailEdit} app={this} />
+
         <PropsRoute exact path="/users" component={UserListing} app={this} />
         <PropsRoute exact path="/users/:id" component={UserDetail} app={this} />
         <PropsRoute exact path="/users/:id/edit" component={UserDetailEdit} app={this} />
 
+        <PropsRoute exact path="/builds/upload" component={BuildUpload} app={this} />
+        <PropsRoute exact path="/builds/:id/edit" component={BuildDetailEdit} app={this} />
+
+        <PropsRoute exact path="/songs" component={AlbumListing} app={this} />
+        <PropsRoute exact path="/songs/:id/edit" component={SongDetailEdit} app={this} />
+
+        <PropsRoute exact path="/albums/:id/edit" component={AlbumDetailEdit} app={this} />
+
+        <PropsRoute exact path="/persons/:id/edit" component={PersonDetailEdit} app={this} />
+
         <PropsRoute exact path="/board" component={Board} app={this} />
+
+        <PropsRoute exact path="/soundfonts" component={SoundfontListing} app={this} />
+        <PropsRoute exact path="/soundfonts/upload" component={SoundfontUpload} app={this} />
+        <PropsRoute exact path="/soundfonts/:id" component={SoundfontDetail} app={this} />
+        <PropsRoute exact path="/soundfonts/:id/edit" component={SoundfontDetailEdit} app={this} />
+
+        <PropsRoute exact path="/translations/edit" component={TranslationEdit} app={this} />
 
         <PropsRoute exact path="/help" component={Help} />
         <PropsRoute exact path="/terms" component={Terms} />
