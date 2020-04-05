@@ -105,7 +105,8 @@ export default class MidiListing extends React.Component {
     this.setState({query, midis, search});
   }
 
-  search() {
+  search(e) {
+    e.preventDefault();
     const s = this.state;
     this.query.search = s.search;
     this.setState({query: this.query});
@@ -151,9 +152,11 @@ export default class MidiListing extends React.Component {
     return <div className="container">
       <section className="Bgc($gray-700) P(30px) text-light shadow">
 
-        <form onSubmit={this.search} className="form-inline row Pos(r)">
-          <input className="form-control W(80%)! Mstart(15px) Pend(50px) Pos(r)" type="text" name="search" value={s.search} onChange={this.onChange}/>
-          <span type="submit" className="Pos(a) Start(78%) text-dark"><i className="fas fa-search"></i></span>
+        <form onSubmit={this.search} className="input-group">
+          <input className="form-control" type="text" name="search" value={s.search} onChange={this.onChange}/>
+          <div class="input-group-append">
+            <button type="submit" class="btn btn-secondary"><i className="fas fa-search"></i></button>
+          </div>
         </form>
 
         <div className="row small mt-3">
