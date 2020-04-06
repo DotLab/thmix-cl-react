@@ -163,6 +163,7 @@ export default class MidiListing extends React.Component {
           <div className="col-md-2">STATUS</div>
           <div className="col-md-10">
             <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== undefined ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: undefined})}>Any</Link>
+            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'INCLUDED' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'INCLUDED'})}>Included</Link>
             <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'APPROVED' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'APPROVED'})}>Approved</Link>
             <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'PENDING' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'PENDING'})}>Pending</Link>
             <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'DEAD' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'DEAD'})}>Dead</Link>
@@ -194,7 +195,8 @@ export default class MidiListing extends React.Component {
       <section className="mt-2 mb-3 shadow border">
         <div className="py-2 px-3 border-bottom small">
           <span className="Cur(p) d-inline-block text-nowrap mr-5">SORT BY</span>
-          <SortOption query={s.query} name="approved date" sortAsc="approvedDate" sortDesc="-approvedDate" />
+          <SortOption query={s.query} name="date uploaded" sortAsc="uploadedDate" sortDesc="-uploadedDate" />
+          <SortOption query={s.query} name="date approved" sortAsc="approvedDate" sortDesc="-approvedDate" />
           <SortOption query={s.query} name="trials" sortAsc="trialCount" sortDesc="-trialCount" />
           <SortOption query={s.query} name="votes" sortAsc="upCount" sortDesc="-upCount" />
           <SortOption query={s.query} name="loves" sortAsc="loveCount" sortDesc="-loveCount" />
