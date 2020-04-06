@@ -307,7 +307,7 @@ export default class App extends React.Component {
       this.app.midiRecentlyPlayed({id: this.props.match.params.id}),
       this.app.midiPlayHistory({id: this.props.match.params.id, interval: this.state.playHistoryInterval}),
     ]);
-    console.log(res);
+
     this.setState({
       ...res[0],
       bestPerformance: res[1],
