@@ -55,7 +55,7 @@ const FirstRank = (p) => (<div className="rounded border shadow-sm px-3">
 const RankRow = (p) => (<tr className="Bgc($gray-200) Bgc($gray-300):h mb-1">
   <td className="px-2 py-1 rounded-left font-weight-bold">#{p.i + 1}</td>
   <td className="px-2 py-1"><span className="badge badge-primary badge-pill">A+</span></td>
-  <td className="px-2 py-1 text-left"><img className="H(1em) rounded" src={DefaultAvatar} alt="avatar"/> <Link className="text-dark" to={'/users/' + p.userId}>{p.userName}</Link></td>
+  <td className="px-2 py-1 text-left"><img className="H(1em) rounded" src={p.userAvatarUrl || DefaultAvatar} alt="avatar"/> <Link className="text-dark" to={'/users/' + p.userId}>{p.userName}</Link></td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.score)}</td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.combo)}x</td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.accuracy * 100)}%</td>
