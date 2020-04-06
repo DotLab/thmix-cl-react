@@ -31,6 +31,8 @@ import PersonDetailEdit from './components/PersonDetailEdit';
 
 import Board from './components/Board';
 
+import TranslationEdit from './components/TranslationEdit';
+
 import Help from './components/posts/Help';
 import Terms from './components/posts/Terms';
 import Privacy from './components/posts/Privacy';
@@ -39,6 +41,10 @@ import Copyright from './components/posts/Copyright';
 import DefaultAvatar from './components/DefaultAvatar.jpg';
 
 import {TEST_EMAIL, TEST_PASSWORD} from './secrets';
+
+import {getCurrentDay} from './utils';
+
+import langs from './json/langs.json';
 
 // const debug = require('debug')('thmix:App');
 
@@ -54,12 +60,14 @@ export default class App extends React.Component {
     this.history = props.history;
     this.socket = props.socket;
     this.isDevelopment = props.env === DEVELOPMENT;
+    this.onLangChange = this.onLangChange.bind(this);
 
     this.state = {
       isHandshakeSuccessful: false,
       user: null,
       error: null,
       success: null,
+      lang: 'en',
     };
 
     this.socket.on('disconnect', this.onDisconnect.bind(this));
@@ -69,6 +77,11 @@ export default class App extends React.Component {
     this.albumCreate = this.albumCreate.bind(this);
     this.songCreate = this.songCreate.bind(this);
     this.personCreate = this.personCreate.bind(this);
+  }
+
+  onLangChange(e) {
+    const lang = e.target.value;
+    this.setState({lang});
   }
 
   error(message) {
@@ -307,6 +320,55 @@ export default class App extends React.Component {
     return build;
   }
 
+  async midiBestPerformance({id}) {
+    const bestPerformance = await this.genericApi1('cl_web_midi_best_performance', {id});
+    return bestPerformance;
+  }
+
+  async midiMostPlayed({id}) {
+    const mostPlayed = await this.genericApi1('cl_web_midi_most_played', {id});
+    return mostPlayed;
+  }
+
+  async midiRecentlyPlayed({id}) {
+    const recent = await this.genericApi1('cl_web_midi_recently_played', {id});
+    return recent;
+  }
+
+  // async midiPlayHistory({id, startDate, endDate}) {
+  //   const hist = await this.genericApi1('cl_web_midi_play_history', {id, startDate, endDate});
+  //   return hist;
+  // }
+
+  async midiPlayHistory({id, startDate, endDate, interval}) {
+    switch (interval) {
+      case '1m':
+        interval = 1 * 60 * 1000;
+        break;
+      case '2m':
+        interval = 2 * 60 * 1000;
+        break;
+      case '5m':
+        interval = 5 * 60 * 1000;
+        break;
+      case '15m':
+        interval = 15 * 60 * 1000;
+        break;
+      case '30m':
+        interval = 30 * 60 * 1000;
+        break;
+      case '1h':
+        interval = 60 * 60 * 1000;
+        break;
+      case '1d':
+        /* fall through */
+      default:
+        interval = 24 * 60 * 60 * 1000;
+    }
+    const hist = await this.genericApi1('cl_web_midi_play_history', {id, startDate: new Date(0), endDate: getCurrentDay(), interval});
+    return hist;
+  }
+
   async albumCreate() {
     const res = await this.genericApi0('cl_web_album_create');
     this.success('album created');
@@ -403,6 +465,14 @@ export default class App extends React.Component {
     return authors;
   }
 
+  async translationList() {
+    return await this.genericApi1('cl_web_translation_list', {lang: this.state.lang});
+  }
+
+  async translationUpdate({src, lang, text}) {
+    return await this.genericApi1('cl_web_translation_update', {lang, src, text});
+  }
+
   render() {
     const s = this.state;
 
@@ -422,29 +492,34 @@ export default class App extends React.Component {
             <ul className="navbar-nav mr-auto">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources">resources</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs">songs</NavLink></li>
-              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit">translations</NavLink></li>
+              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources">resources</NavLink></li> */}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board">board</NavLink></li>
+              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board">board</NavLink></li> */}
             </ul>
             {!s.user ? <ul className="navbar-nav">
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login">login</NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
             </ul> : <ul className="navbar-nav align-items-center">
+              <li className="nav-item">
+                <select className="Bdrs(10px)" onChange={this.onLangChange} value={this.state.lang}>
+                  {langs.map((x) => <option value={x.lang} key={x.lang}>{x.name}</option>)}
+                </select>
+              </li>
               <li className="nav-item dropdown">
                 <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i className="fas fa-plus"></i></span>
                 <div className="dropdown-menu dropdown-menu-right">
-                  <Link className="dropdown-item" to="/midis/upload">Upload midi</Link>
-                  <Link className="dropdown-item" to="/soundfonts/upload">soundfont</Link>
-                  <Link className="dropdown-item" to="/resources/upload">Upload resource</Link>
-                  <Link className="dropdown-item" to="/midis/upload">Create story</Link>
-                  <Link className="dropdown-item" to="/builds/upload">Upload build</Link>
-                  <div className="dropdown-item Cur(p)" onClick={this.albumCreate}>Create album</div>
-                  <div className="dropdown-item Cur(p)" onClick={this.songCreate}>Create song</div>
-                  <div className="dropdown-item Cur(p)" onClick={this.personCreate}>Create person</div>
+                  <Link className="dropdown-item" to="/midis/upload">upload midi</Link>
+                  <div className="dropdown-item Cur(p)" onClick={this.albumCreate}>create album</div>
+                  <div className="dropdown-item Cur(p)" onClick={this.songCreate}>create song</div>
+                  <div className="dropdown-item Cur(p)" onClick={this.personCreate}>create person</div>
+                  <Link className="dropdown-item" to="/soundfonts/upload">upload soundfont</Link>
+                  {/* <Link className="dropdown-item" to="/resources/upload">upload resource</Link> */}
+                  {/* <Link className="dropdown-item" to="/midis/upload">create story</Link> */}
+                  {/* <Link className="dropdown-item" to="/builds/upload">upload build</Link> */}
                   {/* <div className="dropdown-divider"></div>
                   <a className="dropdown-item" href=".">Something else here</a> */}
                 </div>
@@ -491,6 +566,8 @@ export default class App extends React.Component {
         <PropsRoute exact path="/soundfonts/upload" component={SoundfontUpload} app={this} />
         <PropsRoute exact path="/soundfonts/:id" component={SoundfontDetail} app={this} />
         <PropsRoute exact path="/soundfonts/:id/edit" component={SoundfontDetailEdit} app={this} />
+
+        <PropsRoute exact path="/translations/edit" component={TranslationEdit} app={this} />
 
         <PropsRoute exact path="/help" component={Help} />
         <PropsRoute exact path="/terms" component={Terms} />
