@@ -90,7 +90,7 @@ export default class App extends React.Component {
 
   success(message) {
     this.setState({error: null, success: message});
-    setTimeout(() => this.setState({success: null}), 1500);
+    setTimeout(() => this.setState({success: null}), 3000);
   }
 
   onDisconnect() {
@@ -99,7 +99,12 @@ export default class App extends React.Component {
       user: null,
     });
 
-    this.error('disconnected');
+    if (this.history.location.pathname === '/register') {
+      this.error('disconnected, register failed');
+      this.history.push('/');
+    } else {
+      this.error('disconnected');
+    }
   }
 
   async onReconnect() {
@@ -132,9 +137,25 @@ export default class App extends React.Component {
     await this.genericApi1('cl_handshake', {version: VERSION, intent: INTENT});
     this.setState({isHandshakeSuccessful: true});
 
-    if (this.isDevelopment) {
-      await this.userLogin({recaptcha: '', email: TEST_EMAIL, password: TEST_PASSWORD});
+    const sessionTokenHash = localStorage.getItem('sessionTokenHash');
+    if (sessionTokenHash) {
+      this.resumeSession(sessionTokenHash);
+    } else {
+      if (this.isDevelopment) {
+        await this.userLogin({recaptcha: '', email: TEST_EMAIL, password: TEST_PASSWORD});
+      }
     }
+  }
+
+  async resumeSession(hash) {
+    const user = await this.genericApi1('cl_web_user_resume_session', {hash});
+    this.setState({user});
+    this.success('session resumed');
+  }
+
+  clearSession() {
+    localStorage.removeItem('sessionTokenHash');
+    this.success('auto login cleared');
   }
 
   async userRegisterPre({recaptcha, name, email}) {
@@ -149,10 +170,8 @@ export default class App extends React.Component {
   async userLogin({recaptcha, email, password}) {
     const user = await this.genericApi1('cl_web_user_login', {recaptcha, email, password});
     this.setState({user});
-
-    if (!this.isDevelopment) {
-      this.history.replace('/');
-    }
+    localStorage.setItem('sessionTokenHash', user.sessionTokenHash);
+    this.history.replace('/');
   }
 
   async userGet({id}) {

@@ -257,9 +257,11 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
 
+    /** @type {import('../App').default} */
     this.app = props.app;
 
     this.startEdit = this.startEdit.bind(this);
+    this.clearSession = this.clearSession.bind(this);
     this.onPlayHistoryIntervalChange = this.onPlayHistoryIntervalChange.bind(this);
 
     this.state = {
@@ -332,6 +334,10 @@ export default class App extends React.Component {
     this.app.history.push(`/users/${this.app.state.user.id}/edit`);
   }
 
+  clearSession() {
+    this.app.clearSession();
+  }
+
   render() {
     const s = this.state;
     const isSelf = this.app.state.user && s.id === this.app.state.user.id;
@@ -340,7 +346,10 @@ export default class App extends React.Component {
       <section className="Bgc($gray-600) Pt(60px) Pb(20px) px-5 container text-light ">
         <h2 className="m-0 font-weight-normal">
           Player <span className="C(springgreen)">Info</span>
-          {isSelf && <span className="C($gray-100) float-right" onClick={this.startEdit}><button className="btn btn-dark"><i className="fas fa-pencil-alt"></i></button></span>}
+          {isSelf && <div className="float-right">
+            <span className="C($gray-100) mr-2" onClick={this.startEdit}><button className="btn btn-dark"><i className="fas fa-pencil-alt"></i></button></span>
+            <span className="C($gray-100)" onClick={this.clearSession}><button className="btn btn-dark"><i className="fas fa-eraser"></i></button></span>
+          </div>}
         </h2>
       </section>
       {/* intro */}
@@ -352,6 +361,7 @@ export default class App extends React.Component {
               <h3 className="h4 mb-1">{s.name}</h3>
               <div>Joined <strong>{formatDate(s.joinedDate)}</strong></div>
               <div>Last seen <strong>{formatTimeSpan(getTimeSpanBetween(new Date(), s.seenDate))} ago</strong></div>
+              <div>Online <strong>{formatTimeSpan(getTimeSpan(s.onlineTime))}</strong></div>
             </div>
           </div>
           <div className="col-md-4">
