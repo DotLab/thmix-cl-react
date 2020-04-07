@@ -512,16 +512,16 @@ export default class App extends React.Component {
               <li className="nav-item dropdown">
                 <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i className="fas fa-plus"></i></span>
                 <div className="dropdown-menu dropdown-menu-right">
-                  <Link className="dropdown-item" to="/midis/upload">upload midi</Link>
-                  <div className="dropdown-item Cur(p)" onClick={this.albumCreate}>create album</div>
-                  <div className="dropdown-item Cur(p)" onClick={this.songCreate}>create song</div>
-                  <div className="dropdown-item Cur(p)" onClick={this.personCreate}>create person</div>
-                  <Link className="dropdown-item" to="/soundfonts/upload">upload soundfont</Link>
+                  <Link className="dropdown-item" to="/midis/upload"><i className="fa-fw fas fa-upload"></i> upload midi</Link>
+                  <Link className="dropdown-item" to="/soundfonts/upload"><i className="fa-fw fas fa-upload"></i> upload soundfont</Link>
+                  <Link className="dropdown-item" to="/builds/upload"><i className="fa-fw fas fa-upload"></i> upload build</Link>
+                  <div className="dropdown-divider"></div>
+                  <div className="dropdown-item Cur(p)" onClick={this.albumCreate}><i className="fa-fw fas fa-plus-square"></i> create album</div>
+                  <div className="dropdown-item Cur(p)" onClick={this.songCreate}><i className="fa-fw fas fa-plus-square"></i> create song</div>
+                  <div className="dropdown-item Cur(p)" onClick={this.personCreate}><i className="fa-fw fas fa-plus-square"></i> create person</div>
                   {/* <Link className="dropdown-item" to="/resources/upload">upload resource</Link> */}
                   {/* <Link className="dropdown-item" to="/midis/upload">create story</Link> */}
-                  {/* <Link className="dropdown-item" to="/builds/upload">upload build</Link> */}
-                  {/* <div className="dropdown-divider"></div>
-                  <a className="dropdown-item" href=".">Something else here</a> */}
+                  {/* <a className="dropdown-item" href=".">Something else here</a> */}
                 </div>
               </li>
               <li className="nav-item">
