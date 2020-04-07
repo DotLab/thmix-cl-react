@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-// import ReCAPTCHA from 'react-google-recaptcha';
+import ReCAPTCHA from 'react-google-recaptcha';
+import {RECAPTCHA_KEY, TEST_RECAPTCHA_KEY} from '../secrets';
 
 import {formatNumber, formatDate, touhouAlbum} from '../utils';
 
@@ -308,23 +309,23 @@ export default class MidiDetail extends React.Component {
           No scores yet. Maybe you should try setting some?
         </div>}
         {/* comments */}
-        {/* <div className="container bg-white shadow"> */}
-        {/* input */}
-        {/* <div className="Cf Maw(1000px) mx-auto py-3">
+        <div className="container bg-white shadow">
+          {/* input */}
+          <div className="Cf Maw(1000px) mx-auto py-3">
             <h2 className="C($pink) h5 m-0">Comments <span className="badge badge-secondary badge-pill">3</span></h2>
             <div className="mt-2">
               <div className="W(10%) float-left pr-3">
                 <img className="W(100%) rounded-circle shadow-sm" src={DefaultAvatar} alt=""/>
               </div>
               <form className="W(90%) D(ib)">
-                <textarea className="form-control" type="text" />
-                <ReCAPTCHA className="mt-2 float-left" sitekey="6LfMg5YUAAAAAAJr_ANH5TVvhoSHsJEa6oGSHw6f" name="hi" onChange={this.onRecaptchaChange}/>
+                <textarea className="form-control" />
+                <ReCAPTCHA className="mt-2 float-left" sitekey={this.app.isDevelopment ? TEST_RECAPTCHA_KEY : RECAPTCHA_KEY} onChange={this.onRecaptchaChange}/>
                 <button className="btn btn-primary mt-2 ml-2" type="submit">Post</button>
               </form>
             </div>
           </div>
-        </div> */}
-        {s.comments.length && <div className="Bgc($gray-200) container">
+        </div>
+        {!s.comments.length && <div className="Bgc($gray-200) container">
           <div className="">
             <Reply />
             <Reply />
