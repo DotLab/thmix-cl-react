@@ -354,12 +354,7 @@ export default class App extends React.Component {
     return recent;
   }
 
-  // async midiPlayHistory({id, startDate, endDate}) {
-  //   const hist = await this.genericApi1('cl_web_midi_play_history', {id, startDate, endDate});
-  //   return hist;
-  // }
-
-  async midiPlayHistory({id, startDate, endDate, interval}) {
+  async midiPlayHistory({id, interval}) {
     switch (interval) {
       case '1m':
         interval = 1 * 60 * 1000;
