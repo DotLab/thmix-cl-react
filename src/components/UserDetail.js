@@ -5,7 +5,7 @@ import {GradeBadge} from './gradeBadges';
 
 import {formatDate, formatNumber, getTimeSpan, getTimeSpanBetween, formatTimeSpan, formatDateTime} from '../utils';
 
-const Rank = (s) => (<div className="Bgc($gray-800) Bgc($gray-700):h rounded Lh(1.15) mt-1 D(f) Ai(c)">
+const Rank = (s) => (<div className="Bgc($gray-800) Bgc($gray-700):h rounded Lh(1.15) mt-1 D(f) Flw(w) Ai(c)">
   {s.midi.coverUrl && <img className="d-block rounded-left H(50px)" src={s.midi.coverUrl} alt=""/>}
   <span className="d-inline-block ml-2"><GradeBadge gradeLevel={s.gradeLevel} grade={s.grade}/></span>
   <div className="d-block my-2 ml-2">
