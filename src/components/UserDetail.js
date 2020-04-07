@@ -390,27 +390,27 @@ export default class App extends React.Component {
           </span>
 
           <span className="d-inline-block ml-2 ml-lg-5 text-center">
-            <div className="font-weight-bold"><GradeBadge gradeLevel="S"/></div>
+            <div className="font-weight-bold"><GradeBadge gradeLevel="S" grade="S"/></div>
             <div className="Lh(1)">{formatNumber(s.sCount)}</div>
           </span>
           <span className="d-inline-block ml-2 text-center">
-            <div className="font-weight-bold"><GradeBadge gradeLevel="A"/></div>
+            <div className="font-weight-bold"><GradeBadge gradeLevel="A" grade="A"/></div>
             <div className="Lh(1)">{formatNumber(s.aCount)}</div>
           </span>
           <span className="d-inline-block ml-2 text-center">
-            <div className="font-weight-bold"><GradeBadge gradeLevel="B"/></div>
+            <div className="font-weight-bold"><GradeBadge gradeLevel="B" grade="B"/></div>
             <div className="Lh(1)">{formatNumber(s.bCount)}</div>
           </span>
           <span className="d-inline-block ml-2 text-center">
-            <div className="font-weight-bold"><GradeBadge gradeLevel="C"/></div>
+            <div className="font-weight-bold"><GradeBadge gradeLevel="C" grade="C"/></div>
             <div className="Lh(1)">{formatNumber(s.cCount)}</div>
           </span>
           <span className="d-inline-block ml-2 text-center">
-            <div className="font-weight-bold"><GradeBadge gradeLevel="D"/></div>
+            <div className="font-weight-bold"><GradeBadge gradeLevel="D" grade="D"/></div>
             <div className="Lh(1)">{formatNumber(s.dCount)}</div>
           </span>
           <span className="d-inline-block ml-2 text-center">
-            <div className="font-weight-bold"><GradeBadge gradeLevel="F"/></div>
+            <div className="font-weight-bold"><GradeBadge gradeLevel="F" grade="F"/></div>
             <div className="Lh(1)">{formatNumber(s.fCount)}</div>
           </span>
         </div>

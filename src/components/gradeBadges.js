@@ -9,11 +9,11 @@ export const GradeBadgeF = ({grade}) => <span className="badge badge-dark badge-
 
 export const GradeBadge = ({gradeLevel, grade}) => {
   switch (gradeLevel) {
-    case 'S': return <GradeBadgeS grade={grade || gradeLevel}/>;
-    case 'A': return <GradeBadgeA grade={grade || gradeLevel}/>;
-    case 'B': return <GradeBadgeB grade={grade || gradeLevel}/>;
-    case 'C': return <GradeBadgeC grade={grade || gradeLevel}/>;
-    case 'D': return <GradeBadgeD grade={grade || gradeLevel}/>;
-    default: return <GradeBadgeF grade={grade || gradeLevel}/>;
+    case 'S': return <GradeBadgeS grade={grade}/>;
+    case 'A': return <GradeBadgeA grade={grade}/>;
+    case 'B': return <GradeBadgeB grade={grade}/>;
+    case 'C': return <GradeBadgeC grade={grade}/>;
+    case 'D': return <GradeBadgeD grade={grade}/>;
+    default: return <GradeBadgeF grade={grade}/>;
   }
 };
