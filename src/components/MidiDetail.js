@@ -28,11 +28,11 @@ const FirstRank = (p) => (<div className="rounded border shadow-sm px-3">
   </div>
   <div className="D(ib) mx-2 my-2 align-middle">
     <div className="Fz(.75em) font-weight-bold border-bottom">ACCURACY</div>
-    <div className="Fz(1.25em)">{formatNumber(p.accuracy * 100)}%</div>
+    <div className="Fz(1.25em)">{formatNumber(p.accuracy * 100, 2)}%</div>
   </div>
   <div className="D(ib) mx-2 my-2 align-middle">
     <div className="Fz(.75em) font-weight-bold border-bottom">PERF</div>
-    <div className="Fz(1.25em)">{formatNumber(Math.log(p.score).toFixed())}</div>
+    <div className="Fz(1.25em)">{formatNumber(p.performance, 0)}</div>
   </div>
   <div className="D(ib) mx-2 my-2 align-middle">
     <div className="Fz(.75em) font-weight-bold border-bottom">PERFECT</div>
@@ -54,12 +54,12 @@ const FirstRank = (p) => (<div className="rounded border shadow-sm px-3">
 
 const RankRow = (p) => (<tr className="Bgc($gray-200) Bgc($gray-300):h mb-1">
   <td className="px-2 py-1 rounded-left font-weight-bold">#{p.i + 1}</td>
-  <td className="px-2 py-1"><span className="badge badge-primary badge-pill">A+</span></td>
+  <td className="px-2 py-1"><span className="badge badge-primary badge-pill">{p.grade}</span></td>
   <td className="px-2 py-1 text-left"><img className="H(1em) rounded" src={p.userAvatarUrl || DefaultAvatar} alt="avatar"/> <Link className="text-dark" to={'/users/' + p.userId}>{p.userName}</Link></td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.score)}</td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.combo)}x</td>
-  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.accuracy * 100)}%</td>
-  <td className="px-2 py-1">{formatNumber(Math.log(p.score).toFixed())}</td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.accuracy * 100, 2)}%</td>
+  <td className="px-2 py-1">{formatNumber(p.performance)}</td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.perfectCount)}</td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.greatCount)}</td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.goodCount)}</td>
@@ -195,7 +195,7 @@ export default class MidiDetail extends React.Component {
         <div className="Bgp(c) Bgz(cv) text-light row shadow px-md-4" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .6)), url(${s.coverBlurUrl})`}}>
           <div className="col-md-8">
             <div className="py-2 py-md-4">
-              <div><i className="fa-fw fas fa-play"></i> {formatNumber(s.trialCount)} <i className="fa-fw fas fa-chevron-up"></i> {formatNumber(s.upCount - s.downCount)} <i className="fa-fw fas fa-heart"></i> {formatNumber(s.loveCount)}</div>
+              <div className="Fz(20px)"><i className="fa-fw fas fa-play"></i> {formatNumber(s.trialCount)} <i className="fa-fw fas fa-chevron-up"></i> {formatNumber(s.upCount - s.downCount)} <i className="fa-fw fas fa-heart"></i> {formatNumber(s.loveCount)}</div>
               <div className="Lh(1.15) font-italic">
                 <div className="D(f) Ai(c) mt-4">
                   <h2 className="h4 m-0 D(ib)">{s.name}</h2>
@@ -222,14 +222,15 @@ export default class MidiDetail extends React.Component {
             </div>
             <div className="mt-4 ml-md-auto px-3 py-2" style={{backgroundColor: '#00000060'}}>
               {/* <div><i className="fa-fw fas fa-star"></i> 4.8</div> */}
-              <div><i className="fa-fw fas fa-sun"></i> {formatNumber(s.avgScore)}</div>
-              <div><i className="fa-fw fas fa-link"></i> {formatNumber(s.avgCombo)}x</div>
-              <div><i className="fa-fw fas fa-bullseye"></i> {formatNumber(s.avgAccuracy * 100)}%</div>
+              <div><i className="fa-fw fas fa-sun"></i> {formatNumber(s.avgScore, 0)}</div>
+              <div><i className="fa-fw fas fa-link"></i> {formatNumber(s.avgCombo, 0)}x</div>
+              <div><i className="fa-fw fas fa-bullseye"></i> {formatNumber(s.avgAccuracy * 100, 2)}%</div>
             </div>
             <div className="Mt(2px) ml-md-auto px-3 py-2" style={{backgroundColor: '#00000060'}}>
               <div className="text-center">User Rating</div>
               <div>
-                <i className="fa-fw fas fa-angle-up"></i> {formatNumber(s.upCount)} <span className="float-right"><i className="fa-fw fas fa-angle-down"></i> {formatNumber(s.downCount)}</span>
+                <i className="fa-fw fas fa-angle-up"></i> {formatNumber(s.upCount)} ({formatNumber(s.upCount / s.voteCount * 100, 2)}%)
+                <span className="float-right"><i className="fa-fw fas fa-angle-down"></i> {formatNumber(s.downCount)}  ({formatNumber(s.downCount / s.voteCount * 100, 2)}%)</span>
               </div>
             </div>
           </div>
@@ -255,18 +256,20 @@ export default class MidiDetail extends React.Component {
           </div>
           <div className="col-md-4">
             {/* right */}
-            <div className="Bgc(white) ml-md-auto mt-md-3 px-3 py-2 shadow-sm">
+            <div className="ml-md-auto mt-md-3 px-3 py-2 shadow-sm" style={{backgroundColor: '#ffffff80'}}>
               <div className="text-center mt-2">Pass Rate</div>
               <div>
-                <i className="fa-fw fas fa-check"></i> {formatNumber(s.passCount)} <div className="float-right"><i className="fa-fw fas fa-times"></i> {formatNumber(s.failCount)}</div>
+                <i className="fa-fw fas fa-check"></i> {formatNumber(s.passCount)}  ({formatNumber(s.passCount / s.trialCount * 100, 2)}%)
+                <div className="float-right"><i className="fa-fw fas fa-times"></i> {formatNumber(s.failCount)}  ({formatNumber(s.failCount / s.trialCount * 100, 2)}%)</div>
               </div>
-              <div className="text-center mt-2">Grade Cutoff</div>
+              <div className="text-center mt-2">Grade Status</div>
               <div>
-                <div><span className="font-weight-bold">S </span><span className="float-right">{formatNumber(s.sCutoff)}</span></div>
-                <div><span className="font-weight-bold">A-</span><span className="float-right">{formatNumber(s.aCutoff)}</span></div>
-                <div><span className="font-weight-bold">B-</span><span className="float-right">{formatNumber(s.bCutoff)}</span></div>
-                <div><span className="font-weight-bold">C-</span><span className="float-right">{formatNumber(s.cCutoff)}</span></div>
-                <div><span className="font-weight-bold">D-</span><span className="float-right">{formatNumber(s.dCutoff)}</span></div>
+                <div><span className="font-weight-bold">S</span><span className="float-right">{formatNumber(s.sCount)} ({formatNumber(s.sCount / s.trialCount * 100, 2)}%)</span></div>
+                <div><span className="font-weight-bold">A</span><span className="float-right">{formatNumber(s.aCount)} ({formatNumber(s.aCount / s.trialCount * 100, 2)}%)</span></div>
+                <div><span className="font-weight-bold">B</span><span className="float-right">{formatNumber(s.bCount)} ({formatNumber(s.bCount / s.trialCount * 100, 2)}%)</span></div>
+                <div><span className="font-weight-bold">C</span><span className="float-right">{formatNumber(s.cCount)} ({formatNumber(s.cCount / s.trialCount * 100, 2)}%)</span></div>
+                <div><span className="font-weight-bold">D</span><span className="float-right">{formatNumber(s.dCount)} ({formatNumber(s.dCount / s.trialCount * 100, 2)}%)</span></div>
+                <div><span className="font-weight-bold">F</span><span className="float-right">{formatNumber(s.fCount)} ({formatNumber(s.fCount / s.trialCount * 100, 2)}%)</span></div>
               </div>
             </div>
           </div>

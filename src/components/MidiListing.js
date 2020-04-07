@@ -10,7 +10,7 @@ const Card = (s) => (<div className="col-md-6 mb-2 px-1">
   <div className="H(190px) bg-light rounded shadow-sm border">
     <div className="H(120px) Bgp(c) Bgz(cv) rounded-top text-light p-2" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .5)), url(${s.coverUrl})`}}>
       <div className="position-relative w-100 h-100">
-        <div className="T(0) Start(0) position-absolute small"><span className="badge badge-lg badge-pill badge-dark p-2 shadow">{s.status}</span></div>
+        <div className="T(0) Start(0) position-absolute small"><span className="badge badge-lg badge-pill badge-dark p-2 shadow" style={{backgroundColor: '#00000080'}}>{s.status}</span></div>
         <div className="T(0) End(0) Lh(1.15) position-absolute text-right">
           <em>{formatNumber(s.trialCount)}</em> <i className="small fa-fw fas fa-play"></i><br/>
           <em>{formatNumber(s.voteSum)}</em> <i className="small fa-fw fas fa-chevron-up"></i><br/>
