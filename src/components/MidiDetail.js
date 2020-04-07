@@ -49,6 +49,10 @@ const FirstRank = (p) => (<div className="rounded border shadow-sm px-3">
     <div className="Fz(1em)">{formatNumber(p.goodCount)}</div>
   </div>
   <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">BAD</div>
+    <div className="Fz(1em)">{formatNumber(p.badCount)}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
     <div className="Fz(.75em) font-weight-bold border-bottom">MISS</div>
     <div className="Fz(1em)">{formatNumber(p.missCount)}</div>
   </div>
@@ -57,7 +61,7 @@ const FirstRank = (p) => (<div className="rounded border shadow-sm px-3">
 const RankRow = (p) => (<tr className="Bgc($gray-200) Bgc($gray-300):h mb-1">
   <td className="px-2 py-1 rounded-left font-weight-bold">#{p.i}</td>
   <td className="px-2 py-1"><GradeBadge gradeLevel={p.gradeLevel} grade={p.grade}/></td>
-  <td className="px-2 py-1 text-left"><img className="H(1em) rounded" src={p.userAvatarUrl || DefaultAvatar} alt="avatar"/> <Link className="text-dark" to={'/users/' + p.userId}>{p.userName}</Link></td>
+  <td className="px-2 py-1 text-left"><img className="H(20px) rounded" src={p.userAvatarUrl || DefaultAvatar} alt="avatar"/> <Link className="text-dark" to={'/users/' + p.userId}>{p.userName}</Link></td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.score)}</td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.combo)}x</td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.accuracy * 100, 2)}%</td>
@@ -65,6 +69,7 @@ const RankRow = (p) => (<tr className="Bgc($gray-200) Bgc($gray-300):h mb-1">
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.perfectCount)}</td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.greatCount)}</td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.goodCount)}</td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.badCount)}</td>
   <td className="px-2 py-1 C($gray-600) rounded-right">{formatNumber(p.missCount)}</td>
 </tr>);
 
@@ -298,6 +303,7 @@ export default class MidiDetail extends React.Component {
                   <td className="px-2 py-1 text-muted">perfect</td>
                   <td className="px-2 py-1 text-muted">great</td>
                   <td className="px-2 py-1 text-muted">good</td>
+                  <td className="px-2 py-1 text-muted">bad</td>
                   <td className="px-2 py-1 text-muted">miss</td>
                 </tr>
               </thead>
