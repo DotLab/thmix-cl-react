@@ -2,6 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 import {RECAPTCHA_KEY, TEST_RECAPTCHA_KEY} from '../secrets';
+import {GradeBadge} from './gradeBadges';
 
 import {formatNumber, formatDate, touhouAlbum} from '../utils';
 
@@ -9,8 +10,8 @@ import DefaultAvatar from './DefaultAvatar.jpg';
 
 const FirstRank = (p) => (<div className="rounded border shadow-sm px-3">
   <div className="D(ib) Lh(1) text-center align-middle">
-    <div className="Fz(1.2em) font-weight-bold m-0">#1</div>
-    <div className="badge badge-success badge-pill mt-1">A+</div>
+    <div className="Fz(1.2em) font-weight-bold m-0">#0</div>
+    <div className="mt-1"><GradeBadge gradeLevel={p.gradeLevel} grade={p.grade}/></div>
   </div>
   <div className="D(ib) ml-3">
     <img className="H(80px) my-2 rounded shadow-sm" src={p.userAvatarUrl || DefaultAvatar} alt=""/>
@@ -54,8 +55,8 @@ const FirstRank = (p) => (<div className="rounded border shadow-sm px-3">
 </div>);
 
 const RankRow = (p) => (<tr className="Bgc($gray-200) Bgc($gray-300):h mb-1">
-  <td className="px-2 py-1 rounded-left font-weight-bold">#{p.i + 1}</td>
-  <td className="px-2 py-1"><span className="badge badge-primary badge-pill">{p.grade}</span></td>
+  <td className="px-2 py-1 rounded-left font-weight-bold">#{p.i}</td>
+  <td className="px-2 py-1"><GradeBadge gradeLevel={p.gradeLevel} grade={p.grade}/></td>
   <td className="px-2 py-1 text-left"><img className="H(1em) rounded" src={p.userAvatarUrl || DefaultAvatar} alt="avatar"/> <Link className="text-dark" to={'/users/' + p.userId}>{p.userName}</Link></td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.score)}</td>
   <td className="px-2 py-1 C($gray-600)">{formatNumber(p.combo)}x</td>

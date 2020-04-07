@@ -1,12 +1,13 @@
 import React from 'react';
 import DefaultAvatar from './DefaultAvatar.jpg';
 import ReactEcharts from 'echarts-for-react';
+import {GradeBadge} from './gradeBadges';
 
 import {formatDate, formatNumber, getTimeSpan, getTimeSpanBetween, formatTimeSpan, formatDateTime} from '../utils';
 
 const Rank = (s) => (<div className="Bgc($gray-800) Bgc($gray-700):h rounded Lh(1.15) mt-1 D(f) Ai(c)">
   {s.midi.coverUrl && <img className="d-block rounded-left H(50px)" src={s.midi.coverUrl} alt=""/>}
-  <span className="d-inline-block badge badge-warning badge-pill Ta(c) ml-2">{s.grade}</span>
+  <span className="d-inline-block ml-2"><GradeBadge gradeLevel={s.gradeLevel} grade={s.grade}/></span>
   <div className="d-block my-2 ml-2">
     <div className="font-italic">{s.midi.sourceSongName || s.midi.name} <small>by {s.midi.artistName}</small></div>
     <div className="text-warning small">{s.midi.sourceAlbumName} <span className="C($gray-500)">{formatDateTime(s.date)}</span></div>
@@ -389,27 +390,27 @@ export default class App extends React.Component {
           </span>
 
           <span className="d-inline-block ml-2 ml-lg-5 text-center">
-            <div className="font-weight-bold"><span className="Fz(.8em) Bgc($purple)! badge badge-pill">S</span></div>
+            <div className="font-weight-bold"><GradeBadge gradeLevel="S"/></div>
             <div className="Lh(1)">{formatNumber(s.sCount)}</div>
           </span>
           <span className="d-inline-block ml-2 text-center">
-            <div className="font-weight-bold"><span className="Fz(.8em) badge badge-warning badge-pill">A</span></div>
+            <div className="font-weight-bold"><GradeBadge gradeLevel="A"/></div>
             <div className="Lh(1)">{formatNumber(s.aCount)}</div>
           </span>
           <span className="d-inline-block ml-2 text-center">
-            <div className="font-weight-bold"><span className="Fz(.8em) badge badge-light badge-pill">B</span></div>
+            <div className="font-weight-bold"><GradeBadge gradeLevel="B"/></div>
             <div className="Lh(1)">{formatNumber(s.bCount)}</div>
           </span>
           <span className="d-inline-block ml-2 text-center">
-            <div className="font-weight-bold"><span className="Fz(.8em) badge badge-info badge-pill">C</span></div>
+            <div className="font-weight-bold"><GradeBadge gradeLevel="C"/></div>
             <div className="Lh(1)">{formatNumber(s.cCount)}</div>
           </span>
           <span className="d-inline-block ml-2 text-center">
-            <div className="font-weight-bold"><span className="Fz(.8em) badge badge-danger badge-pill">D</span></div>
+            <div className="font-weight-bold"><GradeBadge gradeLevel="D"/></div>
             <div className="Lh(1)">{formatNumber(s.dCount)}</div>
           </span>
           <span className="d-inline-block ml-2 text-center">
-            <div className="font-weight-bold"><span className="Fz(.8em) badge badge-dark badge-pill">F</span></div>
+            <div className="font-weight-bold"><GradeBadge gradeLevel="F"/></div>
             <div className="Lh(1)">{formatNumber(s.fCount)}</div>
           </span>
         </div>
