@@ -6,7 +6,7 @@ import {formatDate, formatNumber, getTimeSpan, getTimeSpanBetween, formatTimeSpa
 
 const Rank = (s) => (<div className="Bgc($gray-800) Bgc($gray-700):h rounded Lh(1.15) mt-1 D(f) Ai(c)">
   {s.midi.coverUrl && <img className="d-block rounded-left H(50px)" src={s.midi.coverUrl} alt=""/>}
-  <span className="d-inline-block badge badge-warning badge-pill Ta(c) ml-2">A+</span>
+  <span className="d-inline-block badge badge-warning badge-pill Ta(c) ml-2">{s.grade}</span>
   <div className="d-block my-2 ml-2">
     <div className="font-italic">{s.midi.sourceSongName || s.midi.name} <small>by {s.midi.artistName}</small></div>
     <div className="text-warning small">{s.midi.sourceAlbumName} <span className="C($gray-500)">{formatDateTime(s.date)}</span></div>
