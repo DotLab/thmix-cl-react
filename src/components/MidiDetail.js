@@ -4,7 +4,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import {RECAPTCHA_KEY, TEST_RECAPTCHA_KEY} from '../secrets';
 import {GradeBadge} from './gradeBadges';
 
-import {formatNumber, formatDate, touhouAlbum} from '../utils';
+import {formatNumber, formatDate, formatDateTime, touhouAlbum, onChange, onChangeNamedDirect} from '../utils';
 
 import DefaultAvatar from './DefaultAvatar.jpg';
 
@@ -73,18 +73,19 @@ const RankRow = (p) => (<tr className="Bgc($gray-200) Bgc($gray-300):h mb-1">
   <td className="px-2 py-1 C($gray-600) rounded-right">{formatNumber(p.missCount)}</td>
 </tr>);
 
-const Reply = () => (<div className="Bdc($gray-400)! border-bottom">
+const Reply = (p) => (<div className="Bdc($gray-400)! border-bottom">
   <div className="Cf Maw(1000px) mx-auto py-2">
     <div className="mt-2">
       <div className="W(10%) float-left pr-3">
-        <img className="W(100%) rounded-circle shadow-sm" src={DefaultAvatar} alt=""/>
+        <img className="W(100%) rounded-circle shadow-sm" src={p.userAvatarUrl || DefaultAvatar} alt=""/>
       </div>
       <div className="W(90%) D(ib)">
         <div>
-          <span className="badge badge-pill badge-primary">A+</span> <Link className="font-weight-bold font-italic" to="/users">domSaur</Link>
+          {/* <span className="badge badge-pill badge-primary">A+</span> */}
+          <Link className="font-weight-bold font-italic" to="/users">{p.userName}</Link>
         </div>
-        <div>finally a map for this song ;w;(albeit taco)</div>
-        <div><span className="C($gray-600) small">7 days ago</span></div>
+        <div>{p.text}</div>
+        <div><span className="C($gray-600) small">{formatDateTime(p.date)}</span></div>
       </div>
     </div>
   </div>
@@ -98,6 +99,10 @@ export default class MidiDetail extends React.Component {
     this.app = props.app;
 
     this.startEdit = this.startEdit.bind(this);
+    this.onChange = onChange.bind(this);
+    this.onRecaptchaChange = onChangeNamedDirect.bind(this, 'recaptcha');
+    this.onPostComment = this.onPostComment.bind(this);
+    this.recaptchaRef = React.createRef();
 
     this.state = {
       id: null,
@@ -154,17 +159,26 @@ export default class MidiDetail extends React.Component {
   }
 
   async componentDidMount() {
-    const midi = await this.app.midiGet({id: this.props.match.params.id});
-    this.setState(midi);
-    if (this.state.mp3Url) {
-      const audio = new Audio(this.state.mp3Url);
+    const id = this.props.match.params.id;
+
+    const res = await Promise.all([
+      this.app.midiGet({id}),
+      this.app.genericApi1('cl_web_midi_record_list', {id}),
+      this.app.genericApi1('ClWebDocCommentList', {docId: id}),
+    ]);
+
+    this.setState({
+      ...res[0],
+      records: res[1],
+      comments: res[2],
+    });
+
+    if (res[0].mp3Url) {
+      const audio = new Audio(res[0].mp3Url);
       audio.addEventListener('loadeddata', () => {
         this.setState({audio});
       });
     }
-
-    const records = await this.app.genericApi1('cl_web_midi_record_list', {id: this.props.match.params.id});
-    this.setState({records});
   }
 
   componentWillUnmount() {
@@ -190,6 +204,20 @@ export default class MidiDetail extends React.Component {
     }
     const playing = !(this.state.playing);
     this.setState({playing});
+  }
+
+  async onPostComment(e) {
+    e.preventDefault();
+    const {_id, recaptcha, commentText} = this.state;
+    if (!commentText) {
+      return;
+    }
+    const comments = await this.app.genericApi1('ClWebDocCommentCreate', {docId: _id, recaptcha, text: commentText});
+    this.recaptchaRef.current.reset();
+    this.setState({
+      recaptcha: null, commentText: '',
+      comments,
+    });
   }
 
   render() {
@@ -319,25 +347,22 @@ export default class MidiDetail extends React.Component {
         <div className="container bg-white shadow">
           {/* input */}
           <div className="Cf Maw(1000px) mx-auto py-3">
-            <h2 className="C($pink) h5 m-0">Comments <span className="badge badge-secondary badge-pill">3</span></h2>
+            <h2 className="C($pink) h5 m-0">Comments <span className="badge badge-secondary badge-pill">{formatNumber(this.state.comments?.length)}</span></h2>
             <div className="mt-2">
               <div className="W(10%) float-left pr-3">
-                <img className="W(100%) rounded-circle shadow-sm" src={DefaultAvatar} alt=""/>
+                <img className="W(100%) rounded-circle shadow-sm" src={this.app.state.user?.avatarUrl || DefaultAvatar} alt=""/>
               </div>
               <form className="W(90%) D(ib)">
-                <textarea className="form-control" />
-                <ReCAPTCHA className="mt-2 float-left" sitekey={this.app.isDevelopment ? TEST_RECAPTCHA_KEY : RECAPTCHA_KEY} onChange={this.onRecaptchaChange}/>
-                <button className="btn btn-primary mt-2 ml-2" type="submit">Post</button>
+                <textarea className="form-control" name="commentText" value={this.state.commentText} onChange={this.onChange} />
+                <ReCAPTCHA ref={this.recaptchaRef} className="mt-2 float-left" sitekey={this.app.isDevelopment ? TEST_RECAPTCHA_KEY : RECAPTCHA_KEY} onChange={this.onRecaptchaChange}/>
+                <button className="btn btn-primary mt-2 ml-2" type="submit" onClick={this.onPostComment} disabled={!this.state.recaptcha || !this.state.commentText}>Post</button>
               </form>
             </div>
           </div>
         </div>
-        {!s.comments.length && <div className="Bgc($gray-200) container">
+        {s.comments.length && <div className="Bgc($gray-200) container">
           <div className="">
-            <Reply />
-            <Reply />
-            <Reply />
-            <Reply />
+            {s.comments.map((x) => <Reply {...x} key={x._id}/>)}
           </div>
         </div>}
       </section>

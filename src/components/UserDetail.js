@@ -303,12 +303,13 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
+    const id = this.props.match.params.id;
     const res = await Promise.all([
-      this.app.userGet({id: this.props.match.params.id}),
-      this.app.midiBestPerformance({id: this.props.match.params.id}),
-      this.app.midiMostPlayed({id: this.props.match.params.id}),
-      this.app.midiRecentlyPlayed({id: this.props.match.params.id}),
-      this.app.midiPlayHistory({id: this.props.match.params.id, interval: this.state.playHistoryInterval}),
+      this.app.userGet({id}),
+      this.app.midiBestPerformance({id}),
+      this.app.midiMostPlayed({id}),
+      this.app.midiRecentlyPlayed({id}),
+      this.app.midiPlayHistory({id, interval: this.state.playHistoryInterval}),
     ]);
 
     this.setState({
