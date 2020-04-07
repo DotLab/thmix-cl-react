@@ -8,21 +8,21 @@ const INVALID = '-1';
 
 const Card = (s) => (<div className="col-md-6 mb-2 px-1">
   <div className="H(190px) bg-light rounded shadow-sm border">
-    <div className="H(120px) Bgp(c) Bgz(cv) rounded-top text-light p-2" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, .5)), url(${s.coverUrl})`}}>
+    <div className="H(120px) Bgp(c) Bgz(cv) rounded-top text-light p-2" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .5)), url(${s.coverUrl})`}}>
       <div className="position-relative w-100 h-100">
         <div className="T(0) Start(0) position-absolute small"><span className="badge badge-lg badge-pill badge-dark p-2 shadow">{s.status}</span></div>
         <div className="T(0) End(0) Lh(1.15) position-absolute text-right">
-          <em>{formatNumber(s.playCount)}</em> <i className="small fa-fw fas fa-play"></i><br/>
-          <em>{formatNumber(s.upCount - s.downCount)}</em> <i className="small fa-fw fas fa-chevron-up"></i><br/>
+          <em>{formatNumber(s.trialCount)}</em> <i className="small fa-fw fas fa-play"></i><br/>
+          <em>{formatNumber(s.voteSum)}</em> <i className="small fa-fw fas fa-chevron-up"></i><br/>
           <em>{formatNumber(s.loveCount)}</em> <i className="small fa-fw fas fa-heart"></i><br/>
         </div>
         <div className="B(0) Start(0) Lh(1.15) position-absolute font-italic w-100">
-          <Link className="h5 m-0 text-light text-truncate" to={`/midis/${s.id}`}>{s.name}</Link>
+          <Link className="h5 m-0 text-light" to={`/midis/${s.id}`}>{s.name}</Link>
           <div>{s.artistName}</div>
         </div>
       </div>
     </div>
-    <div className="H(70px) p-2 small">
+    <div className="H(70px) Bgp(c) Bgz(cv) rounded-bottom p-2 small" style={{backgroundImage: `linear-gradient(rgba(255, 255, 255, .7), rgba(255, 255, 255, .7)), url(${s.coverBlurUrl})`}}>
       <div className="position-relative w-100 h-100">
         <div className="T(0) Start(0) Lh(1.15) position-absolute w-100">
           <div className="small font-weight-bold">uploaded by <Link to={`/users/${s.uploaderId}`}>{s.uploaderName}</Link></div>
@@ -30,7 +30,7 @@ const Card = (s) => (<div className="col-md-6 mb-2 px-1">
           <div className="Lh(1) font-weight-bold text-truncate">{s.touhouAlbumIndex > 0 ? touhouAlbum[s.touhouAlbumIndex].songs[s.touhouSongIndex].name : s.sourceSongName}</div>
         </div>
         <div className="B(0) Start(0) Lh(1.15) position-absolute w-100">
-          <i className="fa-fw fas fa-sun"></i> {formatNumber(s.avgScore)} <i className="fa-fw fas fa-link"></i> {formatNumber(s.avgCombo)}x <i className="fa-fw fas fa-bullseye"></i> {formatNumber(s.avgAccuracy * 100)}%
+          <i className="fa-fw fas fa-sun"></i> {formatNumber(s.avgScore, 0)} <i className="fa-fw fas fa-link"></i> {formatNumber(s.avgCombo, 0)}x <i className="fa-fw fas fa-bullseye"></i> {formatNumber(s.avgAccuracy * 100, 2)}%
         </div>
       </div>
     </div>
@@ -154,8 +154,8 @@ export default class MidiListing extends React.Component {
 
         <form onSubmit={this.search} className="input-group">
           <input className="form-control" type="text" name="search" value={s.search} onChange={this.onChange}/>
-          <div class="input-group-append">
-            <button type="submit" class="btn btn-secondary"><i className="fas fa-search"></i></button>
+          <div className="input-group-append">
+            <button type="submit" className="btn btn-secondary"><i className="fas fa-search"></i></button>
           </div>
         </form>
 
@@ -198,7 +198,7 @@ export default class MidiListing extends React.Component {
           <SortOption query={s.query} name="date uploaded" sortAsc="uploadedDate" sortDesc="-uploadedDate" />
           <SortOption query={s.query} name="date approved" sortAsc="approvedDate" sortDesc="-approvedDate" />
           <SortOption query={s.query} name="trials" sortAsc="trialCount" sortDesc="-trialCount" />
-          <SortOption query={s.query} name="votes" sortAsc="upCount" sortDesc="-upCount" />
+          <SortOption query={s.query} name="votes" sortAsc="voteSum" sortDesc="-voteSum" />
           <SortOption query={s.query} name="loves" sortAsc="loveCount" sortDesc="-loveCount" />
           <SortOption query={s.query} name="avg. score" sortAsc="avgScore" sortDesc="-avgScore" />
           <SortOption query={s.query} name="avg. combo" sortAsc="avgCombo" sortDesc="-avgCombo" />

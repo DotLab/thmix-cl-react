@@ -189,8 +189,8 @@ export default class MidiDetail extends React.Component {
     const s = this.state;
     const canEdit = this.app.state.user && this.state.uploaderId === this.app.state.user.id;
 
-    return <div>
-      <section className="container">
+    return <div className="Bgp(c) Bgz(cv)" style={{backgroundImage: `url(${s.coverBlurUrl})`}}>
+      <section className="container" style={{backgroundColor: '#ffffffc0'}}>
         {/* hero */}
         <div className="Bgp(c) Bgz(cv) text-light row shadow px-md-4" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .6)), url(${s.coverBlurUrl})`}}>
           <div className="col-md-8">
@@ -255,7 +255,7 @@ export default class MidiDetail extends React.Component {
           </div>
           <div className="col-md-4">
             {/* right */}
-            <div className="Bgc($gray-200) ml-md-auto mt-md-3 px-3 py-2 shadow-sm">
+            <div className="Bgc(white) ml-md-auto mt-md-3 px-3 py-2 shadow-sm">
               <div className="text-center mt-2">Pass Rate</div>
               <div>
                 <i className="fa-fw fas fa-check"></i> {formatNumber(s.passCount)} <div className="float-right"><i className="fa-fw fas fa-times"></i> {formatNumber(s.failCount)}</div>
