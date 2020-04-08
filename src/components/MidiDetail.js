@@ -222,7 +222,6 @@ export default class MidiDetail extends React.Component {
 
   render() {
     const s = this.state;
-    const canEdit = this.app.state.user && this.state.uploaderId === this.app.state.user.id;
 
     return <div className="Bgp(c) Bgz(cv)" style={{backgroundImage: `url(${s.coverBlurUrl})`}}>
       <section className="container" style={{backgroundColor: '#ffffffc0'}}>
@@ -253,7 +252,7 @@ export default class MidiDetail extends React.Component {
           <div className="col-md-4">
             <div className="text-right mt-md-4">
               <span className="Fz(1em) badge badge-pill badge-dark p-3 shadow-sm" style={{backgroundColor: '#00000080'}}>{s.status}</span>
-              {canEdit && <span className="Fz(1em) Cur(p) badge badge-pill badge-dark p-3 shadow-sm ml-2" style={{backgroundColor: '#00000080'}} onClick={this.startEdit}><i className="fas fa-pencil-alt"></i></span>}
+              {s.canEdit && <span className="Fz(1em) Cur(p) badge badge-pill badge-dark p-3 shadow-sm ml-2" style={{backgroundColor: '#00000080'}} onClick={this.startEdit}><i className="fas fa-pencil-alt"></i></span>}
             </div>
             <div className="mt-4 ml-md-auto px-3 py-2" style={{backgroundColor: '#00000060'}}>
               {/* <div><i className="fa-fw fas fa-star"></i> 4.8</div> */}
