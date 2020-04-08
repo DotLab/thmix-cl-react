@@ -43,10 +43,6 @@ export const TranslationContext = React.createContext({});
 export class Translation extends React.Component {
   static contextType = TranslationContext;
 
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     requestTranslation(this.props.namespace || 'ui.web', this.props.src);
   }
