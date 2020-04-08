@@ -39,11 +39,11 @@ const Card = (s) => (<div className="col-md-6 mb-2 px-1">
 
 const SortOption = ({query, name, sortAsc, sortDesc}) => {
   if (query.sort === sortAsc) {
-    return <Link className="Cur(p) C($pink)! text-dark d-inline-block text-nowrap mr-5" to={'?' + QueryString.stringify({...query, sort: sortDesc})}>{name} <i className="fas fa-caret-up"></i></Link>;
+    return <Link className="Cur(p) C($pink)! d-inline-block text-nowrap mr-3 mr-lg-4" to={'?' + QueryString.stringify({...query, sort: sortDesc})}>{name} <i className="fas fa-caret-up"></i></Link>;
   } else if (query.sort === sortDesc) {
-    return <Link className="Cur(p) C($pink)! text-dark d-inline-block text-nowrap mr-5" to={'?' + QueryString.stringify({...query, sort: sortAsc})}>{name} <i className="fas fa-caret-down"></i></Link>;
+    return <Link className="Cur(p) C($pink)! d-inline-block text-nowrap mr-3 mr-lg-4" to={'?' + QueryString.stringify({...query, sort: sortAsc})}>{name} <i className="fas fa-caret-down"></i></Link>;
   } else {
-    return <Link className="Cur(p) text-dark d-inline-block text-nowrap mr-5" to={'?' + QueryString.stringify({...query, sort: sortDesc})}>{name}</Link>;
+    return <Link className="Cur(p) text-dark d-inline-block text-nowrap mr-3 mr-lg-4" to={'?' + QueryString.stringify({...query, sort: sortDesc})}>{name}</Link>;
   }
 };
 
@@ -159,22 +159,22 @@ export default class MidiListing extends React.Component {
           </div>
         </form>
 
-        <div className="row small mt-3">
-          <div className="col-md-2">STATUS</div>
-          <div className="col-md-10">
-            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== undefined ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: undefined})}>Any</Link>
-            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'INCLUDED' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'INCLUDED'})}>Included</Link>
-            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'APPROVED' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'APPROVED'})}>Approved</Link>
-            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'PENDING' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'PENDING'})}>Pending</Link>
-            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'DEAD' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'DEAD'})}>Dead</Link>
+        <div className="small mt-3">
+          <div className="d-inline mr-3 mr-md-5">STATUS</div>
+          <div className="d-inline">
+            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-2 mr-md-3' + (s.query.status !== undefined ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: undefined})}>Any</Link>
+            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-2 mr-md-3' + (s.query.status !== 'INCLUDED' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'INCLUDED'})}>Included</Link>
+            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-2 mr-md-3' + (s.query.status !== 'APPROVED' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'APPROVED'})}>Approved</Link>
+            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-2 mr-md-3' + (s.query.status !== 'PENDING' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'PENDING'})}>Pending</Link>
+            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-2 mr-md-3' + (s.query.status !== 'DEAD' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'DEAD'})}>Dead</Link>
           </div>
         </div>
 
-        <div className="row small mt-1">
-          <div className="col-md-2">ALBUM</div>
-          <div className="col-md-10">
-            <div className='Pos(r) Cur(p) text-light d-inline-block text-nowrap mr-3'>{s.albumName || 'Album'}</div>
-            <select className="form-control col-sm-6 Pos(a) Cur(p) T(0) H(20px) Op(0)" name="touhouAlbumIndex" value={s.albumId} onChange={this.changeAlbum}>
+        <div className="small mt-1">
+          <div className="d-inline mr-2 mr-md-5">ALBUM</div>
+          <div className="d-inline Pos(r)">
+            <div className='Cur(p) text-light d-inline-block text-nowrap mr-3'>{s.albumName || 'Any'}</div>
+            <select className="form-control Pos(a) Cur(p) Start(0) T(0) H(20px) Op(0)" name="touhouAlbumIndex" value={s.albumId} onChange={this.changeAlbum}>
               <option value={INVALID}>ANY: Any</option>
               {s.albums.map((x) => <option key={x.id} value={x.id}>{x.abbr}: {x.name}</option>)}
             </select>
@@ -194,7 +194,7 @@ export default class MidiListing extends React.Component {
 
       <section className="mt-2 mb-3 shadow border">
         <div className="py-2 px-3 border-bottom small">
-          <span className="Cur(p) d-inline-block text-nowrap mr-5">SORT BY</span>
+          <span className="Cur(p) text-nowrap mr-2 mr-lg-5">SORT BY</span>
           <SortOption query={s.query} name="date uploaded" sortAsc="uploadedDate" sortDesc="-uploadedDate" />
           <SortOption query={s.query} name="date approved" sortAsc="approvedDate" sortDesc="-approvedDate" />
           <SortOption query={s.query} name="trials" sortAsc="trialCount" sortDesc="-trialCount" />
