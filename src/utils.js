@@ -280,3 +280,12 @@ export function getCurrentDay() {
   d.setHours(24, 0, 0, 0);
   return d;
 }
+
+export function deleteFalsyKeys(obj) {
+  for (const key of Object.keys(obj)) {
+    if (!obj[key]) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
