@@ -41,6 +41,9 @@ export default class MidiDetailEdit extends React.Component {
       touhouAlbumIndex: '-1',
       touhouSongIndex: '-1',
 
+      derivedFromId: null,
+      supersedeId: null,
+
       albums: [],
       albumId: '',
       songs: [],
@@ -71,8 +74,8 @@ export default class MidiDetailEdit extends React.Component {
   }
 
   updateMeta() {
-    const {id, name, desc, artistName, artistUrl, authorId} = this.state;
-    this.app.midiUpdate({id, name, desc, artistName, artistUrl, authorId});
+    const {id, name, desc, artistName, artistUrl, authorId, derivedFromId, supersedeId} = this.state;
+    this.app.midiUpdate({id, name, desc, artistName, artistUrl, authorId, derivedFromId, supersedeId});
   }
 
   updateSource() {
@@ -157,6 +160,16 @@ export default class MidiDetailEdit extends React.Component {
       <Block>
         <Block.Left><h2 className="h5 m-0">Meta</h2></Block.Left>
         <Block.Right>
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label text-right">derived from midi id</label>
+            <div className="col-sm-9"><input className="form-control" type="text" name="derivedFromId" value={s.derivedFromId} onChange={this.onChange}/></div>
+          </div>
+
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label text-right">supersede midi id (will kill old midi)</label>
+            <div className="col-sm-9"><input className="form-control" type="text" name="supersedeId" value={s.supersedeId} onChange={this.onChange}/></div>
+          </div>
+
           <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">midi name</label>
             <div className="col-sm-9"><input className="form-control" type="text" name="name" value={s.name} onChange={this.onChange}/></div>
