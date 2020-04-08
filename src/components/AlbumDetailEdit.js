@@ -2,7 +2,6 @@ import React from 'react';
 
 import {onTextareaChange, onChange} from '../utils';
 import NoImageAvailable from './NoImageAvailable.jpg';
-const INVALID = '-1';
 
 const Block = ({children}) => (<section className="container px-md-5 mb-2"><div className="row text-light">{children}</div></section>);
 Block.Left = ({children}) => (<div className="Bgc($gray-700) shadow col-lg-3 py-3 pl-4 font-italic">{children}</div>);
@@ -92,7 +91,7 @@ export default class AlbumDetailEdit extends React.Component {
             <label className="col-sm-3 col-form-label text-right">category</label>
             <div className="col-sm-9">
               <select className="form-control" name="category" value={s.category} onChange={this.onChange}>
-                <option value={INVALID}></option>
+                <option value="">none</option>
                 <option value="touhou">touhou</option>
                 <option value="anime">anime</option>
                 <option value="game">game</option>

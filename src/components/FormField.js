@@ -9,7 +9,6 @@ export const FormField = (s) => (
   </div>
 );
 
-
 export const FormFieldTextArea = (s) => (
   <div className="form-group row">
     <label className="col-sm-3 col-form-label text-right">{s.label}</label>
