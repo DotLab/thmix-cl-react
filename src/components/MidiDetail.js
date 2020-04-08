@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 import {RECAPTCHA_KEY, TEST_RECAPTCHA_KEY} from '../secrets';
 import {GradeBadge} from './gradeBadges';
+import {rpc} from '../apiService';
 
 import {formatNumber, formatDate, formatDateTime, touhouAlbum, onChange, onChangeNamedDirect} from '../utils';
 
@@ -121,6 +122,13 @@ export default class MidiDetail extends React.Component {
       mp3Url: '',
       playing: false,
       // meta
+      derivedFromId: null,
+      supersedeId: null,
+      supersededById: null,
+
+      derivedMidi: null,
+      supersedeMidi: null,
+
       uploadedDate: null,
       approvedDate: null,
       status: 'PENDING',
@@ -167,6 +175,7 @@ export default class MidiDetail extends React.Component {
       this.app.genericApi1('ClWebDocCommentList', {docId: id}),
     ]);
 
+    console.log(res);
     this.setState({
       ...res[0],
       records: res[1],
@@ -179,6 +188,19 @@ export default class MidiDetail extends React.Component {
         this.setState({audio});
       });
     }
+
+    const derivedFromId = this.state.derivedFromId;
+    const supersedeId = this.state.supersedeId;
+
+    if (derivedFromId) {
+      const derivedMidi = await rpc('ClWebMidiDerivedFrom', {derivedFromId});
+      this.setState({derivedMidi});
+    }
+    if (supersedeId) {
+      const supersedeMidi = await rpc('ClWebMidiSupersede', {supersedeId});
+      this.setState({supersedeMidi});
+    }
+    console.log(this.state.derivedMidi);
   }
 
   componentWillUnmount() {
@@ -232,13 +254,15 @@ export default class MidiDetail extends React.Component {
             <div className="py-2 py-md-4">
               <div className="Fz(20px)"><i className="fa-fw fas fa-play"></i> {formatNumber(s.trialCount)} <i className="fa-fw fas fa-chevron-up"></i> {formatNumber(s.upCount - s.downCount)} <i className="fa-fw fas fa-heart"></i> {formatNumber(s.loveCount)}</div>
               <div className="Lh(1.15) font-italic">
-                <div className="D(f) Ai(c) mt-4">
+                {s.derivedMidi && <div className="h5 mt-4">derived from <span className="text-light">{s.derivedMidi.name} by {s.derivedMidi.artistName}</span></div>}
+                <div className="D(f) Ai(c)">
                   <h2 className="h4 m-0 D(ib)">{s.name}</h2>
                   {!s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i className="far fa-play-circle"></i></span>}
                   {s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i className="fas fa-pause-circle"></i></span>}
                 </div>
 
                 <div className="h5 m-0">by <a className="text-light" href={s.artistUrl}>{s.artistName}</a></div>
+                {s.supersedeMidi && <div className="h5 m-0">by <a className="text-light" href={s.artistUrl}>{s.artistName}</a></div>}
               </div>
               <div className="Cf mt-4">
                 <img className="H(60px) rounded float-left" src={s.uploaderAvatarUrl || DefaultAvatar} alt=""/>
