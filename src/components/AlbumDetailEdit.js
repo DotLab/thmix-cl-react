@@ -2,6 +2,7 @@ import React from 'react';
 
 import {onTextareaChange, onChange} from '../utils';
 import NoImageAvailable from './NoImageAvailable.jpg';
+const INVALID = '-1';
 
 const Block = ({children}) => (<section className="container px-md-5 mb-2"><div className="row text-light">{children}</div></section>);
 Block.Left = ({children}) => (<div className="Bgc($gray-700) shadow col-lg-3 py-3 pl-4 font-italic">{children}</div>);
@@ -23,6 +24,7 @@ export default class AlbumDetailEdit extends React.Component {
       id: null,
 
       name: '',
+      category: '',
       desc: '',
       date: null,
       coverPath: '',
@@ -39,8 +41,8 @@ export default class AlbumDetailEdit extends React.Component {
   }
 
   updateMeta() {
-    const {id, name, desc} = this.state;
-    this.app.albumUpdate({id, name, desc});
+    const {id, name, desc, category} = this.state;
+    this.app.albumUpdate({id, name, desc, category});
   }
 
   onCoverChange(e) {
@@ -85,6 +87,17 @@ export default class AlbumDetailEdit extends React.Component {
           <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">album name</label>
             <div className="col-sm-9"><input className="form-control" type="text" name="name" value={s.name} onChange={this.onChange}/></div>
+          </div>
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label text-right">category</label>
+            <div className="col-sm-9">
+              <select className="form-control" name="category" value={s.category} onChange={this.onChange}>
+                <option value={INVALID}></option>
+                <option value="touhou">touhou</option>
+                <option value="anime">anime</option>
+                <option value="game">game</option>
+              </select>
+            </div>
           </div>
           <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">album description</label>
