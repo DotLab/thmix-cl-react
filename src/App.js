@@ -44,9 +44,11 @@ import {TEST_EMAIL, TEST_PASSWORD} from './secrets';
 
 import {getCurrentDay} from './utils';
 
+// @ts-ignore
 import langs from './json/langs.json';
 
-import {setApp} from './apiService';
+import {setApp as apiServiceSetApp} from './apiService';
+import {setApp as translationServiceSetApp, TranslationContext, Translation as Tr} from './translationService';
 
 // const debug = require('debug')('thmix:App');
 
@@ -59,8 +61,6 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
 
-    setApp(this);
-
     this.history = props.history;
     this.socket = props.socket;
     this.isDevelopment = props.env === DEVELOPMENT;
@@ -72,6 +72,7 @@ export default class App extends React.Component {
       error: null,
       success: null,
       lang: 'en',
+      translationDict: {},
     };
 
     this.socket.on('disconnect', this.onDisconnect.bind(this));
@@ -81,6 +82,9 @@ export default class App extends React.Component {
     this.albumCreate = this.albumCreate.bind(this);
     this.songCreate = this.songCreate.bind(this);
     this.personCreate = this.personCreate.bind(this);
+
+    apiServiceSetApp(this);
+    translationServiceSetApp(this);
   }
 
   onLangChange(e) {
@@ -487,16 +491,14 @@ export default class App extends React.Component {
     return await this.genericApi1('cl_web_translation_list', {lang: this.state.lang});
   }
 
-  async translationUpdate({src, lang, text}) {
-    return await this.genericApi1('cl_web_translation_update', {lang, src, text});
+  async translationUpdate({src, lang, namespace, text}) {
+    return await this.genericApi1('cl_web_translation_update', {lang, src, namespace, text});
   }
 
   render() {
     const s = this.state;
 
-    if (s.waiting) return <div></div>;
-
-    return <div>
+    return <TranslationContext.Provider value={s.translationDict}><div>
       {(s.error || s.success) && <div className="Pe(n) Z(1) position-fixed w-100 text-center">
         {s.error && <span className="d-inline-block alert alert-danger p-2 shadow"><strong>Error</strong>: {s.error}</span>}
         {s.success && <span className="d-inline-block alert alert-success p-2 shadow"><strong>Success</strong>: {s.success}</span>}
@@ -508,19 +510,19 @@ export default class App extends React.Component {
         <div className="container">
           <div className="collapse navbar-collapse" id="navbarText">
             <ul className="navbar-nav mr-auto">
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/"><i className="fas fa-home"></i> home</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis"><i className="fas fa-music"></i> midis</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs"><i className="fas fa-info-circle"></i> songs</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts"><i className="fas fa-guitar"></i> soundfonts</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit"><i className="fas fa-language"></i> translations</NavLink></li>
-              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources">resources</NavLink></li> */}
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users"><i className="fas fa-user-friends"></i> users</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help"><i className="fas fa-question-circle"></i> help</NavLink></li>
-              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board">board</NavLink></li> */}
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/"><i className="fas fa-home"></i> <Tr src="home"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis"><i className="fas fa-music"></i> <Tr src="midis"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs"><i className="fas fa-info-circle"></i> <Tr src="songs"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts"><i className="fas fa-guitar"></i> <Tr src="soundfonts"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit"><i className="fas fa-language"></i> <Tr src="translations"/></NavLink></li>
+              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources"><Tr src="resources"/></NavLink></li> */}
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users"><i className="fas fa-user-friends"></i> <Tr src="users"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help"><i className="fas fa-question-circle"></i> <Tr src="help"/></NavLink></li>
+              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board"><Tr src="board"/></NavLink></li> */}
             </ul>
             {!s.user ? <ul className="navbar-nav">
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login">login</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login"><Tr src="login"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register"><Tr src="register"/></NavLink></li>
             </ul> : <ul className="navbar-nav align-items-center">
               <li className="nav-item">
                 <select className="Bdrs(10px)" onChange={this.onLangChange} value={this.state.lang}>
@@ -530,13 +532,13 @@ export default class App extends React.Component {
               <li className="nav-item dropdown">
                 <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i className="fas fa-plus"></i></span>
                 <div className="dropdown-menu dropdown-menu-right">
-                  <Link className="dropdown-item" to="/midis/upload"><i className="fa-fw fas fa-upload"></i> upload midi</Link>
-                  <Link className="dropdown-item" to="/soundfonts/upload"><i className="fa-fw fas fa-upload"></i> upload soundfont</Link>
-                  <Link className="dropdown-item" to="/builds/upload"><i className="fa-fw fas fa-upload"></i> upload build</Link>
+                  <Link className="dropdown-item" to="/midis/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload midi"/></Link>
+                  <Link className="dropdown-item" to="/soundfonts/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload soundfont"/></Link>
+                  <Link className="dropdown-item" to="/builds/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload build"/></Link>
                   <div className="dropdown-divider"></div>
-                  <div className="dropdown-item Cur(p)" onClick={this.albumCreate}><i className="fa-fw fas fa-plus-square"></i> create album</div>
-                  <div className="dropdown-item Cur(p)" onClick={this.songCreate}><i className="fa-fw fas fa-plus-square"></i> create song</div>
-                  <div className="dropdown-item Cur(p)" onClick={this.personCreate}><i className="fa-fw fas fa-plus-square"></i> create person</div>
+                  <div className="dropdown-item Cur(p)" onClick={this.albumCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create album"/></div>
+                  <div className="dropdown-item Cur(p)" onClick={this.songCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create song"/></div>
+                  <div className="dropdown-item Cur(p)" onClick={this.personCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create person"/></div>
                   {/* <Link className="dropdown-item" to="/resources/upload">upload resource</Link> */}
                   {/* <Link className="dropdown-item" to="/midis/upload">create story</Link> */}
                   {/* <a className="dropdown-item" href=".">Something else here</a> */}
@@ -596,17 +598,17 @@ export default class App extends React.Component {
       <footer className="W(100%) Lh(18px) Bgc($gray-600) text-center py-1 shadow">
         <div className="container">
           <div className="small">
-            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/terms">terms</Link>
-            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/privacy">privacy</Link>
-            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/copyright">copyright(DMCA)</Link>
-            <a className="d-inline-block text-nowrap text-decoration-none text-light mr-4" href="https://travis-ci.org/github/DotLab/touhou-mix-server-nodejs">server status</a>
-            <a className="d-inline-block text-nowrap text-decoration-none text-light     " href="https://github.com/DotLab/touhou-mix-client-react">source code</a>
+            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/terms"><Tr src="terms"/></Link>
+            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/privacy"><Tr src="privacy"/></Link>
+            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/copyright"><Tr src="copyright(DMCA)"/></Link>
+            <a className="d-inline-block text-nowrap text-decoration-none text-light mr-4" href="https://travis-ci.org/github/DotLab/touhou-mix-server-nodejs"><Tr src="server status"/></a>
+            <a className="d-inline-block text-nowrap text-decoration-none text-light     " href="https://github.com/DotLab/touhou-mix-client-react"><Tr src="source code"/></a>
           </div>
           <div className="C($gray-500)">
-            <small>Touhou Mix 2016-2019</small>
+            <small>Touhou Mix 2015-2020</small>
           </div>
         </div>
       </footer>
-    </div>;
+    </div></TranslationContext.Provider>;
   }
 }
