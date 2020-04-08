@@ -71,6 +71,7 @@ export default class MidiListing extends React.Component {
       midis: [],
       albums: [],
       songs: [],
+      isLoading: true,
     };
   }
 
@@ -91,6 +92,7 @@ export default class MidiListing extends React.Component {
       this.app.albumList(),
     ]);
     this.setState({
+      isLoading: false,
       midis: res[0],
       albums: res[1],
     });
@@ -101,7 +103,8 @@ export default class MidiListing extends React.Component {
 
   async componentWillReceiveProps(props) {
     const {albumId, songId, status, sort, page, search} = queryString.parse(props.location.search);
-    this.setState({midis: await this.app.midiList({albumId, songId, status, sort, page, search})});
+    this.setState({isLoading: true});
+    this.setState({isLoading: false, midis: await this.app.midiList({albumId, songId, status, sort, page, search})});
   }
 
   onSearch(e) {
@@ -212,7 +215,10 @@ export default class MidiListing extends React.Component {
             {parseInt(String(q.page)) > 0 && <div className="col-12 mb-2 px-1">
               <button className="btn btn-block btn-outline-secondary" onClick={this.onLoadPrevPage}>load prev page ({parseInt(String(q.page || 0)) - 1})</button>
             </div>}
-            {s.midis.map((midi) => <Card {...midi} key={midi.id} />)}
+
+            {s.isLoading ? <div className="col-12 mb-2 px-1 D(f)">
+              <div className="spinner-border mx-auto"></div>
+            </div> : s.midis.map((midi) => <Card {...midi} key={midi.id} />)}
             <div className="col-12 mb-2 px-1">
               <button className="btn btn-block btn-outline-secondary" onClick={this.onLoadNextPage}>load next page ({parseInt(String(q.page || 0)) + 1})</button>
             </div>
