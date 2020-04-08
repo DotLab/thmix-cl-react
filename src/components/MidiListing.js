@@ -1,10 +1,12 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import QueryString from 'query-string';
+import queryString from 'query-string';
 
-import {onChange, formatNumber, touhouAlbum, pushHistory} from '../utils';
+import {onChange, formatNumber, touhouAlbum, deleteFalsyKeys} from '../utils';
 
-const INVALID = '-1';
+const OPTION_ANY = '-1';
+
+const ListingFilterButton = (p) => (<span className={'Cur(p) d-inline-block text-nowrap mr-2 mr-md-3 ' + (p.active ? 'C($white)' : 'C($pink)')} onClick={p.onClick}>{p.option}</span>);
 
 const Card = (s) => (<div className="col-md-6 mb-2 px-1">
   <div className="H(190px) bg-light rounded shadow-sm border">
@@ -37,13 +39,13 @@ const Card = (s) => (<div className="col-md-6 mb-2 px-1">
   </div>
 </div>);
 
-const SortOption = ({query, name, sortAsc, sortDesc}) => {
+const SortOption = ({query, changeSort, name, sortAsc, sortDesc}) => {
   if (query.sort === sortAsc) {
-    return <Link className="Cur(p) C($pink)! text-dark d-inline-block text-nowrap mr-5" to={'?' + QueryString.stringify({...query, sort: sortDesc})}>{name} <i className="fas fa-caret-up"></i></Link>;
+    return <span className="Cur(p) C($pink) d-inline-block text-nowrap mr-3 mr-lg-4" onClick={() => changeSort(sortAsc, sortDesc)}>{name} <i className="fas fa-caret-up"></i></span>;
   } else if (query.sort === sortDesc) {
-    return <Link className="Cur(p) C($pink)! text-dark d-inline-block text-nowrap mr-5" to={'?' + QueryString.stringify({...query, sort: sortAsc})}>{name} <i className="fas fa-caret-down"></i></Link>;
+    return <span className="Cur(p) C($pink) d-inline-block text-nowrap mr-3 mr-lg-4" onClick={() => changeSort(sortAsc, sortDesc)}>{name} <i className="fas fa-caret-down"></i></span>;
   } else {
-    return <Link className="Cur(p) text-dark d-inline-block text-nowrap mr-5" to={'?' + QueryString.stringify({...query, sort: sortDesc})}>{name}</Link>;
+    return <span className="Cur(p) text-dark d-inline-block text-nowrap mr-3 mr-lg-4" onClick={() => changeSort(sortAsc, sortDesc)}>{name}</span>;
   }
 };
 
@@ -54,159 +56,166 @@ export default class MidiListing extends React.Component {
     /** @type {import('../App').default} */
     this.app = props.app;
 
-    this.query = QueryString.parse(props.location.search);
-
     this.onChange = onChange.bind(this);
-    this.pushHistory = pushHistory.bind(this);
 
-    this.search = this.search.bind(this);
-    this.changeAlbum = this.changeAlbum.bind(this);
-    this.changeSong = this.changeSong.bind(this);
+    this.onSearch = this.onSearch.bind(this);
+    this.onChangeAlbum = this.onChangeAlbum.bind(this);
+    this.onChangeSong = this.onChangeSong.bind(this);
+    this.onChangeSort = this.onChangeSort.bind(this);
+    this.onLoadPrevPage = this.onLoadPrevPage.bind(this);
+    this.onLoadNextPage = this.onLoadNextPage.bind(this);
 
+    const query = this.getQuery();
     this.state = {
-      query: {},
+      searchInput: query.search,
       midis: [],
-      touhouAlbumIndex: '-2',
-      touhouSongIndex: '-2',
       albums: [],
       songs: [],
-      albumId: '',
-      songId: '',
-      albumName: '',
-      songName: '',
     };
   }
 
-  getQuery(props) {
-    return QueryString.parse(props.location.search);
+  getQuery() {
+    return queryString.parse(this.props.location.search);
+  }
+
+  pushQuery(spec) {
+    const query = deleteFalsyKeys({...this.getQuery(), search: this.state.searchInput, ...spec});
+    this.props.history.push(this.props.location.pathname + '?' + queryString.stringify(query));
+    return query;
   }
 
   async componentDidMount() {
-    const query = this.getQuery(this.props);
-    // @ts-ignore
-    await Promise.all([
-      this.app.midiList(query),
+    const {albumId, songId, status, sort, page, search} = this.getQuery();
+    const res = await Promise.all([
+      this.app.midiList({albumId, songId, status, sort, page, search}),
       this.app.albumList(),
-    ]).then((value) => {
-      this.setState({
-        midis: value[0],
-        albums: value[1],
-      });
+    ]);
+    this.setState({
+      midis: res[0],
+      albums: res[1],
     });
-
-    this.setState({query});
+    if (albumId && songId) {
+      await this.app.songList({albumId}).then((songs) => this.setState({songs}));
+    }
   }
 
   async componentWillReceiveProps(props) {
-    const query = this.getQuery(props);
-    // @ts-ignore
-    const midis = await this.app.midiList(query);
-    const search = query.search;
-    this.setState({query, midis, search});
+    const {albumId, songId, status, sort, page, search} = queryString.parse(props.location.search);
+    this.setState({midis: await this.app.midiList({albumId, songId, status, sort, page, search})});
   }
 
-  search(e) {
+  onSearch(e) {
     e.preventDefault();
-    const s = this.state;
-    this.query.search = s.search;
-    this.setState({query: this.query});
-    this.pushHistory();
+    this.pushQuery({page: undefined});
   }
 
-  async changeAlbum(e) {
-    if (e.target.value === INVALID) {
-      this.query.songId = null;
-      this.query.albumId = null;
-      this.setState({albumId: '', albumName: '', songName: '', query: this.query});
-      this.pushHistory();
-      return;
-    }
+  async onChangeAlbum(e) {
     const albumId = e.target.value;
-    this.query.albumId = albumId;
-    const albumName = this.state.albums.find((x) => x.id === albumId).name;
-    const songs = await this.app.songList({albumId});
-    this.setState({albumId, albumName, songs, query: this.query});
-    this.pushHistory();
+    if (albumId === OPTION_ANY) {
+      this.pushQuery({page: undefined, albumId: undefined, songId: undefined});
+    } else {
+      this.pushQuery({page: undefined, albumId, songId: undefined});
+      this.setState({songs: await this.app.songList({albumId})});
+    }
   }
 
-  async changeSong(e) {
-    if (e.target.value === INVALID) {
-      this.query.songId = null;
-      this.setState({songId: '', songName: '', query: this.query});
-      this.pushHistory();
-      return;
-    }
+  async onChangeSong(e) {
     const songId = e.target.value;
-    this.query.songId = songId;
-    this.setState({
-      songId,
-      songName: this.state.songs.find((x) => x.id === songId).name,
-      query: this.query,
-    });
-    this.pushHistory();
+    if (songId === OPTION_ANY) {
+      this.pushQuery({page: undefined, songId: undefined});
+    } else {
+      this.pushQuery({page: undefined, songId});
+    }
+  }
+
+  async onChangeSort(sortAsc, sortDesc) {
+    const query = this.getQuery();
+    if (query.sort === sortDesc) {
+      await this.pushQuery({page: undefined, sort: sortAsc});
+    } else {
+      await this.pushQuery({page: undefined, sort: sortDesc});
+    }
+  }
+
+  async onLoadPrevPage() {
+    this.pushQuery({page: String(parseInt(String(this.getQuery().page || 0)) - 1)});
+  }
+
+  async onLoadNextPage() {
+    this.pushQuery({page: String(parseInt(String(this.getQuery().page || 0)) + 1)});
   }
 
   render() {
+    const q = this.getQuery();
     const s = this.state;
+
+    const albumName = s.albums && q.albumId && s.albums.find((x) => x.id === q.albumId)?.name;
+    const songName = s.songs && q.songId && s.songs.find((x) => x.id === q.songId)?.name;
 
     return <div className="container">
       <section className="Bgc($gray-700) P(30px) text-light shadow">
 
-        <form onSubmit={this.search} className="input-group">
-          <input className="form-control" type="text" name="search" value={s.search} onChange={this.onChange}/>
+        <form onSubmit={this.onSearch} className="input-group">
+          <input className="form-control" type="text" name="searchInput" value={s.searchInput} onChange={this.onChange}/>
           <div className="input-group-append">
             <button type="submit" className="btn btn-secondary"><i className="fas fa-search"></i></button>
           </div>
         </form>
 
-        <div className="row small mt-3">
-          <div className="col-md-2">STATUS</div>
-          <div className="col-md-10">
-            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== undefined ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: undefined})}>Any</Link>
-            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'INCLUDED' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'INCLUDED'})}>Included</Link>
-            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'APPROVED' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'APPROVED'})}>Approved</Link>
-            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'PENDING' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'PENDING'})}>Pending</Link>
-            <Link className={'Cur(p) text-light d-inline-block text-nowrap mr-3' + (s.query.status !== 'DEAD' ? ' C($pink)!' : '')} to={'?' + QueryString.stringify({...s.query, status: 'DEAD'})}>Dead</Link>
+        <div className="small mt-3">
+          <div className="d-inline mr-3 mr-md-5">STATUS</div>
+          <div className="d-inline">
+            <ListingFilterButton active={!q.status} onClick={() => this.pushQuery({status: undefined})} option="any" />
+            <ListingFilterButton active={q.status === 'INCLUDED'} onClick={() => this.pushQuery({status: 'INCLUDED'})} option="included" />
+            <ListingFilterButton active={q.status === 'APPROVED'} onClick={() => this.pushQuery({status: 'APPROVED'})} option="approved" />
+            <ListingFilterButton active={q.status === 'PENDING'} onClick={() => this.pushQuery({status: 'PENDING'})} option="pending" />
+            <ListingFilterButton active={q.status === 'DEAD'} onClick={() => this.pushQuery({status: 'DEAD'})} option="dead" />
           </div>
         </div>
 
-        <div className="row small mt-1">
-          <div className="col-md-2">ALBUM</div>
-          <div className="col-md-10">
-            <div className='Pos(r) Cur(p) text-light d-inline-block text-nowrap mr-3'>{s.albumName || 'Album'}</div>
-            <select className="form-control col-sm-6 Pos(a) Cur(p) T(0) H(20px) Op(0)" name="touhouAlbumIndex" value={s.albumId} onChange={this.changeAlbum}>
-              <option value={INVALID}>ANY: Any</option>
+        <div className="small mt-1">
+          <div className="d-inline mr-2 mr-md-5">ALBUM</div>
+          <div className="d-inline Pos(r)">
+            <div className='Cur(p) text-light d-inline-block text-nowrap mr-3'>{albumName || 'any'}</div>
+            <select className="form-control Pos(a) Cur(p) Start(0) T(0) H(20px) Op(0)" value={q.albumId} onChange={this.onChangeAlbum}>
+              <option value={OPTION_ANY}>Any</option>
               {s.albums.map((x) => <option key={x.id} value={x.id}>{x.abbr}: {x.name}</option>)}
             </select>
           </div>
         </div>
-        <div className="row small mt-1">
-          <div className="col-md-2">SONG</div>
-          <div className="col-md-10">
-            <div className='Pos(r) Cur(p) text-light d-inline-block text-nowrap mr-3'>{s.songName || 'Song'}</div>
-            <select className="form-control col-sm-6 Pos(a) Cur(p) T(0) H(20px) Op(0)" name="touhouSongIndex" value={s.songId} onChange={this.changeSong}>
-              <option value={INVALID}>ANY: Any</option>
+        {q.albumId && <div className="small mt-1">
+          <div className="d-inline mr-2 mr-md-5">SONG</div>
+          <div className="d-inline Pos(r)">
+            <div className='Cur(p) text-light d-inline-block text-nowrap mr-3'>{songName || 'any'}</div>
+            <select className="form-control Pos(a) Cur(p) Start(0) T(0) H(20px) Op(0)" value={q.songId} onChange={this.onChangeSong}>
+              <option value={OPTION_ANY}>Any</option>
               {s.songs.map((x) => <option key={x.id} value={x.id}>{x.track}: {x.name}</option>)}
             </select>
           </div>
-        </div>
+        </div>}
       </section>
 
       <section className="mt-2 mb-3 shadow border">
         <div className="py-2 px-3 border-bottom small">
-          <span className="Cur(p) d-inline-block text-nowrap mr-5">SORT BY</span>
-          <SortOption query={s.query} name="date uploaded" sortAsc="uploadedDate" sortDesc="-uploadedDate" />
-          <SortOption query={s.query} name="date approved" sortAsc="approvedDate" sortDesc="-approvedDate" />
-          <SortOption query={s.query} name="trials" sortAsc="trialCount" sortDesc="-trialCount" />
-          <SortOption query={s.query} name="votes" sortAsc="voteSum" sortDesc="-voteSum" />
-          <SortOption query={s.query} name="loves" sortAsc="loveCount" sortDesc="-loveCount" />
-          <SortOption query={s.query} name="avg. score" sortAsc="avgScore" sortDesc="-avgScore" />
-          <SortOption query={s.query} name="avg. combo" sortAsc="avgCombo" sortDesc="-avgCombo" />
-          <SortOption query={s.query} name="avg. accuracy" sortAsc="avgAccuracy" sortDesc="-avgAccuracy" />
+          <span className="Cur(p) text-nowrap mr-2 mr-lg-5">SORT BY</span>
+          <SortOption query={q} changeSort={this.onChangeSort} name="date uploaded" sortAsc="uploadedDate" sortDesc="-uploadedDate" />
+          <SortOption query={q} changeSort={this.onChangeSort} name="date approved" sortAsc="approvedDate" sortDesc="-approvedDate" />
+          <SortOption query={q} changeSort={this.onChangeSort} name="trials" sortAsc="trialCount" sortDesc="-trialCount" />
+          <SortOption query={q} changeSort={this.onChangeSort} name="votes" sortAsc="voteSum" sortDesc="-voteSum" />
+          <SortOption query={q} changeSort={this.onChangeSort} name="loves" sortAsc="loveCount" sortDesc="-loveCount" />
+          <SortOption query={q} changeSort={this.onChangeSort} name="avg. score" sortAsc="avgScore" sortDesc="-avgScore" />
+          <SortOption query={q} changeSort={this.onChangeSort} name="avg. combo" sortAsc="avgCombo" sortDesc="-avgCombo" />
+          <SortOption query={q} changeSort={this.onChangeSort} name="avg. accuracy" sortAsc="avgAccuracy" sortDesc="-avgAccuracy" />
         </div>
         <div className="Bgc($gray-100) Px(1.25em) pt-2">
           <div className="row">
+            {parseInt(String(q.page)) > 0 && <div className="col-12 mb-2 px-1">
+              <button className="btn btn-block btn-outline-secondary" onClick={this.onLoadPrevPage}>load prev page ({parseInt(String(q.page || 0)) - 1})</button>
+            </div>}
             {s.midis.map((midi) => <Card {...midi} key={midi.id} />)}
+            <div className="col-12 mb-2 px-1">
+              <button className="btn btn-block btn-outline-secondary" onClick={this.onLoadNextPage}>load next page ({parseInt(String(q.page || 0)) + 1})</button>
+            </div>
           </div>
         </div>
       </section>

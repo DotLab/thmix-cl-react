@@ -23,6 +23,7 @@ export default class AlbumDetailEdit extends React.Component {
       id: null,
 
       name: '',
+      category: '',
       desc: '',
       date: null,
       coverPath: '',
@@ -39,8 +40,8 @@ export default class AlbumDetailEdit extends React.Component {
   }
 
   updateMeta() {
-    const {id, name, desc} = this.state;
-    this.app.albumUpdate({id, name, desc});
+    const {id, name, desc, category} = this.state;
+    this.app.albumUpdate({id, name, desc, category});
   }
 
   onCoverChange(e) {
@@ -85,6 +86,17 @@ export default class AlbumDetailEdit extends React.Component {
           <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">album name</label>
             <div className="col-sm-9"><input className="form-control" type="text" name="name" value={s.name} onChange={this.onChange}/></div>
+          </div>
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label text-right">category</label>
+            <div className="col-sm-9">
+              <select className="form-control" name="category" value={s.category} onChange={this.onChange}>
+                <option value="">none</option>
+                <option value="touhou">touhou</option>
+                <option value="anime">anime</option>
+                <option value="game">game</option>
+              </select>
+            </div>
           </div>
           <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">album description</label>
