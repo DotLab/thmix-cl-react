@@ -46,6 +46,8 @@ import {getCurrentDay} from './utils';
 
 import langs from './json/langs.json';
 
+import {setApp} from './apiService';
+
 // const debug = require('debug')('thmix:App');
 
 const VERSION = 0;
@@ -56,6 +58,8 @@ const DEVELOPMENT = 'development';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
+
+    setApp(this);
 
     this.history = props.history;
     this.socket = props.socket;
@@ -504,14 +508,14 @@ export default class App extends React.Component {
         <div className="container">
           <div className="collapse navbar-collapse" id="navbarText">
             <ul className="navbar-nav mr-auto">
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs">songs</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit">translations</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/"><i className="fas fa-home"></i> home</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis"><i className="fas fa-music"></i> midis</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs"><i className="fas fa-info-circle"></i> songs</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts"><i className="fas fa-guitar"></i> soundfonts</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit"><i className="fas fa-language"></i> translations</NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources">resources</NavLink></li> */}
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users"><i className="fas fa-user-friends"></i> users</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help"><i className="fas fa-question-circle"></i> help</NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board">board</NavLink></li> */}
             </ul>
             {!s.user ? <ul className="navbar-nav">
@@ -595,8 +599,8 @@ export default class App extends React.Component {
             <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/terms">terms</Link>
             <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/privacy">privacy</Link>
             <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/copyright">copyright(DMCA)</Link>
-            <a className="d-inline-block text-nowrap text-decoration-none text-light mr-4" href="http://thmix.cc/boot/report.php">server status</a>
-            <a className="d-inline-block text-nowrap text-decoration-none text-light     " href="https://github.com/DotLab">source code</a>
+            <a className="d-inline-block text-nowrap text-decoration-none text-light mr-4" href="https://travis-ci.org/github/DotLab/touhou-mix-server-nodejs">server status</a>
+            <a className="d-inline-block text-nowrap text-decoration-none text-light     " href="https://github.com/DotLab/touhou-mix-client-react">source code</a>
           </div>
           <div className="C($gray-500)">
             <small>Touhou Mix 2016-2019</small>
