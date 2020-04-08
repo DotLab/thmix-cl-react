@@ -34,6 +34,7 @@ class Row extends React.Component {
 
     return <tr>
       <td className="">{p.src}</td>
+      <td className="">{p.namespace}</td>
       <td className="Whs(nw)">{correctLang(p.lang)}</td>
       <td className="W(500px)"><input className="Bdrs(10px) Bdw(1px) D(b) W(100%)" type="text" name="text" onChange={this.onChange} value={s.text}/></td>
       <td><button className="btn btn-primary btn-sm" disabled={s.text === p.text} onClick={() => p.onApply(p, s.text)}>apply</button></td>
@@ -72,7 +73,7 @@ export default class TranslationEdit extends React.Component {
   }
 
   async onApplyTranslation(p, text) {
-    await this.app.translationUpdate({src: p.src, lang: p.lang, text});
+    await this.app.translationUpdate({src: p.src, lang: p.lang, namespace: p.namespace, text});
 
     const translations = await this.app.translationList();
     this.setState({translations});
@@ -91,6 +92,7 @@ export default class TranslationEdit extends React.Component {
             <thead>
               <tr>
                 <th>src</th>
+                <th>namespace</th>
                 <th>lang</th>
                 <th>text</th>
                 <th>action</th>
