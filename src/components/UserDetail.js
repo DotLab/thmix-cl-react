@@ -5,7 +5,7 @@ import {GradeBadge} from './gradeBadges';
 
 import {formatDate, formatNumber, getTimeSpan, getTimeSpanBetween, formatTimeSpan, formatDateTime} from '../utils';
 
-const Rank = (s) => (<div className="Bgc($gray-800) Bgc($gray-700):h rounded Lh(1.15) mt-1 D(f) Flw(w) Ai(c)">
+const Rank = (s) => (<div className="rounded Lh(1.15) mt-1 D(f) Flw(w) Ai(c) Bgp(c) Bgz(cv)" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .6)), url(${s.midi.coverBlurUrl})`}}>
   {s.midi.coverUrl && <img className="d-block rounded-left H(50px)" src={s.midi.coverUrl} alt=""/>}
   <span className="d-inline-block ml-2"><GradeBadge gradeLevel={s.gradeLevel} grade={s.grade}/></span>
   <div className="d-block my-2 ml-2">
@@ -27,7 +27,7 @@ const Rank = (s) => (<div className="Bgc($gray-800) Bgc($gray-700):h rounded Lh(
   </div>
 </div>);
 
-const Played = (s) => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) pr-3 rounded mt-1 D(f) Ai(c)">
+const Played = (s) => (<div className="Bgc($gray-800) Bgc($gray-700):h Lh(1.15) pr-3 rounded mt-1 D(f) Ai(c) Bgp(c) Bgz(cv)" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .6)), url(${s.coverBlurUrl})`}}>
   {s.coverUrl && <img className="d-inline-block rounded-left H(50px)" src={s.coverUrl} alt=""/>}
   <div className="my-2 ml-2">
     <div><strong>{s.midi.sourceSongName || s.midi.name}</strong> <small>by {s.sourceArtistName || (s.composer && s.composer.name) || 'Unknown'}</small></div>
