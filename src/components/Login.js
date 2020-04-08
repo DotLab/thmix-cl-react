@@ -1,5 +1,6 @@
 import React from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
+import {Translation as Tr} from '../translationService';
 
 import {onChange, onChangeNamedDirect} from '../utils';
 import {RECAPTCHA_KEY, TEST_RECAPTCHA_KEY} from '../secrets';
@@ -30,11 +31,11 @@ class App extends React.Component {
     return <section className="container my-4">
       <form className="Maw(500px) Mx(a) shadow p-3 rounded" onSubmit={this.onSubmit}>
         <div className="form-group">
-          <label>Email address</label>
+          <label><Tr src="Email address"/></label>
           <input className="form-control" type="email" required name="email" onChange={this.onChange}/>
         </div>
         <div className="form-group">
-          <label>Password</label>
+          <label><Tr src="Password"/></label>
           <input className="form-control" type="password" required name="password" onChange={this.onChange}/>
         </div>
         {/* <div className="form-group form-check">
@@ -44,7 +45,7 @@ class App extends React.Component {
         <div className="form-group">
           <ReCAPTCHA sitekey={this.app.isDevelopment ? TEST_RECAPTCHA_KEY : RECAPTCHA_KEY} onChange={this.onRecaptchaChange}/>
         </div>
-        <button type="submit" className="btn btn-primary" disabled={!this.state.recaptcha}>Login</button>
+        <button type="submit" className="btn btn-primary" disabled={!this.state.recaptcha}><Tr src="Login"/></button>
       </form>
     </section>;
   }
