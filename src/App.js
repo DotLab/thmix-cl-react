@@ -157,9 +157,13 @@ export default class App extends React.Component {
   }
 
   async resumeSession(hash) {
-    const user = await this.genericApi1('cl_web_user_resume_session', {hash});
-    this.setState({user});
-    this.success('session resumed');
+    try {
+      const user = await this.genericApi1('cl_web_user_resume_session', {hash});
+      this.setState({user});
+      this.success('session resumed');
+    } catch (e) {
+      localStorage.removeItem('sessionTokenHash');
+    }
   }
 
   clearSession() {

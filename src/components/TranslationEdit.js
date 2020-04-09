@@ -1,5 +1,6 @@
 import React from 'react';
 import {onChange, formatDateTime} from '../utils';
+import {getKey} from '../translationService';
 
 function correctLang(lang) {
   if (lang === 'zh-CN') {
@@ -101,7 +102,7 @@ export default class TranslationEdit extends React.Component {
               </tr>
             </thead>
             <tbody>
-              {s.translations.map((x) => <Row {...x} key={x.src} onApply={this.onApplyTranslation}/>)}
+              {s.translations.map((x) => <Row {...x} key={getKey(x.namespace, x.src)} onApply={this.onApplyTranslation}/>)}
             </tbody>
           </table>
         </div>
