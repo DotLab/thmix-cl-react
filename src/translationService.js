@@ -29,6 +29,8 @@ export function clearTranslationCache() {
 
   localStorage.setItem(TRANSLATION_LANG_KEY, app_.state.lang);
   localStorage.setItem(TRANSLATION_DICT_KEY, JSON.stringify(dict_));
+
+  window.location.reload();
 }
 
 export function pushDict(key, text) {
@@ -60,16 +62,29 @@ export const TranslationContext = React.createContext({});
 export class Translation extends React.Component {
   static contextType = TranslationContext;
 
+  constructor(props) {
+    super(props);
+    this.key = null;
+  }
+
   getNamespace() {
     return (this.props.namespace || this.props.ns || 'ui.web');
   }
 
   componentDidMount() {
-    requestTranslation(this.getNamespace(), this.props.src);
+    const key = getKey(this.getNamespace(), this.props.src);
+    if (this.key !== key) {
+      this.key = key;
+      requestTranslation(this.getNamespace(), this.props.src);
+    }
   }
 
   componentWillReceiveProps() {
-    requestTranslation(this.getNamespace(), this.props.src);
+    const key = getKey(this.getNamespace(), this.props.src);
+    if (this.key !== key) {
+      this.key = key;
+      requestTranslation(this.getNamespace(), this.props.src);
+    }
   }
 
   render() {
