@@ -3,7 +3,6 @@ import {Link} from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 import {RECAPTCHA_KEY, TEST_RECAPTCHA_KEY} from '../secrets';
 import {GradeBadge} from './gradeBadges';
-import {rpc} from '../apiService';
 
 import {formatNumber, formatDate, formatDateTime, touhouAlbum, onChange, onChangeNamedDirect} from '../utils';
 
@@ -192,11 +191,11 @@ export default class MidiDetail extends React.Component {
     const supersedeId = this.state.supersedeId;
 
     if (derivedFromId) {
-      const derivedMidi = await rpc('ClWebMidiDerivedFrom', {derivedFromId});
+      const derivedMidi = await this.app.midiGet({id: derivedFromId});
       this.setState({derivedMidi});
     }
     if (supersedeId) {
-      const supersedeMidi = await rpc('ClWebMidiSupersede', {supersedeId});
+      const supersedeMidi = await this.app.midiGet({id: supersedeId});
       this.setState({supersedeMidi});
     }
   }
