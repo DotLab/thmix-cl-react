@@ -48,7 +48,7 @@ import {getCurrentDay} from './utils';
 import langs from './json/langs.json';
 
 import {setApp as apiServiceSetApp} from './apiService';
-import {setApp as translationServiceSetApp, TranslationContext, Translation as Tr} from './translationService';
+import {setApp as translationServiceSetApp, TranslationContext, Translation as Tr, saveLang, clearTranslationCache, UI_VOLATILE} from './translationService';
 
 // const debug = require('debug')('thmix:App');
 
@@ -90,6 +90,7 @@ export default class App extends React.Component {
   onLangChange(e) {
     const lang = e.target.value;
     this.setState({lang});
+    saveLang(lang);
   }
 
   error(message) {
@@ -500,8 +501,8 @@ export default class App extends React.Component {
 
     return <TranslationContext.Provider value={s.translationDict}><div>
       {(s.error || s.success) && <div className="Pe(n) Z(1) position-fixed w-100 text-center">
-        {s.error && <span className="d-inline-block alert alert-danger p-2 shadow"><strong>Error</strong>: {s.error}</span>}
-        {s.success && <span className="d-inline-block alert alert-success p-2 shadow"><strong>Success</strong>: {s.success}</span>}
+        {s.error && <span className="d-inline-block alert alert-danger p-2 shadow"><strong><Tr src="error"/></strong>: <Tr ns={UI_VOLATILE} src={s.error}/></span>}
+        {s.success && <span className="d-inline-block alert alert-success p-2 shadow"><strong><Tr src="success"/></strong>: <Tr ns={UI_VOLATILE} src={s.success}/></span>}
       </div>}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -520,15 +521,18 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help"><i className="fas fa-question-circle"></i> <Tr src="help"/></NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board"><Tr src="board"/></NavLink></li> */}
             </ul>
-            {!s.user ? <ul className="navbar-nav">
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login"><Tr src="login"/></NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register"><Tr src="register"/></NavLink></li>
-            </ul> : <ul className="navbar-nav align-items-center">
+            <ul className="navbar-nav align-items-center">
+              <span className="Cur(p) nav-link" onClick={clearTranslationCache}><i className="fas fa-sync-alt"></i></span>
               <li className="nav-item">
-                <select className="Bdrs(10px)" onChange={this.onLangChange} value={this.state.lang}>
+                <select className="Bdrs(5px)" onChange={this.onLangChange} value={this.state.lang}>
                   {langs.map((x) => <option value={x.lang} key={x.lang}>{x.name}</option>)}
                 </select>
               </li>
+            </ul>
+            {!s.user ? <ul className="navbar-nav align-items-center">
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login"><Tr src="login"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register"><Tr src="register"/></NavLink></li>
+            </ul> : <ul className="navbar-nav align-items-center">
               <li className="nav-item dropdown">
                 <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i className="fas fa-plus"></i></span>
                 <div className="dropdown-menu dropdown-menu-right">
