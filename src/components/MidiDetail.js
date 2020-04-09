@@ -121,6 +121,13 @@ export default class MidiDetail extends React.Component {
       mp3Url: '',
       playing: false,
       // meta
+      derivedFromId: null,
+      supersedeId: null,
+      supersededById: null,
+
+      derivedMidi: null,
+      supersedeMidi: null,
+
       uploadedDate: null,
       approvedDate: null,
       status: 'PENDING',
@@ -179,6 +186,18 @@ export default class MidiDetail extends React.Component {
         this.setState({audio});
       });
     }
+
+    const derivedFromId = this.state.derivedFromId;
+    const supersedeId = this.state.supersedeId;
+
+    if (derivedFromId) {
+      const derivedMidi = await this.app.midiGet({id: derivedFromId});
+      this.setState({derivedMidi});
+    }
+    if (supersedeId) {
+      const supersedeMidi = await this.app.midiGet({id: supersedeId});
+      this.setState({supersedeMidi});
+    }
   }
 
   componentWillUnmount() {
@@ -231,20 +250,31 @@ export default class MidiDetail extends React.Component {
             <div className="py-2 py-md-4">
               <div className="Fz(20px)"><i className="fa-fw fas fa-play"></i> {formatNumber(s.trialCount)} <i className="fa-fw fas fa-chevron-up"></i> {formatNumber(s.upCount - s.downCount)} <i className="fa-fw fas fa-heart"></i> {formatNumber(s.loveCount)}</div>
               <div className="Lh(1.15) font-italic">
-                <div className="D(f) Ai(c) mt-4">
+
+                <div className="D(f) Ai(c)">
                   <h2 className="h4 m-0 D(ib)">{s.name}</h2>
                   {!s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i className="far fa-play-circle"></i></span>}
                   {s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i className="fas fa-pause-circle"></i></span>}
                 </div>
 
                 <div className="h5 m-0">by <a className="text-light" href={s.artistUrl}>{s.artistName}</a></div>
+                {s.derivedMidi && <div className="h5 my-0 Lh(1.15) mt-3 Op(70%) Fw(n)">derived from <Link className="text-light Fw(b)" to={`/midis/${s.derivedMidi.id}`}>{s.derivedMidi.name}</Link> by <span className="Fw(b)">{s.derivedMidi.artistName}</span></div>}
+                {s.supersedeMidi && <div className="h5 my-0 Lh(1.15) Op(70%) Fw(n)">supersede <Link className="text-light Fw(b)" to={`/midis/${s.supersedeMidi.id}`}>{s.supersedeMidi.name}</Link> by <span className="Fw(b)">{s.supersedeMidi.artistName}</span></div>}
               </div>
-              <div className="Cf mt-4">
-                <img className="H(60px) rounded float-left" src={s.uploaderAvatarUrl || DefaultAvatar} alt=""/>
-                <div className="D(ib) Lh(1.15) ml-2 small">
-                  <div className="mb-2"><Link className="text-light" to={`/users/${s.uploaderId}`}>{s.uploaderName}</Link></div>
-                  <div>uploaded on <strong>{formatDate(s.uploadedDate)}</strong></div>
-                  {s.approvedDate && <div>approved on <strong>{formatDate(s.approvedDate)}</strong></div>}
+              <div className="D(f) Fxf(w)">
+                {s.author && <div className="Cf mt-4 mr-5">
+                  <img className="H(60px) rounded float-left" src={s.author.avatarUrl || DefaultAvatar} alt=""/>
+                  <div className="D(ib) Lh(1.15) ml-2 small">
+                    <div className="mb-2"><span className="text-light">{s.author.name}</span></div>
+                  </div>
+                </div>}
+                <div className="Cf mt-4">
+                  <img className="H(60px) rounded float-left" src={s.uploaderAvatarUrl || DefaultAvatar} alt=""/>
+                  <div className="D(ib) Lh(1.15) ml-2 small">
+                    <div className="mb-2"><Link className="text-light" to={`/users/${s.uploaderId}`}>{s.uploaderName}</Link></div>
+                    <div>uploaded on <strong>{formatDate(s.uploadedDate)}</strong></div>
+                    {s.approvedDate && <div>approved on <strong>{formatDate(s.approvedDate)}</strong></div>}
+                  </div>
                 </div>
               </div>
             </div>
