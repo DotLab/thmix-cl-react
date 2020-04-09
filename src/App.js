@@ -10,17 +10,31 @@ import MidiListing from './components/MidiListing';
 import MidiDetail from './components/MidiDetail';
 import MidiDetailEdit from './components/MidiDetailEdit';
 import MidiUpload from './components/MidiUpload';
+
+import SoundfontListing from './components/SoundfontListing';
+import SoundfontDetail from './components/SoundfontDetail';
+import SoundfontDetailEdit from './components/SoundfontDetailEdit';
+import SoundfontUpload from './components/SoundfontUpload';
+
 import UserListing from './components/UserListing';
 import UserDetail from './components/UserDetail';
 import UserDetailEdit from './components/UserDetailEdit';
 import ResourceListing from './components/ResourceListing';
 import ResourceDetailEdit from './components/ResourceDetailEdit';
 import ResourceUpload from './components/ResourceUpload';
+import BuildUpload from './components/BuildUpload';
+import BuildDetailEdit from './components/BuildDetailEdit';
+import AlbumDetailEdit from './components/AlbumDetailEdit';
+import AlbumListing from './components/AlbumListing';
+import SongDetailEdit from './components/SongDetailEdit';
+import PersonDetailEdit from './components/PersonDetailEdit';
 
 import CardUpload from './components/CardUpload';
 import CardDetailEdit from './components/CardDetailEdit';
 
 import Board from './components/Board';
+
+import TranslationEdit from './components/TranslationEdit';
 
 import Help from './components/posts/Help';
 import Terms from './components/posts/Terms';
@@ -31,13 +45,20 @@ import DefaultAvatar from './components/DefaultAvatar.jpg';
 
 import {TEST_EMAIL, TEST_PASSWORD} from './secrets';
 
+import {getCurrentDay} from './utils';
+
+// @ts-ignore
+import langs from './json/langs.json';
+
+import {setApp as apiServiceSetApp} from './apiService';
+import {setApp as translationServiceSetApp, TranslationContext, Translation as Tr, saveLang, clearTranslationCache, UI_VOLATILE} from './translationService';
+
 // const debug = require('debug')('thmix:App');
 
 const VERSION = 0;
 const INTENT = 'web';
 
 const DEVELOPMENT = 'development';
-const CARD_EDITOR = 'cardEditor';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -46,18 +67,33 @@ export default class App extends React.Component {
     this.history = props.history;
     this.socket = props.socket;
     this.isDevelopment = props.env === DEVELOPMENT;
+    this.onLangChange = this.onLangChange.bind(this);
 
     this.state = {
       isHandshakeSuccessful: false,
       user: null,
       error: null,
       success: null,
+      lang: 'en',
+      translationDict: {},
     };
 
     this.socket.on('disconnect', this.onDisconnect.bind(this));
     this.socket.on('reconnect', this.onReconnect.bind(this));
 
     this.handshake();
+    this.albumCreate = this.albumCreate.bind(this);
+    this.songCreate = this.songCreate.bind(this);
+    this.personCreate = this.personCreate.bind(this);
+
+    apiServiceSetApp(this);
+    translationServiceSetApp(this);
+  }
+
+  onLangChange(e) {
+    const lang = e.target.value;
+    this.setState({lang});
+    saveLang(lang);
   }
 
   error(message) {
@@ -66,7 +102,7 @@ export default class App extends React.Component {
 
   success(message) {
     this.setState({error: null, success: message});
-    setTimeout(() => this.setState({success: null}), 1500);
+    setTimeout(() => this.setState({success: null}), 3000);
   }
 
   onDisconnect() {
@@ -75,7 +111,12 @@ export default class App extends React.Component {
       user: null,
     });
 
-    this.error('disconnected');
+    if (this.history.location.pathname === '/register') {
+      this.error('disconnected, register failed');
+      this.history.push('/');
+    } else {
+      this.error('disconnected');
+    }
   }
 
   async onReconnect() {
@@ -108,9 +149,29 @@ export default class App extends React.Component {
     await this.genericApi1('cl_handshake', {version: VERSION, intent: INTENT});
     this.setState({isHandshakeSuccessful: true});
 
-    if (this.isDevelopment) {
-      await this.userLogin({recaptcha: '', email: TEST_EMAIL, password: TEST_PASSWORD});
+    const sessionTokenHash = localStorage.getItem('sessionTokenHash');
+    if (sessionTokenHash) {
+      this.resumeSession(sessionTokenHash);
+    } else {
+      if (this.isDevelopment) {
+        await this.userLogin({recaptcha: '', email: TEST_EMAIL, password: TEST_PASSWORD});
+      }
     }
+  }
+
+  async resumeSession(hash) {
+    try {
+      const user = await this.genericApi1('cl_web_user_resume_session', {hash});
+      this.setState({user});
+      this.success('session resumed');
+    } catch (e) {
+      localStorage.removeItem('sessionTokenHash');
+    }
+  }
+
+  clearSession() {
+    localStorage.removeItem('sessionTokenHash');
+    this.success('auto login cleared');
   }
 
   async userRegisterPre({recaptcha, name, email}) {
@@ -125,10 +186,8 @@ export default class App extends React.Component {
   async userLogin({recaptcha, email, password}) {
     const user = await this.genericApi1('cl_web_user_login', {recaptcha, email, password});
     this.setState({user});
-
-    if (!this.isDevelopment) {
-      this.history.replace('/');
-    }
+    localStorage.setItem('sessionTokenHash', user.sessionTokenHash);
+    this.history.replace('/');
   }
 
   async userGet({id}) {
@@ -174,8 +233,8 @@ export default class App extends React.Component {
     return midi;
   }
 
-  async midiList({touhouAlbumIndex, touhouSongIndex, status, sort, page}) {
-    const midis = await this.genericApi1('cl_web_midi_list', {touhouAlbumIndex, touhouSongIndex, status, sort, page});
+  async midiList({albumId, songId, status, sort, page, search}) {
+    const midis = await this.genericApi1('cl_web_midi_list', {albumId, songId, status, sort, page, search});
     return midis;
   }
 
@@ -191,6 +250,41 @@ export default class App extends React.Component {
     this.success('cover uploaded');
 
     return midi;
+  }
+
+  async soundfontUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_soundfont_upload', {name, size, buffer});
+    this.success('soundfont uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/soundfonts/${res.id}`);
+    } else {
+      this.history.push(`/soundfonts/${res.id}/edit`);
+    }
+  }
+
+  async soundfontUploadCover({id, size, buffer}) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_upload_cover', {id, size, buffer});
+    this.success('cover uploaded');
+
+    return soundfont;
+  }
+
+  async soundfontGet({id}) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_get', {id});
+    return soundfont;
+  }
+
+  async soundfontUpdate(update) {
+    const soundfont = await this.genericApi1('cl_web_soundfont_update', update);
+    this.success('soundfont updated');
+
+    return soundfont;
+  }
+
+  async soundfontList({status, sort, page}) {
+    const soundfonts = await this.genericApi1('cl_web_soundfont_list', {status, sort, page});
+    return soundfonts;
   }
 
   async boardGetMessages() {
@@ -261,16 +355,184 @@ export default class App extends React.Component {
     return card;
   }
 
+  async buildUpload({name, size, buffer}) {
+    const res = await this.genericApi1('cl_web_build_upload', {name, size, buffer});
+    this.success('build uploaded');
+
+    if (res.duplicated === true) {
+      this.history.push(`/builds/${res.id}`);
+    } else {
+      this.history.push(`/builds/${res.id}/edit`);
+    }
+  }
+
+  async buildGet({id}) {
+    const build = await this.genericApi1('cl_web_build_get', {id});
+    return build;
+  }
+
+  async buildUpdate(update) {
+    const build = await this.genericApi1('cl_web_build_update', update);
+    this.success('build updated');
+
+    return build;
+  }
+
+  async midiBestPerformance({id}) {
+    const bestPerformance = await this.genericApi1('cl_web_midi_best_performance', {id});
+    return bestPerformance;
+  }
+
+  async midiMostPlayed({id}) {
+    const mostPlayed = await this.genericApi1('cl_web_midi_most_played', {id});
+    return mostPlayed;
+  }
+
+  async midiRecentlyPlayed({id}) {
+    const recent = await this.genericApi1('cl_web_midi_recently_played', {id});
+    return recent;
+  }
+
+  async midiPlayHistory({id, interval}) {
+    switch (interval) {
+      case '1m':
+        interval = 1 * 60 * 1000;
+        break;
+      case '2m':
+        interval = 2 * 60 * 1000;
+        break;
+      case '5m':
+        interval = 5 * 60 * 1000;
+        break;
+      case '15m':
+        interval = 15 * 60 * 1000;
+        break;
+      case '30m':
+        interval = 30 * 60 * 1000;
+        break;
+      case '1h':
+        interval = 60 * 60 * 1000;
+        break;
+      case '1d':
+        /* fall through */
+      default:
+        interval = 24 * 60 * 60 * 1000;
+    }
+    const hist = await this.genericApi1('cl_web_midi_play_history', {id, startDate: new Date(0), endDate: getCurrentDay(), interval});
+    return hist;
+  }
+
+  async albumCreate() {
+    const res = await this.genericApi0('cl_web_album_create');
+    this.success('album created');
+
+    if (res.duplicated === true) {
+      this.history.push(`/albums/${res.id}`);
+    } else {
+      this.history.push(`/albums/${res.id}/edit`);
+    }
+  }
+
+  async songCreate() {
+    const res = await this.genericApi0('cl_web_song_create');
+    this.success('song created');
+
+    if (res.duplicated === true) {
+      this.history.push(`/songs/${res.id}`);
+    } else {
+      this.history.push(`/songs/${res.id}/edit`);
+    }
+  }
+
+  async personCreate() {
+    const res = await this.genericApi0('cl_web_person_create');
+    this.success('person created');
+
+    if (res.duplicated === true) {
+      this.history.push(`/persons/${res.id}`);
+    } else {
+      this.history.push(`/persons/${res.id}/edit`);
+    }
+  }
+
+  async albumGet({id}) {
+    const album = await this.genericApi1('cl_web_album_get', {id});
+    return album;
+  }
+
+  async albumUploadCover({id, size, buffer}) {
+    const album = await this.genericApi1('cl_web_album_upload_cover', {id, size, buffer});
+    this.success('cover uploaded');
+    return album;
+  }
+
+  async albumUpdate(update) {
+    const album = await this.genericApi1('cl_web_album_update', update);
+    this.success('album updated');
+
+    return album;
+  }
+
+  async songGet({id}) {
+    const song = await this.genericApi1('cl_web_song_get', {id});
+    return song;
+  }
+
+  async songUpdate(update) {
+    const song = await this.genericApi1('cl_web_song_update', update);
+    this.success('song updated');
+
+    return song;
+  }
+
+  async personGet({id}) {
+    const person = await this.genericApi1('cl_web_person_get', {id});
+    return person;
+  }
+
+  async personUploadAvatar({id, size, buffer}) {
+    const person = await this.genericApi1('cl_web_person_upload_avatar', {id, size, buffer});
+    this.success('cover uploaded');
+    return person;
+  }
+
+  async personUpdate(update) {
+    const person = await this.genericApi1('cl_web_person_update', update);
+    this.success('person updated');
+
+    return person;
+  }
+
+  async albumList() {
+    const albums = await this.genericApi0('cl_web_album_list');
+    return albums;
+  }
+
+  async songList({albumId}) {
+    const songs = await this.genericApi1('cl_web_song_list', {albumId});
+    return songs;
+  }
+
+  async authorList() {
+    const authors = await this.genericApi0('cl_web_person_list');
+    return authors;
+  }
+
+  async translationList() {
+    return await this.genericApi1('cl_web_translation_list', {lang: this.state.lang});
+  }
+
+  async translationUpdate({src, lang, namespace, text}) {
+    return await this.genericApi1('cl_web_translation_update', {lang, src, namespace, text});
+  }
+
   render() {
     const s = this.state;
 
-    if (s.waiting) return <div></div>;
-    const isEditor = this.state.user && this.state.user.roles.includes(CARD_EDITOR);
-
-    return <div>
+    return <TranslationContext.Provider value={s.translationDict}><div>
       {(s.error || s.success) && <div className="Pe(n) Z(1) position-fixed w-100 text-center">
-        {s.error && <span className="d-inline-block alert alert-danger p-2 shadow"><strong>Error</strong>: {s.error}</span>}
-        {s.success && <span className="d-inline-block alert alert-success p-2 shadow"><strong>Success</strong>: {s.success}</span>}
+        {s.error && <span className="d-inline-block alert alert-danger p-2 shadow"><strong><Tr src="error"/></strong>: <Tr ns={UI_VOLATILE} src={s.error}/></span>}
+        {s.success && <span className="d-inline-block alert alert-success p-2 shadow"><strong><Tr src="success"/></strong>: <Tr ns={UI_VOLATILE} src={s.success}/></span>}
       </div>}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -279,28 +541,41 @@ export default class App extends React.Component {
         <div className="container">
           <div className="collapse navbar-collapse" id="navbarText">
             <ul className="navbar-nav mr-auto">
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/">home</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis">midis</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources">resources</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/storys">stories</NavLink></li>
-              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts">soundfonts</NavLink></li> */}
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users">users</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help">help</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board">board</NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/"><i className="fas fa-home"></i> <Tr src="home"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis"><i className="fas fa-music"></i> <Tr src="midis"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs"><i className="fas fa-info-circle"></i> <Tr src="songs"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts"><i className="fas fa-guitar"></i> <Tr src="soundfonts"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit"><i className="fas fa-language"></i> <Tr src="translations"/></NavLink></li>
+              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources"><Tr src="resources"/></NavLink></li> */}
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users"><i className="fas fa-user-friends"></i> <Tr src="users"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help"><i className="fas fa-question-circle"></i> <Tr src="help"/></NavLink></li>
+              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board"><Tr src="board"/></NavLink></li> */}
             </ul>
-            {!s.user ? <ul className="navbar-nav">
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login">login</NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register">register</NavLink></li>
+            <ul className="navbar-nav align-items-center">
+              <span className="Cur(p) nav-link" onClick={clearTranslationCache}><i className="fas fa-sync-alt"></i></span>
+              <li className="nav-item">
+                <select className="Bdrs(5px)" onChange={this.onLangChange} value={this.state.lang}>
+                  {langs.map((x) => <option value={x.lang} key={x.lang}>{x.name}</option>)}
+                </select>
+              </li>
+            </ul>
+            {!s.user ? <ul className="navbar-nav align-items-center">
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/login"><Tr src="login"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/register"><Tr src="register"/></NavLink></li>
             </ul> : <ul className="navbar-nav align-items-center">
               <li className="nav-item dropdown">
                 <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i className="fas fa-plus"></i></span>
                 <div className="dropdown-menu dropdown-menu-right">
-                  <Link className="dropdown-item" to="/midis/upload">Upload midi</Link>
-                  <Link className="dropdown-item" to="/resources/upload">Upload resource</Link>
-                  {isEditor && <Link className="dropdown-item" to="/cards/upload">Upload card</Link>}
-                  <Link className="dropdown-item" to="/midis/upload">Create story</Link>
-                  {/* <div className="dropdown-divider"></div>
-                  <a className="dropdown-item" href=".">Something else here</a> */}
+                  <Link className="dropdown-item" to="/midis/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload midi"/></Link>
+                  <Link className="dropdown-item" to="/soundfonts/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload soundfont"/></Link>
+                  <Link className="dropdown-item" to="/builds/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload build"/></Link>
+                  <div className="dropdown-divider"></div>
+                  <div className="dropdown-item Cur(p)" onClick={this.albumCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create album"/></div>
+                  <div className="dropdown-item Cur(p)" onClick={this.songCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create song"/></div>
+                  <div className="dropdown-item Cur(p)" onClick={this.personCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create person"/></div>
+                  {/* <Link className="dropdown-item" to="/resources/upload">upload resource</Link> */}
+                  {/* <Link className="dropdown-item" to="/midis/upload">create story</Link> */}
+                  {/* <a className="dropdown-item" href=".">Something else here</a> */}
                 </div>
               </li>
               <li className="nav-item">
@@ -332,7 +607,24 @@ export default class App extends React.Component {
         <PropsRoute exact path="/users/:id" component={UserDetail} app={this} />
         <PropsRoute exact path="/users/:id/edit" component={UserDetailEdit} app={this} />
 
+        <PropsRoute exact path="/builds/upload" component={BuildUpload} app={this} />
+        <PropsRoute exact path="/builds/:id/edit" component={BuildDetailEdit} app={this} />
+
+        <PropsRoute exact path="/songs" component={AlbumListing} app={this} />
+        <PropsRoute exact path="/songs/:id/edit" component={SongDetailEdit} app={this} />
+
+        <PropsRoute exact path="/albums/:id/edit" component={AlbumDetailEdit} app={this} />
+
+        <PropsRoute exact path="/persons/:id/edit" component={PersonDetailEdit} app={this} />
+
         <PropsRoute exact path="/board" component={Board} app={this} />
+
+        <PropsRoute exact path="/soundfonts" component={SoundfontListing} app={this} />
+        <PropsRoute exact path="/soundfonts/upload" component={SoundfontUpload} app={this} />
+        <PropsRoute exact path="/soundfonts/:id" component={SoundfontDetail} app={this} />
+        <PropsRoute exact path="/soundfonts/:id/edit" component={SoundfontDetailEdit} app={this} />
+
+        <PropsRoute exact path="/translations/edit" component={TranslationEdit} app={this} />
 
         <PropsRoute exact path="/help" component={Help} />
         <PropsRoute exact path="/terms" component={Terms} />
@@ -343,17 +635,17 @@ export default class App extends React.Component {
       <footer className="W(100%) Lh(18px) Bgc($gray-600) text-center py-1 shadow">
         <div className="container">
           <div className="small">
-            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/terms">terms</Link>
-            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/privacy">privacy</Link>
-            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/copyright">copyright(DMCA)</Link>
-            <a className="d-inline-block text-nowrap text-decoration-none text-light mr-4" href="http://thmix.cc/boot/report.php">server status</a>
-            <a className="d-inline-block text-nowrap text-decoration-none text-light     " href="https://github.com/DotLab">source code</a>
+            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/terms"><Tr src="terms"/></Link>
+            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/privacy"><Tr src="privacy"/></Link>
+            <Link className="d-inline-block text-nowrap text-decoration-none text-light mr-4" to="/copyright"><Tr src="copyright(DMCA)"/></Link>
+            <a className="d-inline-block text-nowrap text-decoration-none text-light mr-4" href="https://travis-ci.org/github/DotLab/touhou-mix-server-nodejs"><Tr src="server status"/></a>
+            <a className="d-inline-block text-nowrap text-decoration-none text-light     " href="https://github.com/DotLab/touhou-mix-client-react"><Tr src="source code"/></a>
           </div>
           <div className="C($gray-500)">
-            <small>Touhou Mix 2016-2019</small>
+            <small>Touhou Mix 2015-2020</small>
           </div>
         </div>
       </footer>
-    </div>;
+    </div></TranslationContext.Provider>;
   }
 }

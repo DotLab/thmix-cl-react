@@ -1,37 +1,91 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-// import ReCAPTCHA from 'react-google-recaptcha';
+import ReCAPTCHA from 'react-google-recaptcha';
+import {RECAPTCHA_KEY, TEST_RECAPTCHA_KEY} from '../secrets';
+import {GradeBadge} from './gradeBadges';
 
-import {formatNumber, formatDate, touhouAlbum} from '../utils';
+import {formatNumber, formatDate, formatDateTime, touhouAlbum, onChange, onChangeNamedDirect} from '../utils';
 
 import DefaultAvatar from './DefaultAvatar.jpg';
 
-const Row = () => (<tr className="Bgc($gray-200) Bgc($gray-300):h mb-1">
-  <td className="px-2 py-1 rounded-left font-weight-bold">#1</td>
-  <td className="px-2 py-1"><span className="badge badge-primary badge-pill">A+</span></td>
-  <td className="px-2 py-1 text-left"><img className="H(1em) rounded" src={DefaultAvatar} alt="avatar"/> <Link className="text-dark" to="/users/idke">idke</Link></td>
-  <td className="px-2 py-1 C($gray-600)">342,234,444</td>
-  <td className="px-2 py-1 C($gray-600)">34,342x</td>
-  <td className="px-2 py-1 C($gray-600)">84%</td>
-  <td className="px-2 py-1">1,334</td>
-  <td className="px-2 py-1 C($gray-600)">23</td>
-  <td className="px-2 py-1 C($gray-600)">23</td>
-  <td className="px-2 py-1 C($gray-600)">644</td>
-  <td className="px-2 py-1 C($gray-600) rounded-right">583</td>
+const FirstRank = (p) => (<div className="rounded border shadow-sm px-3">
+  <div className="D(ib) Lh(1) text-center align-middle">
+    <div className="Fz(1.2em) font-weight-bold m-0">#0</div>
+    <div className="mt-1"><GradeBadge gradeLevel={p.gradeLevel} grade={p.grade}/></div>
+  </div>
+  <div className="D(ib) ml-3">
+    <img className="H(80px) my-2 rounded shadow-sm" src={p.userAvatarUrl || DefaultAvatar} alt=""/>
+  </div>
+  <div className="Mend(120px)--xl Mend(20px)--lg D(ib) ml-2 align-middle">
+    <h4 className="h6 m-0 font-italic">{p.userName}</h4>
+    <div className="small">achieved {formatDate(p.date)}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">TOTAL SUNSHINE</div>
+    <div className="Fz(1.25em)">{formatNumber(p.score)}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">MAX COMBO</div>
+    <div className="Fz(1.25em)">{formatNumber(p.combo)}x</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">ACCURACY</div>
+    <div className="Fz(1.25em)">{formatNumber(p.accuracy * 100, 2)}%</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">PERF</div>
+    <div className="Fz(1.25em)">{formatNumber(p.performance, 0)}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">PERFECT</div>
+    <div className="Fz(1em)">{formatNumber(p.perfectCount)}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">GREAT</div>
+    <div className="Fz(1em)">{formatNumber(p.greatCount)}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">GOOD</div>
+    <div className="Fz(1em)">{formatNumber(p.goodCount)}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">BAD</div>
+    <div className="Fz(1em)">{formatNumber(p.badCount)}</div>
+  </div>
+  <div className="D(ib) mx-2 my-2 align-middle">
+    <div className="Fz(.75em) font-weight-bold border-bottom">MISS</div>
+    <div className="Fz(1em)">{formatNumber(p.missCount)}</div>
+  </div>
+</div>);
+
+const RankRow = (p) => (<tr className="Bgc($gray-200) Bgc($gray-300):h mb-1">
+  <td className="px-2 py-1 rounded-left font-weight-bold">#{p.i}</td>
+  <td className="px-2 py-1"><GradeBadge gradeLevel={p.gradeLevel} grade={p.grade}/></td>
+  <td className="px-2 py-1 text-left"><img className="H(20px) rounded" src={p.userAvatarUrl || DefaultAvatar} alt="avatar"/> <Link className="text-dark" to={'/users/' + p.userId}>{p.userName}</Link></td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.score)}</td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.combo)}x</td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.accuracy * 100, 2)}%</td>
+  <td className="px-2 py-1">{formatNumber(p.performance)}</td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.perfectCount)}</td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.greatCount)}</td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.goodCount)}</td>
+  <td className="px-2 py-1 C($gray-600)">{formatNumber(p.badCount)}</td>
+  <td className="px-2 py-1 C($gray-600) rounded-right">{formatNumber(p.missCount)}</td>
 </tr>);
 
-const Reply = () => (<div className="Bdc($gray-400)! border-bottom">
+const Reply = (p) => (<div className="Bdc($gray-400)! border-bottom">
   <div className="Cf Maw(1000px) mx-auto py-2">
     <div className="mt-2">
       <div className="W(10%) float-left pr-3">
-        <img className="W(100%) rounded-circle shadow-sm" src={DefaultAvatar} alt=""/>
+        <img className="W(100%) rounded-circle shadow-sm" src={p.userAvatarUrl || DefaultAvatar} alt=""/>
       </div>
       <div className="W(90%) D(ib)">
         <div>
-          <span className="badge badge-pill badge-primary">A+</span> <Link className="font-weight-bold font-italic" to="/users">domSaur</Link>
+          {/* <span className="badge badge-pill badge-primary">A+</span> */}
+          <Link className="font-weight-bold font-italic" to="/users">{p.userName}</Link>
         </div>
-        <div>finally a map for this song ;w;(albeit taco)</div>
-        <div><span className="C($gray-600) small">7 days ago</span></div>
+        <div>{p.text}</div>
+        <div><span className="C($gray-600) small">{formatDateTime(p.date)}</span></div>
       </div>
     </div>
   </div>
@@ -45,6 +99,10 @@ export default class MidiDetail extends React.Component {
     this.app = props.app;
 
     this.startEdit = this.startEdit.bind(this);
+    this.onChange = onChange.bind(this);
+    this.onRecaptchaChange = onChangeNamedDirect.bind(this, 'recaptcha');
+    this.onPostComment = this.onPostComment.bind(this);
+    this.recaptchaRef = React.createRef();
 
     this.state = {
       id: null,
@@ -59,7 +117,17 @@ export default class MidiDetail extends React.Component {
       path: '',
       artistName: '',
       artistUrl: '',
+      audio: null,
+      mp3Url: '',
+      playing: false,
       // meta
+      derivedFromId: null,
+      supersedeId: null,
+      supersededById: null,
+
+      derivedMidi: null,
+      supersedeMidi: null,
+
       uploadedDate: null,
       approvedDate: null,
       status: 'PENDING',
@@ -93,38 +161,120 @@ export default class MidiDetail extends React.Component {
       cCutoff: 0,
       dCutoff: 0,
     };
+
+    this.play = this.play.bind(this);
   }
 
   async componentDidMount() {
-    const midi = await this.app.midiGet({id: this.props.match.params.id});
-    this.setState(midi);
+    const id = this.props.match.params.id;
+
+    const res = await Promise.all([
+      this.app.midiGet({id}),
+      this.app.genericApi1('cl_web_midi_record_list', {id}),
+      this.app.genericApi1('ClWebDocCommentList', {docId: id}),
+    ]);
+
+    this.setState({
+      ...res[0],
+      records: res[1],
+      comments: res[2],
+    });
+
+    if (res[0].mp3Url) {
+      const audio = new Audio(res[0].mp3Url);
+      audio.addEventListener('loadeddata', () => {
+        this.setState({audio});
+      });
+    }
+
+    const derivedFromId = this.state.derivedFromId;
+    const supersedeId = this.state.supersedeId;
+
+    if (derivedFromId) {
+      const derivedMidi = await this.app.midiGet({id: derivedFromId});
+      this.setState({derivedMidi});
+    }
+    if (supersedeId) {
+      const supersedeMidi = await this.app.midiGet({id: supersedeId});
+      this.setState({supersedeMidi});
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.state.audio) {
+      this.state.audio.pause();
+      this.setState({audio: null});
+    }
   }
 
   startEdit() {
     this.app.history.push(`/midis/${this.state.id}/edit`);
   }
 
+  async play() {
+    if (!this.state.audio) {
+      return;
+    }
+
+    if (!this.state.playing) {
+      this.state.audio.play();
+    } else {
+      this.state.audio.pause();
+    }
+    const playing = !(this.state.playing);
+    this.setState({playing});
+  }
+
+  async onPostComment(e) {
+    e.preventDefault();
+    const {_id, recaptcha, commentText} = this.state;
+    if (!commentText) {
+      return;
+    }
+    const comments = await this.app.genericApi1('ClWebDocCommentCreate', {docId: _id, recaptcha, text: commentText});
+    this.recaptchaRef.current.reset();
+    this.setState({
+      recaptcha: null, commentText: '',
+      comments,
+    });
+  }
+
   render() {
     const s = this.state;
-    const canEdit = this.app.state.user && this.state.uploaderId === this.app.state.user.id;
 
-    return <div>
-      <section className="container">
+    return <div className="Bgp(c) Bgz(cv)" style={{backgroundImage: `url(${s.coverBlurUrl})`}}>
+      <section className="container" style={{backgroundColor: '#ffffffc0'}}>
         {/* hero */}
         <div className="Bgp(c) Bgz(cv) text-light row shadow px-md-4" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .6)), url(${s.coverBlurUrl})`}}>
           <div className="col-md-8">
             <div className="py-2 py-md-4">
-              <div><i className="fa-fw fas fa-play"></i> {formatNumber(s.trialCount)} <i className="fa-fw fas fa-chevron-up"></i> {formatNumber(s.upCount - s.downCount)} <i className="fa-fw fas fa-heart"></i> {formatNumber(s.loveCount)}</div>
+              <div className="Fz(20px)"><i className="fa-fw fas fa-play"></i> {formatNumber(s.trialCount)} <i className="fa-fw fas fa-chevron-up"></i> {formatNumber(s.upCount - s.downCount)} <i className="fa-fw fas fa-heart"></i> {formatNumber(s.loveCount)}</div>
               <div className="Lh(1.15) font-italic">
-                <h2 className="h4 m-0 mt-4 ">{s.name}</h2>
+
+                <div className="D(f) Ai(c)">
+                  <h2 className="h4 m-0 D(ib)">{s.name}</h2>
+                  {!s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i className="far fa-play-circle"></i></span>}
+                  {s.playing && <span onClick={this.play} className="Mstart(20px) Fz(40px)"><i className="fas fa-pause-circle"></i></span>}
+                </div>
+
                 <div className="h5 m-0">by <a className="text-light" href={s.artistUrl}>{s.artistName}</a></div>
+                {s.derivedMidi && <div className="h5 my-0 Lh(1.15) mt-3 Op(70%) Fw(n)">derived from <Link className="text-light Fw(b)" to={`/midis/${s.derivedMidi.id}`}>{s.derivedMidi.name}</Link> by <span className="Fw(b)">{s.derivedMidi.artistName}</span></div>}
+                {s.supersedeMidi && <div className="h5 my-0 Lh(1.15) Op(70%) Fw(n)">supersede <Link className="text-light Fw(b)" to={`/midis/${s.supersedeMidi.id}`}>{s.supersedeMidi.name}</Link> by <span className="Fw(b)">{s.supersedeMidi.artistName}</span></div>}
               </div>
-              <div className="Cf mt-4">
-                <img className="H(60px) rounded float-left" src={s.uploaderAvatarUrl || DefaultAvatar} alt=""/>
-                <div className="D(ib) Lh(1.15) ml-2 small">
-                  <div className="mb-2"><Link className="text-light" to={`/users/${s.uploaderId}`}>{s.uploaderName}</Link></div>
-                  <div>uploaded on <strong>{formatDate(s.uploadedDate)}</strong></div>
-                  {s.approvedDate && <div>approved on <strong>{formatDate(s.approvedDate)}</strong></div>}
+              <div className="D(f) Fxf(w)">
+                {s.author && <div className="Cf mt-4 mr-5">
+                  <img className="H(60px) rounded float-left" src={s.author.avatarUrl || DefaultAvatar} alt=""/>
+                  <div className="D(ib) Lh(1.15) ml-2 small">
+                    <div className="mb-2"><span className="text-light">{s.author.name}</span></div>
+                  </div>
+                </div>}
+                <div className="Cf mt-4">
+                  <img className="H(60px) rounded float-left" src={s.uploaderAvatarUrl || DefaultAvatar} alt=""/>
+                  <div className="D(ib) Lh(1.15) ml-2 small">
+                    <div className="mb-2"><Link className="text-light" to={`/users/${s.uploaderId}`}>{s.uploaderName}</Link></div>
+                    <div>uploaded on <strong>{formatDate(s.uploadedDate)}</strong></div>
+                    {s.approvedDate && <div>approved on <strong>{formatDate(s.approvedDate)}</strong></div>}
+                  </div>
                 </div>
               </div>
             </div>
@@ -132,18 +282,19 @@ export default class MidiDetail extends React.Component {
           <div className="col-md-4">
             <div className="text-right mt-md-4">
               <span className="Fz(1em) badge badge-pill badge-dark p-3 shadow-sm" style={{backgroundColor: '#00000080'}}>{s.status}</span>
-              {canEdit && <span className="Fz(1em) Cur(p) badge badge-pill badge-dark p-3 shadow-sm ml-2" style={{backgroundColor: '#00000080'}} onClick={this.startEdit}><i className="fas fa-pencil-alt"></i></span>}
+              {s.canEdit && <span className="Fz(1em) Cur(p) badge badge-pill badge-dark p-3 shadow-sm ml-2" style={{backgroundColor: '#00000080'}} onClick={this.startEdit}><i className="fas fa-pencil-alt"></i></span>}
             </div>
             <div className="mt-4 ml-md-auto px-3 py-2" style={{backgroundColor: '#00000060'}}>
               {/* <div><i className="fa-fw fas fa-star"></i> 4.8</div> */}
-              <div><i className="fa-fw fas fa-sun"></i> {formatNumber(s.avgScore)}</div>
-              <div><i className="fa-fw fas fa-link"></i> {formatNumber(s.avgCombo)}x</div>
-              <div><i className="fa-fw fas fa-bullseye"></i> {formatNumber(s.avgAccuracy * 100)}%</div>
+              <div><i className="fa-fw fas fa-sun"></i> {formatNumber(s.avgScore, 0)}</div>
+              <div><i className="fa-fw fas fa-link"></i> {formatNumber(s.avgCombo, 0)}x</div>
+              <div><i className="fa-fw fas fa-bullseye"></i> {formatNumber(s.avgAccuracy * 100, 2)}%</div>
             </div>
             <div className="Mt(2px) ml-md-auto px-3 py-2" style={{backgroundColor: '#00000060'}}>
               <div className="text-center">User Rating</div>
               <div>
-                <i className="fa-fw fas fa-angle-up"></i> {formatNumber(s.upCount)} <span className="float-right"><i className="fa-fw fas fa-angle-down"></i> {formatNumber(s.downCount)}</span>
+                <i className="fa-fw fas fa-angle-up"></i> {formatNumber(s.upCount)} ({formatNumber(s.upCount / s.voteCount * 100, 2)}%)
+                <span className="float-right"><i className="fa-fw fas fa-angle-down"></i> {formatNumber(s.downCount)}  ({formatNumber(s.downCount / s.voteCount * 100, 2)}%)</span>
               </div>
             </div>
           </div>
@@ -169,18 +320,20 @@ export default class MidiDetail extends React.Component {
           </div>
           <div className="col-md-4">
             {/* right */}
-            <div className="Bgc($gray-200) ml-md-auto mt-md-3 px-3 py-2 shadow-sm">
+            <div className="ml-md-auto mt-md-3 px-3 py-2 shadow-sm" style={{backgroundColor: '#ffffff80'}}>
               <div className="text-center mt-2">Pass Rate</div>
               <div>
-                <i className="fa-fw fas fa-check"></i> {formatNumber(s.passCount)} <div className="float-right"><i className="fa-fw fas fa-times"></i> {formatNumber(s.failCount)}</div>
+                <i className="fa-fw fas fa-check"></i> {formatNumber(s.passCount)}  ({formatNumber(s.passCount / s.trialCount * 100, 2)}%)
+                <div className="float-right"><i className="fa-fw fas fa-times"></i> {formatNumber(s.failCount)}  ({formatNumber(s.failCount / s.trialCount * 100, 2)}%)</div>
               </div>
-              <div className="text-center mt-2">Grade Cutoff</div>
+              <div className="text-center mt-2">Grade Status</div>
               <div>
-                <div><span className="font-weight-bold">S </span><span className="float-right">{formatNumber(s.sCutoff)}</span></div>
-                <div><span className="font-weight-bold">A-</span><span className="float-right">{formatNumber(s.aCutoff)}</span></div>
-                <div><span className="font-weight-bold">B-</span><span className="float-right">{formatNumber(s.bCutoff)}</span></div>
-                <div><span className="font-weight-bold">C-</span><span className="float-right">{formatNumber(s.cCutoff)}</span></div>
-                <div><span className="font-weight-bold">D-</span><span className="float-right">{formatNumber(s.dCutoff)}</span></div>
+                <div><span className="font-weight-bold">S</span><span className="float-right">{formatNumber(s.sCount)} ({formatNumber(s.sCount / s.trialCount * 100, 2)}%)</span></div>
+                <div><span className="font-weight-bold">A</span><span className="float-right">{formatNumber(s.aCount)} ({formatNumber(s.aCount / s.trialCount * 100, 2)}%)</span></div>
+                <div><span className="font-weight-bold">B</span><span className="float-right">{formatNumber(s.bCount)} ({formatNumber(s.bCount / s.trialCount * 100, 2)}%)</span></div>
+                <div><span className="font-weight-bold">C</span><span className="float-right">{formatNumber(s.cCount)} ({formatNumber(s.cCount / s.trialCount * 100, 2)}%)</span></div>
+                <div><span className="font-weight-bold">D</span><span className="float-right">{formatNumber(s.dCount)} ({formatNumber(s.dCount / s.trialCount * 100, 2)}%)</span></div>
+                <div><span className="font-weight-bold">F</span><span className="float-right">{formatNumber(s.fCount)} ({formatNumber(s.fCount / s.trialCount * 100, 2)}%)</span></div>
               </div>
             </div>
           </div>
@@ -189,53 +342,9 @@ export default class MidiDetail extends React.Component {
 
       <section className="Bgc($gray-800) pt-2 pb-3">
         {/* rank */}
-        {s.records.length ? <div className="container bg-white shadow p-3 mb-3">
+        {s.records && s.records.length ? <div className="container bg-white shadow p-3 mb-3">
           {/* 1st */}
-          <div className="rounded border shadow-sm px-3">
-            <div className="D(ib) Lh(1) text-center align-middle">
-              <div className="Fz(1.2em) font-weight-bold m-0">#1</div>
-              <div className="badge badge-success badge-pill mt-1">A+</div>
-            </div>
-            <div className="D(ib) ml-3">
-              <img className="H(80px) my-2 rounded shadow-sm" src={DefaultAvatar} alt=""/>
-            </div>
-            <div className="Mend(120px)--xl Mend(20px)--lg D(ib) ml-2 align-middle">
-              <h4 className="h6 m-0 font-italic">Alchyr</h4>
-              <div className="small">achieved about 2 hour ago</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">TOTAL SUNSHINE</div>
-              <div className="Fz(1.25em)">453,432,435</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">MAX COMBO</div>
-              <div className="Fz(1.25em)">445x</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">ACCURACY</div>
-              <div className="Fz(1.25em)">90.4%</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">PERF</div>
-              <div className="Fz(1.25em)">453</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">PERFECT</div>
-              <div className="Fz(1em)">453</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">GREAT</div>
-              <div className="Fz(1em)">453</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">GOOD</div>
-              <div className="Fz(1em)">453</div>
-            </div>
-            <div className="D(ib) mx-2 my-2 align-middle">
-              <div className="Fz(.75em) font-weight-bold border-bottom">MISS</div>
-              <div className="Fz(1em)">453</div>
-            </div>
-          </div>
+          <FirstRank {...s.records[0]} />
           {/* ranking */}
           <div className="table-responsive">
             <table className="Bdcl(s) Bdsp(0,.25em) text-nowrap text-center">
@@ -251,16 +360,12 @@ export default class MidiDetail extends React.Component {
                   <td className="px-2 py-1 text-muted">perfect</td>
                   <td className="px-2 py-1 text-muted">great</td>
                   <td className="px-2 py-1 text-muted">good</td>
+                  <td className="px-2 py-1 text-muted">bad</td>
                   <td className="px-2 py-1 text-muted">miss</td>
                 </tr>
               </thead>
               <tbody>
-                <Row/>
-                <Row/>
-                <Row/>
-                <Row/>
-                <Row/>
-                <Row/>
+                {s.records.map((x, i) => <RankRow {...x} i={i} key={i} />)}
               </tbody>
             </table>
           </div>
@@ -268,28 +373,25 @@ export default class MidiDetail extends React.Component {
           No scores yet. Maybe you should try setting some?
         </div>}
         {/* comments */}
-        {/* <div className="container bg-white shadow"> */}
-        {/* input */}
-        {/* <div className="Cf Maw(1000px) mx-auto py-3">
-            <h2 className="C($pink) h5 m-0">Comments <span className="badge badge-secondary badge-pill">3</span></h2>
+        <div className="container bg-white shadow">
+          {/* input */}
+          <div className="Cf Maw(1000px) mx-auto py-3">
+            <h2 className="C($pink) h5 m-0">Comments <span className="badge badge-secondary badge-pill">{formatNumber(this.state.comments?.length)}</span></h2>
             <div className="mt-2">
               <div className="W(10%) float-left pr-3">
-                <img className="W(100%) rounded-circle shadow-sm" src={DefaultAvatar} alt=""/>
+                <img className="W(100%) rounded-circle shadow-sm" src={this.app.state.user?.avatarUrl || DefaultAvatar} alt=""/>
               </div>
               <form className="W(90%) D(ib)">
-                <textarea className="form-control" type="text" />
-                <ReCAPTCHA className="mt-2 float-left" sitekey="6LfMg5YUAAAAAAJr_ANH5TVvhoSHsJEa6oGSHw6f" name="hi" onChange={this.onRecaptchaChange}/>
-                <button className="btn btn-primary mt-2 ml-2" type="submit">Post</button>
+                <textarea className="form-control" name="commentText" value={this.state.commentText} onChange={this.onChange} />
+                <ReCAPTCHA ref={this.recaptchaRef} className="mt-2 float-left" sitekey={this.app.isDevelopment ? TEST_RECAPTCHA_KEY : RECAPTCHA_KEY} onChange={this.onRecaptchaChange}/>
+                <button className="btn btn-primary mt-2 ml-2" type="submit" onClick={this.onPostComment} disabled={!this.state.recaptcha || !this.state.commentText}>Post</button>
               </form>
             </div>
-          </div> */}
-        {/* </div> */}
+          </div>
+        </div>
         {s.comments.length && <div className="Bgc($gray-200) container">
           <div className="">
-            <Reply />
-            <Reply />
-            <Reply />
-            <Reply />
+            {s.comments.map((x) => <Reply {...x} key={x._id}/>)}
           </div>
         </div>}
       </section>
