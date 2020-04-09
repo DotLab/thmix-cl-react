@@ -477,8 +477,13 @@ export default class App extends React.Component {
     return person;
   }
 
-  async albumList() {
-    const albums = await this.genericApi0('cl_web_album_list');
+  async albumList({page}) {
+    const albums = await this.genericApi1('cl_web_album_list', {page});
+    return albums;
+  }
+
+  async albumInfoList() {
+    const albums = await this.genericApi0('cl_web_album_info_list');
     return albums;
   }
 

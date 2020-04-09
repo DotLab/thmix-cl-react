@@ -89,7 +89,7 @@ export default class MidiListing extends React.Component {
     const {albumId, songId, status, sort, page, search} = this.getQuery();
     const res = await Promise.all([
       this.app.midiList({albumId, songId, status, sort, page, search}),
-      this.app.albumList(),
+      this.app.albumInfoList(),
     ]);
     this.setState({
       isLoading: false,

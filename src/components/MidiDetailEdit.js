@@ -56,7 +56,7 @@ export default class MidiDetailEdit extends React.Component {
   async componentDidMount() {
     await Promise.all([
       this.app.midiGet({id: this.props.match.params.id}),
-      this.app.albumList(),
+      this.app.albumInfoList(),
       this.app.authorList(),
     ]).then((value) => {
       this.setState({

@@ -71,23 +71,31 @@ export class Translation extends React.Component {
     return (this.props.namespace || this.props.ns || 'ui.web');
   }
 
-  componentDidMount() {
+  refresh() {
+    if (!this.props.src) {
+      return;
+    }
+
     const key = getKey(this.getNamespace(), this.props.src);
     if (this.key !== key) {
       this.key = key;
       requestTranslation(this.getNamespace(), this.props.src);
     }
+  }
+
+  componentDidMount() {
+    this.refresh();
   }
 
   componentWillReceiveProps() {
-    const key = getKey(this.getNamespace(), this.props.src);
-    if (this.key !== key) {
-      this.key = key;
-      requestTranslation(this.getNamespace(), this.props.src);
-    }
+    this.refresh();
   }
 
   render() {
+    if (!this.props.src) {
+      return <span></span>;
+    }
+
     const key = getKey(this.getNamespace(), this.props.src);
     const text = this.context[key];
     return <span title={this.props.src}>{text}</span>;
