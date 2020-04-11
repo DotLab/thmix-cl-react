@@ -546,7 +546,8 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs"><i className="fas fa-info-circle"></i> <Tr src="songs"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts"><i className="fas fa-guitar"></i> <Tr src="soundfonts"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit"><i className="fas fa-language"></i> <Tr src="translations"/></NavLink></li>
-              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources"><Tr src="resources"/></NavLink></li> */}
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources"><i className="fas fa-box-open"></i><Tr src="resources"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/cards"><i className="fas fa-star"></i><Tr src="cards"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users"><i className="fas fa-user-friends"></i> <Tr src="users"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help"><i className="fas fa-question-circle"></i> <Tr src="help"/></NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/board"><Tr src="board"/></NavLink></li> */}
@@ -569,11 +570,12 @@ export default class App extends React.Component {
                   <Link className="dropdown-item" to="/midis/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload midi"/></Link>
                   <Link className="dropdown-item" to="/soundfonts/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload soundfont"/></Link>
                   <Link className="dropdown-item" to="/builds/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload build"/></Link>
+                  <Link className="dropdown-item" to="/resources/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload resource"/></Link>
+                  <Link className="dropdown-item" to="/cards/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload card"/></Link>
                   <div className="dropdown-divider"></div>
                   <div className="dropdown-item Cur(p)" onClick={this.albumCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create album"/></div>
                   <div className="dropdown-item Cur(p)" onClick={this.songCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create song"/></div>
                   <div className="dropdown-item Cur(p)" onClick={this.personCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create person"/></div>
-                  {/* <Link className="dropdown-item" to="/resources/upload">upload resource</Link> */}
                   {/* <Link className="dropdown-item" to="/midis/upload">create story</Link> */}
                   {/* <a className="dropdown-item" href=".">Something else here</a> */}
                 </div>
