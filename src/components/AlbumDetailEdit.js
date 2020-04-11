@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {onTextareaChange, onChange} from '../utils';
+import {requestTranslation} from '../translationService';
 import NoImageAvailable from './NoImageAvailable.jpg';
 
 const Block = ({children}) => (<section className="container px-md-5 mb-2"><div className="row text-light">{children}</div></section>);
@@ -23,6 +24,7 @@ export default class AlbumDetailEdit extends React.Component {
       id: null,
 
       name: '',
+      nameI18n: '',
       category: '',
       desc: '',
       date: null,
@@ -36,12 +38,13 @@ export default class AlbumDetailEdit extends React.Component {
 
   async componentDidMount() {
     const album = await this.app.albumGet({id: this.props.match.params.id});
-    this.setState(album);
+    const nameI18n = await requestTranslation('name.artifact', album.name);
+    this.setState({...album, nameI18n});
   }
 
   updateMeta() {
-    const {id, name, desc, category} = this.state;
-    this.app.albumUpdate({id, name, desc, category});
+    const {id, name, nameI18n, desc, category} = this.state;
+    this.app.albumUpdate({id, name, nameI18n, desc, category});
   }
 
   onCoverChange(e) {
@@ -86,6 +89,10 @@ export default class AlbumDetailEdit extends React.Component {
           <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">album name</label>
             <div className="col-sm-9"><input className="form-control" type="text" name="name" value={s.name} onChange={this.onChange}/></div>
+          </div>
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label text-right">translated name</label>
+            <div className="col-sm-9"><input className="form-control" type="text" name="nameI18n" value={s.nameI18n} onChange={this.onChange}/></div>
           </div>
           <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">category</label>
