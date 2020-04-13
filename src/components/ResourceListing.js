@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import QueryString from 'query-string';
-import Card from './Card';
+import Resource from './Resource';
 
 import {onChange, pushHistory} from '../utils';
 
@@ -78,7 +78,7 @@ export default class ResourceListing extends React.Component {
       <section className="mt-2 mb-3 shadow border">
         <div className="Bgc($gray-100) Px(1.25em) pt-2">
           <div className="row">
-            {s.resources.map((resource) => <Card {...resource} key={resource.id} app={this.app}/>)}
+            {s.resources.map((resource) => <Resource {...resource} key={resource.id} app={this.app}/>)}
           </div>
         </div>
       </section>

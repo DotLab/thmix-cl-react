@@ -1,6 +1,8 @@
 import React from 'react';
 
 import {onTextareaChange, onChange, onCheckboxChange} from '../utils';
+import NoImageAvailable from './NoImageAvailable.jpg';
+import {rpc} from '../apiService';
 
 const Block = ({children}) => (<section className="container px-md-5 mb-2"><div className="row text-light">{children}</div></section>);
 Block.Left = ({children}) => (<div className="Bgc($gray-700) shadow col-lg-3 py-3 pl-4 font-italic">{children}</div>);
@@ -20,12 +22,14 @@ export default class CardDetailEdit extends React.Component {
     this.updateMain = this.updateMain.bind(this);
     this.updateParameter = this.updateParameter.bind(this);
     this.validateInput = this.validateInput.bind(this);
+    this.onCoverChange = this.onCoverChange.bind(this);
 
     this.state = {
       id: null,
 
       name: '',
       desc: '',
+      url: '',
       rarity: '',
       attribute: '',
       spInit: 0,
@@ -61,6 +65,24 @@ export default class CardDetailEdit extends React.Component {
       reiInit, reiMax, maInit, maMax});
   }
 
+  onCoverChange(e) {
+    if (!e.target.files[0]) return;
+
+    const size = e.target.files[0].size;
+    if (size > 2048576) {
+      this.app.error('image too large');
+    } else {
+      const fr = new FileReader();
+      fr.onload = (e) => {
+        // @ts-ignore
+        const buffer = e.target.result;
+        rpc('cl_web_card_upload_cover', {id: this.state.id, size, buffer}).then((card) => this.setState(card));
+      };
+      fr.readAsArrayBuffer(e.target.files[0]);
+    }
+  }
+
+
   validateInput() {
     const s = this.state;
     return {
@@ -84,7 +106,18 @@ export default class CardDetailEdit extends React.Component {
       <section className="Bgc($gray-800) container text-light px-5 pb-3 pt-5">
         <h2 className="font-weight-light m-0"><strong className="font-weight-normal">Card</strong> Detail</h2>
       </section>
-
+      <Block>
+        <Block.Left><h2 className="h5 m-0">Cover</h2></Block.Left>
+        <Block.Right>
+          <div className="form-group row">
+            <div className="offset-sm-3 col-sm-9">
+              <img className="H(256px) shadow-sm rounded" src={s.url || NoImageAvailable} alt=""/>
+              <img className="H(128px) shadow-sm rounded ml-2" src={s.coverBlurUrl} alt=""/>
+              <input className="D(b) W(a) mt-2 form-control-file" type="file" accept="image/*" onChange={this.onCoverChange}/>
+            </div>
+          </div>
+        </Block.Right>
+      </Block>
       <Block>
         <Block.Left><h2 className="h5 m-0">Meta</h2></Block.Left>
         <Block.Right>

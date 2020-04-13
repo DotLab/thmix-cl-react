@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import backgroundImage from './background.png';
 import soundImage from './sound.jpg';
 
-export default class Card extends React.Component {
+export default class Resource extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
