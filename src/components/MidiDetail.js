@@ -248,7 +248,12 @@ export default class MidiDetail extends React.Component {
         <div className="Bgp(c) Bgz(cv) text-light row shadow px-md-4" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .6)), url(${s.coverBlurUrl})`}}>
           <div className="col-md-8">
             <div className="py-2 py-md-4">
-              <div className="Fz(20px)"><i className="fa-fw fas fa-play"></i> {formatNumber(s.trialCount)} <i className="fa-fw fas fa-chevron-up"></i> {formatNumber(s.upCount - s.downCount)} <i className="fa-fw fas fa-heart"></i> {formatNumber(s.loveCount)}</div>
+              <div className="Fz(20px)">
+                <i className="fa-fw fas fa-play"></i> {formatNumber(s.trialCount)}&nbsp;
+                <i className="fa-fw fas fa-download"></i> {formatNumber(s.downloadCount)}&nbsp;
+                <i className="fa-fw fas fa-chevron-up"></i> {formatNumber(s.upCount - s.downCount)}&nbsp;
+                <i className="fa-fw fas fa-heart"></i> {formatNumber(s.loveCount)}&nbsp;
+              </div>
               <div className="Lh(1.15) font-italic">
 
                 <div className="D(f) Ai(c)">
