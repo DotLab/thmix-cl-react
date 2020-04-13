@@ -258,8 +258,8 @@ export default class MidiDetail extends React.Component {
                 </div>
 
                 <div className="h5 m-0">by <a className="text-light" href={s.artistUrl}>{s.artistName}</a></div>
-                {s.derivedMidi && <div className="h5 my-0 Lh(1.15) mt-3 Op(70%) Fw(n)">derived from <Link className="text-light Fw(b)" to={`/midis/${s.derivedMidi.id}`}>{s.derivedMidi.name}</Link> by <span className="Fw(b)">{s.derivedMidi.artistName}</span></div>}
-                {s.supersedeMidi && <div className="h5 my-0 Lh(1.15) Op(70%) Fw(n)">supersede <Link className="text-light Fw(b)" to={`/midis/${s.supersedeMidi.id}`}>{s.supersedeMidi.name}</Link> by <span className="Fw(b)">{s.supersedeMidi.artistName}</span></div>}
+                {s.derivedMidi && <div className="h5 my-0 Lh(1.15) mt-3 Fw(n)">derived from <Link className="text-light Fw(b)" to={`/midis/${s.derivedMidi.id}`}>{s.derivedMidi.name}</Link> by <span className="Fw(b)">{s.derivedMidi.artistName}</span></div>}
+                {s.supersedeMidi && <div className="h5 my-0 Lh(1.15) Fw(n)">supersede <Link className="text-light Fw(b)" to={`/midis/${s.supersedeMidi.id}`}>{s.supersedeMidi.name}</Link> by <span className="Fw(b)">{s.supersedeMidi.artistName}</span></div>}
               </div>
               <div className="D(f) Fxf(w)">
                 {s.author && <div className="Cf mt-4 mr-5">

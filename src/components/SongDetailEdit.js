@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {onTextareaChange, onChange} from '../utils';
+import {requestTranslation} from '../translationService';
 
 const Block = ({children}) => (<section className="container px-md-5 mb-2"><div className="row text-light">{children}</div></section>);
 Block.Left = ({children}) => (<div className="Bgc($gray-700) shadow col-lg-3 py-3 pl-4 font-italic">{children}</div>);
@@ -23,6 +24,7 @@ export default class SongDetailEdit extends React.Component {
       albumId: null,
       composerId: null,
       name: '',
+      nameI18n: '',
       desc: '',
       track: null,
       descRowCount: 5,
@@ -31,12 +33,13 @@ export default class SongDetailEdit extends React.Component {
 
   async componentDidMount() {
     const song = await this.app.songGet({id: this.props.match.params.id});
-    this.setState(song);
+    const nameI18n = await requestTranslation('name.artifact', song.name);
+    this.setState({...song, nameI18n});
   }
 
   updateMeta() {
-    const {id, albumId, composerId, name, desc, track} = this.state;
-    this.app.songUpdate({id, albumId, composerId, name, desc, track});
+    const {id, albumId, composerId, name, nameI18n, desc, track} = this.state;
+    this.app.songUpdate({id, albumId, composerId, name, nameI18n, desc, track});
   }
 
   render() {
@@ -59,6 +62,10 @@ export default class SongDetailEdit extends React.Component {
           <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">song name</label>
             <div className="col-sm-9"><input className="form-control" type="text" name="name" value={s.name} onChange={this.onChange}/></div>
+          </div>
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label text-right">translated name</label>
+            <div className="col-sm-9"><input className="form-control" type="text" name="nameI18n" value={s.nameI18n} onChange={this.onChange}/></div>
           </div>
           <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">song description</label>

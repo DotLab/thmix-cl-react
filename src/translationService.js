@@ -41,20 +41,26 @@ export function pushDict(key, text) {
   localStorage.setItem(TRANSLATION_DICT_KEY, JSON.stringify(dict_));
 }
 
+/**
+ * @param {String} namespace
+ * @param {String} src
+ * @return {Promise<String>}
+ */
 export async function requestTranslation(namespace, src) {
   const key = getKey(namespace, src);
 
   if (namespace.substr(0, 2) === 'ui' && app_.state.lang === 'en') {
     pushDict(key, src);
-    return;
+    return src;
   }
   if (dict_[key]) {
-    return;
+    return dict_[key];
   }
 
   pushDict(key, src + '...');
   const text = await rpc('cl_web_translate', {lang: app_.state.lang, namespace, src});
   pushDict(key, text);
+  return text;
 }
 
 export const TranslationContext = React.createContext({});
@@ -71,23 +77,31 @@ export class Translation extends React.Component {
     return (this.props.namespace || this.props.ns || 'ui.web');
   }
 
-  componentDidMount() {
+  refresh() {
+    if (!this.props.src) {
+      return;
+    }
+
     const key = getKey(this.getNamespace(), this.props.src);
     if (this.key !== key) {
       this.key = key;
       requestTranslation(this.getNamespace(), this.props.src);
     }
+  }
+
+  componentDidMount() {
+    this.refresh();
   }
 
   componentWillReceiveProps() {
-    const key = getKey(this.getNamespace(), this.props.src);
-    if (this.key !== key) {
-      this.key = key;
-      requestTranslation(this.getNamespace(), this.props.src);
-    }
+    this.refresh();
   }
 
   render() {
+    if (!this.props.src) {
+      return <span></span>;
+    }
+
     const key = getKey(this.getNamespace(), this.props.src);
     const text = this.context[key];
     return <span title={this.props.src}>{text}</span>;

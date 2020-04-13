@@ -467,7 +467,7 @@ export default class App extends React.Component {
   }
 
   async albumUpdate(update) {
-    const album = await this.genericApi1('cl_web_album_update', update);
+    const album = await this.genericApi1('cl_web_album_update', {...update, lang: this.state.lang});
     this.success('album updated');
 
     return album;
@@ -479,7 +479,7 @@ export default class App extends React.Component {
   }
 
   async songUpdate(update) {
-    const song = await this.genericApi1('cl_web_song_update', update);
+    const song = await this.genericApi1('cl_web_song_update', {...update, lang: this.state.lang});
     this.success('song updated');
 
     return song;
@@ -503,8 +503,13 @@ export default class App extends React.Component {
     return person;
   }
 
-  async albumList() {
-    const albums = await this.genericApi0('cl_web_album_list');
+  async albumList({page}) {
+    const albums = await this.genericApi1('cl_web_album_list', {page});
+    return albums;
+  }
+
+  async albumInfoList() {
+    const albums = await this.genericApi0('cl_web_album_info_list');
     return albums;
   }
 
