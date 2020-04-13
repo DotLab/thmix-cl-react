@@ -19,6 +19,7 @@ export default class CardDetailEdit extends React.Component {
     this.updateMeta = this.updateMeta.bind(this);
     this.updateMain = this.updateMain.bind(this);
     this.updateParameter = this.updateParameter.bind(this);
+    this.validateInput = this.validateInput.bind(this);
 
     this.state = {
       id: null,
@@ -27,14 +28,14 @@ export default class CardDetailEdit extends React.Component {
       desc: '',
       rarity: '',
       attribute: '',
-      sp_init: 0,
-      sp_max: 0,
-      haru_init: 0,
-      haru_max: 0,
-      rei_init: 0,
-      rei_max: 0,
-      ma_init: 0,
-      ma_max: 0,
+      spInit: 0,
+      spMax: 0,
+      haruInit: 0,
+      haruMax: 0,
+      reiInit: 0,
+      reiMax: 0,
+      maInit: 0,
+      maMax: 0,
     };
   }
 
@@ -54,14 +55,31 @@ export default class CardDetailEdit extends React.Component {
   }
 
   updateParameter() {
-    const {id, sp_init, sp_max, haru_init, haru_max,
-      rei_init, rei_max, ma_init, ma_max} = this.state;
-    this.app.cardUpdate({id, sp_init, sp_max, haru_init, haru_max,
-      rei_init, rei_max, ma_init, ma_max});
+    const {id, spInit, spMax, haruInit, haruMax,
+      reiInit, reiMax, maInit, maMax} = this.state;
+    this.app.cardUpdate({id, spInit, spMax, haruInit, haruMax,
+      reiInit, reiMax, maInit, maMax});
+  }
+
+  validateInput() {
+    const s = this.state;
+    return {
+      spInitField: s.spInit >= 1 && s.spInit <= 4,
+      spMaxField: s.spMax >= 1 && s.spMax <= 4,
+      haruInitField: s.haruInit >= 1000 && s.haruInit <= 2000,
+      haruMaxField: s.haruMax >= 1500 && s.haruMax <= 3000,
+      reiInitField: s.reiInit >= 200 && s.reiInit <= 750,
+      reiMaxField: s.reiMax >= 400 && s.reiMax <= 1200,
+      maInitField: s.maInit >= 200 && s.maInit <= 750,
+      maMaxField: s.maMax >= 400 && s.maMax <= 1200,
+    };
   }
 
   render() {
     const s = this.state;
+    const inputErrors = this.validateInput();
+    const noErrors = !Object.values(inputErrors).some((x) => x === false);
+
     return <div>
       <section className="Bgc($gray-800) container text-light px-5 pb-3 pt-5">
         <h2 className="font-weight-light m-0"><strong className="font-weight-normal">Card</strong> Detail</h2>
@@ -120,40 +138,56 @@ export default class CardDetailEdit extends React.Component {
         <Block.Left><h2 className="h5 m-0">Parameters</h2></Block.Left>
         <Block.Right>
           <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">sp init</label>
-            <div className="col-sm-9"><input className="form-control" type="text" name="sp_init" value={s.sp_init} onChange={this.onChange}/></div>
+            <label className="col-sm-3 col-form-label text-right">Initial SP</label>
+            <div className="col-sm-9"><input className="form-control" type="number" name="spInit" value={s.spInit} min={1} max={4} onChange={this.onChange}/>
+              <small className="form-text">range [1, 4]</small>
+            </div>
           </div>
           <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">sp max</label>
-            <div className="col-sm-9"><input className="form-control" type="text" name="sp_max" value={s.sp_max} onChange={this.onChange}/></div>
+            <label className="col-sm-3 col-form-label text-right">Max SP</label>
+            <div className="col-sm-9"><input className="form-control" type="number" name="spMax" value={s.spMax} onChange={this.onChange}/>
+              <small className="form-text">range [1, 4]</small>
+            </div>
           </div>
           <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">haru init</label>
-            <div className="col-sm-9"><input className="form-control" type="text" name="haru_init" value={s.haru_init} onChange={this.onChange}/></div>
+            <label className="col-sm-3 col-form-label text-right">Initial Haru</label>
+            <div className="col-sm-9"><input className="form-control" type="number" name="haruInit" value={s.haruInit} onChange={this.onChange}/>
+              <small className="form-text">range [1000, 2000]</small>
+            </div>
           </div>
           <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">haru max</label>
-            <div className="col-sm-9"><input className="form-control" type="text" name="haru_max" value={s.haru_max} onChange={this.onChange}/></div>
+            <label className="col-sm-3 col-form-label text-right">Max Haru</label>
+            <div className="col-sm-9"><input className="form-control" type="number" name="haruMax" value={s.haruMax} onChange={this.onChange}/>
+              <small className="form-text">range [1500, 3000]</small>
+            </div>
           </div>
           <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">rei init</label>
-            <div className="col-sm-9"><input className="form-control" type="text" name="rei_init" value={s.rei_init} onChange={this.onChange}/></div>
+            <label className="col-sm-3 col-form-label text-right">Initial Rei</label>
+            <div className="col-sm-9"><input className="form-control" type="number" name="reiInit" value={s.reiInit} onChange={this.onChange}/>
+              <small className="form-text">range [200, 750]</small>
+            </div>
           </div>
           <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">rei max</label>
-            <div className="col-sm-9"><input className="form-control" type="text" name="rei_max" value={s.rei_max} onChange={this.onChange}/></div>
+            <label className="col-sm-3 col-form-label text-right">Max Rei</label>
+            <div className="col-sm-9"><input className="form-control" type="number" name="reiMax" value={s.reiMax} onChange={this.onChange}/>
+              <small className="form-text">range [400, 1200]</small>
+            </div>
           </div>
           <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">ma init</label>
-            <div className="col-sm-9"><input className="form-control" type="text" name="ma_init" value={s.ma_init} onChange={this.onChange}/></div>
+            <label className="col-sm-3 col-form-label text-right">Initial Ma</label>
+            <div className="col-sm-9"><input className="form-control" type="number" name="maInit" value={s.maInit} onChange={this.onChange}/>
+              <small className="form-text">range [200, 750]</small>
+            </div>
           </div>
           <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">ma max</label>
-            <div className="col-sm-9"><input className="form-control" type="text" name="ma_max" value={s.ma_max} onChange={this.onChange}/></div>
+            <label className="col-sm-3 col-form-label text-right">Max Ma</label>
+            <div className="col-sm-9"><input className="form-control" type="number" name="maMax" value={s.maMax} onChange={this.onChange}/>
+              <small className="form-text">range [400, 1200]</small>
+            </div>
           </div>
           <hr/>
           <div className="form-group row">
-            <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updateParameter}>Update</button></div>
+            <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" disabled={!noErrors} onClick={this.updateParameter}>Update</button></div>
           </div>
         </Block.Right>
       </Block>
