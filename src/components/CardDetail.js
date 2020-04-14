@@ -70,9 +70,9 @@ export default class CardDetail extends React.Component {
       maInit: 0,
       maMax: 0,
       level: 1,
-      haru: 1000,
-      rei: 1000,
-      ma: 1000,
+      haru: 0,
+      rei: 0,
+      ma: 0,
       uploaderName: '',
       comments: [],
     };
@@ -228,8 +228,8 @@ export default class CardDetail extends React.Component {
                 <tr>
                   <th>Card</th>
                   <td>
-                    <div>{s.rarity}</div>
-                    <small>{s.attribute}</small>
+                    <div>{s.rarity.toUpperCase()}</div>
+                    <small>{s.attribute.toUpperCase()}</small>
                   </td>
                   <td><img className="W(30px)" src={attrHaru} alt=""/></td>
                 </tr>
