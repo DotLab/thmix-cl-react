@@ -1,10 +1,8 @@
 import React from 'react';
 import queryString from 'query-string';
 
-import {Header} from './Header';
 import {rpc} from '../apiService';
-
-import {deleteFalsyKeys, formatNumber} from '../utils';
+import {deleteFalsyKeys, onChange} from '../utils';
 import {Link} from 'react-router-dom';
 
 const OPTION_ANY = '-1';
@@ -43,21 +41,21 @@ export default class CardListing extends React.Component {
     super(props);
     this.app = props.app;
 
+    this.onChange = onChange.bind(this);
     this.onChangeRarity = this.onChangeRarity.bind(this);
     this.onChangeAttribute = this.onChangeAttribute.bind(this);
     this.onSearch = this.onSearch.bind(this);
 
-    const query = this.getQuery();
     this.state = {
       cards: [],
       searchInput: '',
+      isLoading: true,
     };
   }
 
   async componentDidMount() {
     const cards = await rpc('cl_web_card_list', {});
     this.setState({isLoading: false, cards});
-    console.log(cards);
   }
 
   async componentWillReceiveProps(props) {
@@ -112,7 +110,6 @@ export default class CardListing extends React.Component {
             <button type="submit" className="btn btn-secondary"><i className="fas fa-search"></i></button>
           </div>
         </form>
-
         <div className="small mt-4">
           <div className="d-inline mr-2 mr-md-5">Rarity</div>
           <div className="d-inline Pos(r)">
@@ -126,7 +123,6 @@ export default class CardListing extends React.Component {
             </select>
           </div>
         </div>
-
         <div className="small mt-1">
           <div className="d-inline mr-2 mr-md-5">Attribute</div>
           <div className="d-inline Pos(r)">
@@ -139,21 +135,17 @@ export default class CardListing extends React.Component {
             </select>
           </div>
         </div>
-
       </section>
-
       <section className="mt-2 mb-3 shadow border">
-
         <div className="Bgc($gray-100) Px(1.25em) pt-2">
           <div className="row">
             {parseInt(String(q.page)) > 0 && <div className="col-12 mb-2 px-1">
               <button className="btn btn-block btn-outline-secondary" onClick={this.onLoadPrevPage}>load prev page ({parseInt(String(q.page || 0)) - 1})</button>
             </div>}
 
-            {/* {s.isLoading ? <div className="col-12 mb-2 px-1 D(f)">
+            {s.isLoading ? <div className="col-12 mb-2 px-1 D(f)">
               <div className="spinner-border mx-auto"></div>
-            </div> : s.cards.map((card) => <Card {...card} key={card.id} />)} */}
-            {s.cards.map((card) => <Card {...card} key={card.id}/>)}
+            </div> : s.cards.map((card) => <Card {...card} key={card.id}/>)}
             <div className="col-12 mb-2 px-1">
               <button className="btn btn-block btn-outline-secondary" onClick={this.onLoadNextPage}>load next page ({parseInt(String(q.page || 0)) + 1})</button>
             </div>
