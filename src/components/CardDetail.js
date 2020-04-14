@@ -116,7 +116,7 @@ export default class CardDetail extends React.Component {
 
   applyLevel(level) {
     const s = this.state;
-    if (level == 0) {
+    if (level === 0) {
       const haru = s.haruInit / 60;
       const rei = s.reiInit / 60;
       const ma = s.maInit / 60;
