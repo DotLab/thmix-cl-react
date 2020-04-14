@@ -55,6 +55,7 @@ export default class CardDetail extends React.Component {
     this.state = {
       id: null,
 
+      date: null,
       name: '',
       desc: '',
       url: '',
@@ -78,8 +79,16 @@ export default class CardDetail extends React.Component {
   }
 
   async componentDidMount() {
-    const card = await this.app.cardGet({id: this.props.match.params.id});
-    this.setState({...card, uploaderName: card.uploader.name});
+    const id = this.props.match.params.id;
+    const res = await Promise.all([
+      this.app.cardGet({id}),
+      this.app.genericApi1('ClWebDocCommentList', {docId: id}),
+    ]);
+
+    this.setState({...res[0],
+      uploaderName: res[0].uploader.name,
+      comments: res[1]});
+
     const haru = this.applyLevel(0);
     const rei = this.applyLevel(0);
     const ma = this.applyLevel(0);
@@ -87,16 +96,17 @@ export default class CardDetail extends React.Component {
   }
 
   startEdit() {
-    this.app.history.push(`/midis/${this.state.id}/edit`);
+    this.app.history.push(`/cards/${this.state.id}/edit`);
   }
 
   async onPostComment(e) {
     e.preventDefault();
-    const {_id, recaptcha, commentText} = this.state;
+    const {id, recaptcha, commentText} = this.state;
     if (!commentText) {
       return;
     }
-    const comments = await this.app.genericApi1('ClWebDocCommentCreate', {docId: _id, recaptcha, text: commentText});
+
+    const comments = await this.app.genericApi1('ClWebDocCommentCreate', {docId: id, recaptcha, text: commentText});
     this.recaptchaRef.current.reset();
     this.setState({
       recaptcha: null, commentText: '',
@@ -135,22 +145,19 @@ export default class CardDetail extends React.Component {
         <div className="shadow row no-gutters pt-4">
           <div className="col-md-6">
             {/* left */}
-            <img className="W(100%)" src={s.url} alt=""/>;
+            <img className="W(100%)" src={s.url} alt=""/>
           </div>
           <div className="col-md-6 px-4">
             {/* right */}
             <div className="btn-group btn-block">
               <label className={'btn w-100 Bgc(#ff3396):h C(white) C(white):h ' + (s.level === 1 ? 'Bgc(#ff3396)' : 'Bgc(#ff66b0)')} onClick={() => {
-                this.setState({level: 1}); this.applyLevel(0)
-                ;
+                this.setState({level: 1}); this.applyLevel(0);
               }}>level {levelLimits[s.rarity][0]}</label>
               <label className={'btn w-100 Bgc(#ff3396):h C(white) C(white):h ' + (s.level === 40 ? 'Bgc(#ff3396)' : 'Bgc(#ff66b0)')} onClick={() => {
-                this.setState({level: 40}); this.applyLevel(1)
-                ;
+                this.setState({level: 40}); this.applyLevel(1);
               }}>level {levelLimits[s.rarity][1]}</label>
               <label className={'btn w-100 Bgc(#ff3396):h C(white) C(white):h ' + (s.level === 80 ? 'Bgc(#ff3396)' : 'Bgc(#ff66b0)')} onClick={() => {
-                this.setState({level: 80}); this.applyLevel(2)
-                ;
+                this.setState({level: 80}); this.applyLevel(2);
               }}>level {levelLimits[s.rarity][2]}</label>
             </div>
             <div className="row no-gutters mt-3">
@@ -200,7 +207,6 @@ export default class CardDetail extends React.Component {
                 </div>
               </div>
             </div>
-
             <div className="row no-gutters mt-3">
               <div className="col-1">
                 <i class="fas fa-heart"></i>
@@ -212,51 +218,32 @@ export default class CardDetail extends React.Component {
                 </div>
               </div>
             </div>
-
             <table className="table mt-4">
               <tbody>
                 <tr>
                   <th>Creator</th>
-                  <td></td>
+                  <td>{s.uploaderName}</td>
+                  <td><i className="fas fa-pen Cur(p)" onClick={this.startEdit}></i></td>
+                </tr>
+                <tr>
+                  <th>Card</th>
+                  <td>
+                    <div>{s.rarity}</div>
+                    <small>{s.attribute}</small>
+                  </td>
+                  <td><img className="W(30px)" src={attrHaru} alt=""/></td>
+                </tr>
+                <tr>
+                  <th>Submitted</th>
+                  <td>{formatDate(s.date)}</td>
+                  <td><i class="fas fa-calendar-alt"></i></td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
       </section>
-
       <section className="Bgc($gray-800) pt-2 pb-3">
-        {/* rank */}
-        {s.records && s.records.length ? <div className="container bg-white shadow p-3 mb-3">
-          {/* 1st */}
-          {/* <FirstRank {...s.records[0]} /> */}
-          {/* ranking */}
-          <div className="table-responsive">
-            <table className="Bdcl(s) Bdsp(0,.25em) text-nowrap text-center">
-              <thead className="small">
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td className="w-100"></td>
-                  <td className="px-2 py-1 text-muted">sunshine</td>
-                  <td className="px-2 py-1 text-muted">combo</td>
-                  <td className="px-2 py-1 text-muted">accuracy</td>
-                  <td className="px-2 py-1">performance</td>
-                  <td className="px-2 py-1 text-muted">perfect</td>
-                  <td className="px-2 py-1 text-muted">great</td>
-                  <td className="px-2 py-1 text-muted">good</td>
-                  <td className="px-2 py-1 text-muted">bad</td>
-                  <td className="px-2 py-1 text-muted">miss</td>
-                </tr>
-              </thead>
-              <tbody>
-                {/* {s.records.map((x, i) => <RankRow {...x} i={i} key={i} />)} */}
-              </tbody>
-            </table>
-          </div>
-        </div> : <div className="container bg-white shadow p-3 text-center">
-        No scores yet. Maybe you should try setting some?
-        </div>}
         {/* comments */}
         <div className="container bg-white shadow">
           {/* input */}

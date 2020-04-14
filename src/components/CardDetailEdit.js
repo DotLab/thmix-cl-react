@@ -48,20 +48,20 @@ export default class CardDetailEdit extends React.Component {
     this.setState(card);
   }
 
-  updateMeta() {
+  async updateMeta() {
     const {id, name, desc} = this.state;
-    this.app.cardUpdate({id, name, desc});
+    await this.app.cardUpdate({id, name, desc});
   }
 
-  updateMain() {
+  async updateMain() {
     const {id, rarity, attribute} = this.state;
-    this.app.cardUpdate({id, rarity, attribute});
+    await this.app.cardUpdate({id, rarity, attribute});
   }
 
-  updateParameter() {
+  async updateParameter() {
     const {id, spInit, spMax, haruInit, haruMax,
       reiInit, reiMax, maInit, maMax} = this.state;
-    this.app.cardUpdate({id, spInit, spMax, haruInit, haruMax,
+    await this.app.cardUpdate({id, spInit, spMax, haruInit, haruMax,
       reiInit, reiMax, maInit, maMax});
   }
 
@@ -144,10 +144,10 @@ export default class CardDetailEdit extends React.Component {
             <label className="col-sm-3 col-form-label text-right">card rarity</label>
             <div className="col-sm-9">
               <select className="form-control" name="rarity" value={s.rarity} onChange={this.onChange}>
-                <option value="N">N</option>
-                <option value="R">R</option>
-                <option value="SR">SR</option>
-                <option value="UR">UR</option>
+                <option value="n">N</option>
+                <option value="r">R</option>
+                <option value="sr">SR</option>
+                <option value="ur">UR</option>
               </select>
             </div>
           </div>

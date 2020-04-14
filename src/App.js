@@ -610,8 +610,8 @@ export default class App extends React.Component {
         <PropsRoute exact path="/resources/:id/edit" component={ResourceDetailEdit} app={this} />
 
         <PropsRoute exact path="/cards" component={CardListing} app={this} />
-        <PropsRoute exact path="/cards/:id" component={CardDetail} app={this} />
         <PropsRoute exact path="/cards/upload" component={CardUpload} app={this} />
+        <PropsRoute exact path="/cards/:id" component={CardDetail} app={this} />
         <PropsRoute exact path="/cards/:id/edit" component={CardDetailEdit} app={this} />
 
         <PropsRoute exact path="/users" component={UserListing} app={this} />
