@@ -49,6 +49,7 @@ import langs from './json/langs.json';
 
 import {setApp as apiServiceSetApp} from './apiService';
 import {setApp as translationServiceSetApp, TranslationContext, Translation as Tr, saveLang, clearTranslationCache, UI_VOLATILE} from './translationService';
+import PlotEdit from './components/PlotEdit';
 
 // const debug = require('debug')('thmix:App');
 
@@ -82,6 +83,7 @@ export default class App extends React.Component {
     this.albumCreate = this.albumCreate.bind(this);
     this.songCreate = this.songCreate.bind(this);
     this.personCreate = this.personCreate.bind(this);
+    this.plotCreate = this.plotCreate.bind(this);
 
     apiServiceSetApp(this);
     translationServiceSetApp(this);
@@ -429,6 +431,17 @@ export default class App extends React.Component {
     }
   }
 
+  async plotCreate() {
+    const res = await this.genericApi1('ClWebPlotCreate', {});
+    this.success('plot created');
+
+    if (res.duplicated === true) {
+      this.history.push(`/plots/${res.id}`);
+    } else {
+      this.history.push(`/plots/${res.id}/edit`);
+    }
+  }
+
   async albumGet({id}) {
     const album = await this.genericApi1('cl_web_album_get', {id});
     return album;
@@ -552,6 +565,7 @@ export default class App extends React.Component {
                   <div className="dropdown-item Cur(p)" onClick={this.albumCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create album"/></div>
                   <div className="dropdown-item Cur(p)" onClick={this.songCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create song"/></div>
                   <div className="dropdown-item Cur(p)" onClick={this.personCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create person"/></div>
+                  <div className="dropdown-item Cur(p)" onClick={this.plotCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create plot"/></div>
                   {/* <Link className="dropdown-item" to="/resources/upload">upload resource</Link> */}
                   {/* <Link className="dropdown-item" to="/midis/upload">create story</Link> */}
                   {/* <a className="dropdown-item" href=".">Something else here</a> */}
@@ -578,6 +592,8 @@ export default class App extends React.Component {
         <PropsRoute exact path="/resources" component={ResourceListing} app={this} />
         <PropsRoute exact path="/resources/upload" component={ResourceUpload} app={this} />
         <PropsRoute exact path="/resources/:id/edit" component={ResourceDetailEdit} app={this} />
+
+        <PropsRoute exact path="/plots/:id/edit" component={PlotEdit} app={this} />
 
         <PropsRoute exact path="/users" component={UserListing} app={this} />
         <PropsRoute exact path="/users/:id" component={UserDetail} app={this} />
