@@ -33,6 +33,7 @@ import Board from './components/Board';
 
 import TranslationEdit from './components/TranslationEdit';
 import VersionListing from './components/VersionListing';
+import ErrorListing from './components/ErrorListing';
 
 import Help from './components/posts/Help';
 import Terms from './components/posts/Terms';
@@ -527,6 +528,7 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts"><i className="fas fa-guitar"></i> <Tr src="soundfonts"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit"><i className="fas fa-language"></i> <Tr src="translations"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/versions"><i class="fas fa-parachute-box"></i> <Tr src="versions"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/errors"><i class="fas fa-bomb"></i> <Tr src="errors"/></NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources"><Tr src="resources"/></NavLink></li> */}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users"><i className="fas fa-user-friends"></i> <Tr src="users"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help"><i className="fas fa-question-circle"></i> <Tr src="help"/></NavLink></li>
@@ -605,6 +607,7 @@ export default class App extends React.Component {
         <PropsRoute exact path="/translations/edit" component={TranslationEdit} app={this} />
 
         <PropsRoute exact path="/versions" component={VersionListing} app={this} />
+        <PropsRoute exact path="/errors" component={ErrorListing} app={this} />
 
         <PropsRoute exact path="/help" component={Help} />
         <PropsRoute exact path="/terms" component={Terms} />
