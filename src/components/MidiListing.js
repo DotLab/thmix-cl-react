@@ -98,7 +98,7 @@ export default class MidiListing extends React.Component {
       albums: res[1],
     });
     if (albumId && songId) {
-      await this.app.songList({albumId}).then((songs) => this.setState({songs}));
+      this.setState({songs: await this.app.songList({albumId})});
     }
   }
 
