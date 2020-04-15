@@ -8,7 +8,8 @@ class ErrorRow extends React.Component {
     const p = this.props;
     return <div className="row shadow-sm rounded pt-2 mt-2">
       <div className="col-md-3">
-        <div className="badge badge-pill badge-danger">{formatDate(p.date)}</div>
+        {p.exception ? <div className="badge badge-pill C(white) Bgc(blueviolet)">{formatDate(p.date)}</div> :
+            <div className="badge badge-pill badge-danger">{formatDate(p.date)}</div>}
         <pre className="Fz(10px)">
           {[p.version, p.platform, p.runtime, p.source, p.sampleRate, p.bufferSize, p.model, p.name, p.os, p.cpu, p.gpu].join('\n')}
         </pre>
