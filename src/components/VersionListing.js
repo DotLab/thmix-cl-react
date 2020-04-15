@@ -15,7 +15,10 @@ class VersionRow extends React.Component {
           <a className="btn btn-outline-secondary btn-sm" href={p.url}><i class="fas fa-cloud-download-alt"></i> Download</a>
         </div>
         <div className="col-md-9">
-          <h4><i class="fas fa-box"></i> {p.version} ({p.build})</h4>
+          {p.path.split('.').pop() === 'ipa' && <h4><i class="fab fa-apple"></i> {p.version} ({p.build})</h4>}
+          {p.path.split('.').pop() === 'apk' && <h4><i class="fab fa-android"></i> {p.version} ({p.build})</h4>}
+          {(p.path.split('.').pop() !== 'apk' && p.path.split('.').pop() !== 'ipa') && <h4><i class="fas fa-question"></i> {p.version} ({p.build})</h4>}
+
           <ReactMarkdown skipHtml={true} source={p.desc}/>
         </div>
       </div>
