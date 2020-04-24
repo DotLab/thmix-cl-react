@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import queryString from 'query-string';
+import 星月夜 from '../c7肘/星月夜.jpg';
 
 import {onChange, formatNumber, touhouAlbum, deleteFalsyKeys} from '../utils';
 
@@ -8,7 +9,7 @@ const OPTION_ANY = '-1';
 
 const ListingFilterButton = (p) => (<span className={'Cur(p) d-inline-block text-nowrap mr-2 mr-md-3 ' + (p.active ? 'C($white)' : 'C($pink)')} onClick={p.onClick}>{p.option}</span>);
 
-const Card = (s) => (<div className="col-md-6 mb-2 px-1">
+const Card = (s) => (<div className="col-xl-3 col-lg-4 col-md-6 mb-2 px-1">
   <div className="H(190px) bg-light rounded shadow-sm border">
     <div className="H(120px) Bgp(c) Bgz(cv) rounded-top text-light p-2" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .5)), url(${s.coverUrl})`}}>
       <div className="position-relative w-100 h-100">
@@ -98,7 +99,7 @@ export default class MidiListing extends React.Component {
       albums: res[1],
     });
     if (albumId && songId) {
-      await this.app.songList({albumId}).then((songs) => this.setState({songs}));
+      this.setState({songs: await this.app.songList({albumId})});
     }
   }
 
@@ -156,10 +157,9 @@ export default class MidiListing extends React.Component {
     const albumName = s.albums && q.albumId && s.albums.find((x) => x.id === q.albumId)?.name;
     const songName = s.songs && q.songId && s.songs.find((x) => x.id === q.songId)?.name;
 
-    return <div className="container">
-      <section className="Bgc($gray-700) P(30px) text-light shadow">
-
-        <form onSubmit={this.onSearch} className="input-group">
+    return <div className="container-fluid">
+      <section className="Bgp(c) Bgz(cv) Px(30px) Pt(200px) Pb(30px) text-light shadow" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, .6)), url(${星月夜})`}}>
+        <form onSubmit={this.onSearch} className="input-group Op(.7)">
           <input className="form-control" type="text" name="searchInput" value={s.searchInput} onChange={this.onChange}/>
           <div className="input-group-append">
             <button type="submit" className="btn btn-secondary"><i className="fas fa-search"></i></button>

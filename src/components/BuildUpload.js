@@ -31,7 +31,7 @@ export default class BuildUpload extends React.Component {
         <h2 className="h3 m-0 font-weight-light">Upload Build</h2>
       </section>
       <section className="Bgc($gray-800) container mt-2 shadow px-4 py-2 text-light">
-        <input className="form-control-file w-auto mx-auto" type="file" accept=".apk" onChange={this.onFileChange}/>
+        <input className="form-control-file w-auto mx-auto" type="file" accept=".apk,.ipa,.zip" onChange={this.onFileChange}/>
       </section>
     </div>;
   }
