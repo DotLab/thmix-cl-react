@@ -16,6 +16,11 @@ import SoundfontDetail from './components/SoundfontDetail';
 import SoundfontDetailEdit from './components/SoundfontDetailEdit';
 import SoundfontUpload from './components/SoundfontUpload';
 
+import SkinListing from './components/SkinListing';
+import SkinDetail from './components/SkinDetail';
+import SkinDetailEdit from './components/SkinDetailEdit';
+import SkinUpload from './components/SkinUpload';
+
 import UserListing from './components/UserListing';
 import UserDetail from './components/UserDetail';
 import UserDetailEdit from './components/UserDetailEdit';
@@ -525,6 +530,7 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" exact to="/"><i className="fas fa-home"></i> <Tr src="home"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis"><i className="fas fa-music"></i> <Tr src="midis"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs"><i className="fas fa-info-circle"></i> <Tr src="songs"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/skins"><i className="fas fa-tshirt"></i> <Tr src="skin"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts"><i className="fas fa-guitar"></i> <Tr src="soundfonts"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit"><i className="fas fa-language"></i> <Tr src="translations"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/versions"><i class="fas fa-parachute-box"></i> <Tr src="versions"/></NavLink></li>
@@ -550,6 +556,7 @@ export default class App extends React.Component {
                 <span className="Cur(p) nav-link dropdown-toggle" data-toggle="dropdown"><i className="fas fa-plus"></i></span>
                 <div className="dropdown-menu dropdown-menu-right">
                   <Link className="dropdown-item" to="/midis/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload midi"/></Link>
+                  <Link className="dropdown-item" to="/skins/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload skin"/></Link>
                   <Link className="dropdown-item" to="/soundfonts/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload soundfont"/></Link>
                   <Link className="dropdown-item" to="/builds/upload"><i className="fa-fw fas fa-upload"></i> <Tr src="upload build"/></Link>
                   <div className="dropdown-divider"></div>
@@ -592,6 +599,11 @@ export default class App extends React.Component {
 
         <PropsRoute exact path="/songs" component={AlbumListing} app={this} />
         <PropsRoute exact path="/songs/:id/edit" component={SongDetailEdit} app={this} />
+
+        <PropsRoute exact path="/skins" component={SkinListing} app={this} />
+        <PropsRoute exact path="/skins/upload" component={SkinUpload} app={this} />
+        <PropsRoute exact path="/skins/:id" component={SkinDetail} app={this} />
+        <PropsRoute exact path="/skins/:id/edit" component={SkinDetailEdit} app={this} />
 
         <PropsRoute exact path="/albums/:id/edit" component={AlbumDetailEdit} app={this} />
 
