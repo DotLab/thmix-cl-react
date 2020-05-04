@@ -31,6 +31,8 @@ import PersonDetailEdit from './components/PersonDetailEdit';
 
 import Board from './components/Board';
 
+import CardDetailEdit from './components/CardDetailEdit';
+
 import TranslationEdit from './components/TranslationEdit';
 import VersionListing from './components/VersionListing';
 import ErrorListing from './components/ErrorListing';
@@ -84,6 +86,7 @@ export default class App extends React.Component {
     this.albumCreate = this.albumCreate.bind(this);
     this.songCreate = this.songCreate.bind(this);
     this.personCreate = this.personCreate.bind(this);
+    this.cardCreate = this.cardCreate.bind(this);
 
     apiServiceSetApp(this);
     translationServiceSetApp(this);
@@ -431,6 +434,13 @@ export default class App extends React.Component {
     }
   }
 
+  async cardCreate() {
+    const res = await this.genericApi1('ClWebCardCreate', {});
+    this.success('card created');
+
+    this.history.push(`/cards/${res.id}/edit`);
+  }
+
   async albumGet({id}) {
     const album = await this.genericApi1('cl_web_album_get', {id});
     return album;
@@ -526,9 +536,10 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis"><i className="fas fa-music"></i> <Tr src="midis"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs"><i className="fas fa-info-circle"></i> <Tr src="songs"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts"><i className="fas fa-guitar"></i> <Tr src="soundfonts"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/cards"><i className="fas fa-star"></i><Tr src="cards"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit"><i className="fas fa-language"></i> <Tr src="translations"/></NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/versions"><i class="fas fa-parachute-box"></i> <Tr src="versions"/></NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/errors"><i class="fas fa-bomb"></i> <Tr src="errors"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/versions"><i className="fas fa-parachute-box"></i> <Tr src="versions"/></NavLink></li>
+              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/errors"><i className="fas fa-bomb"></i> <Tr src="errors"/></NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/resources"><Tr src="resources"/></NavLink></li> */}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/users"><i className="fas fa-user-friends"></i> <Tr src="users"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/help"><i className="fas fa-question-circle"></i> <Tr src="help"/></NavLink></li>
@@ -556,6 +567,7 @@ export default class App extends React.Component {
                   <div className="dropdown-item Cur(p)" onClick={this.albumCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create album"/></div>
                   <div className="dropdown-item Cur(p)" onClick={this.songCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create song"/></div>
                   <div className="dropdown-item Cur(p)" onClick={this.personCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create person"/></div>
+                  <div className="dropdown-item Cur(p)" onClick={this.cardCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create card"/></div>
                   {/* <Link className="dropdown-item" to="/resources/upload">upload resource</Link> */}
                   {/* <Link className="dropdown-item" to="/midis/upload">create story</Link> */}
                   {/* <a className="dropdown-item" href=".">Something else here</a> */}
@@ -582,6 +594,8 @@ export default class App extends React.Component {
         <PropsRoute exact path="/resources" component={ResourceListing} app={this} />
         <PropsRoute exact path="/resources/upload" component={ResourceUpload} app={this} />
         <PropsRoute exact path="/resources/:id/edit" component={ResourceDetailEdit} app={this} />
+
+        <PropsRoute exact path="/cards/:id/edit" component={CardDetailEdit} app={this} />
 
         <PropsRoute exact path="/users" component={UserListing} app={this} />
         <PropsRoute exact path="/users/:id" component={UserDetail} app={this} />
