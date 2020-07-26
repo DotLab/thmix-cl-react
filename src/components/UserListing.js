@@ -111,7 +111,7 @@ export default class RankingListing extends React.Component {
                 </tr>
               </thead>
               <tbody>
-                {s.users.map((user, i) => <Row {...user} key={user.id} ranking={i} />)}
+                {s.users.map((user, i) => <Row {...user} key={user.id} />)}
               </tbody>
             </table>
           </div>}
