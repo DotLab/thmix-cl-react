@@ -89,7 +89,7 @@ export default class TranslationEdit extends React.Component {
     e.preventDefault();
     const regex = new RegExp(this.state.filter);
     const translationsFiltered = this.state.translations.filter((x) =>
-      ([x.src, x.namespace, x.text, x.editorName].join('\n').match(regex))
+      [x.src, x.namespace, x.text, x.editorName].join('\n').match(regex)
     );
     this.setState({translationsFiltered});
   }
