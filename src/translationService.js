@@ -63,6 +63,10 @@ export async function requestTranslation(namespace, src) {
   return text;
 }
 
+export async function requestTranslationNS(lang, src) {
+  return await rpc('cl_web_translate', {lang, namespace: 'ns', src});
+}
+
 export const TranslationContext = React.createContext({});
 
 export class Translation extends React.Component {
