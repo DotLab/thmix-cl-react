@@ -1,11 +1,10 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
 import queryString from 'query-string';
-
 import {onChange} from '../utils';
 import {requestTranslationNS} from '../translationService';
 // @ts-ignore
 import langs from '../json/langs.json';
+import {rpc} from '../apiService';
 
 
 class SongRow extends React.Component {
@@ -18,6 +17,7 @@ class SongRow extends React.Component {
       songName1: '',
       songName2: '',
     };
+    this._isMounted = false;
 
     this.onChange = onChange.bind(this);
     this.onApplyTranslation = this.onApplyTranslation.bind(this);
@@ -25,12 +25,15 @@ class SongRow extends React.Component {
 
   async componentDidMount() {
     const p = this.props;
+    this._isMounted = true;
     await Promise.all([
       requestTranslationNS(p.lang0, p.name),
       requestTranslationNS(p.lang1, p.name),
       requestTranslationNS(p.lang2, p.name),
     ]).then((value) => {
-      this.setState({songName0: value[0], songName1: value[1], songName2: value[2]});
+      if (this._isMounted) {
+        this.setState({songName0: value[0], songName1: value[1], songName2: value[2]});
+      }
     });
   }
 
@@ -40,8 +43,14 @@ class SongRow extends React.Component {
       requestTranslationNS(props.lang1, props.name),
       requestTranslationNS(props.lang2, props.name),
     ]).then((value) => {
-      this.setState({songName0: value[0], songName1: value[1], songName2: value[2]});
+      if (this._isMounted) {
+        this.setState({songName0: value[0], songName1: value[1], songName2: value[2]});
+      }
     });
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   async onApplyTranslation() {
@@ -59,7 +68,9 @@ class SongRow extends React.Component {
       requestTranslationNS(p.lang1, p.name),
       requestTranslationNS(p.lang2, p.name),
     ]).then((value) => {
-      this.setState({songName0: value[0], songName1: value[1], songName2: value[2]});
+      if (this._isMounted) {
+        this.setState({songName0: value[0], songName1: value[1], songName2: value[2]});
+      }
     });
   }
 
@@ -68,7 +79,7 @@ class SongRow extends React.Component {
 
     return <tr className="" key={p._id}>
       <td className="W(15%)"></td>
-      <td className="W(35%)"><Link className="btn btn-outline-secondary btn-sm" to={{pathname: `/songs/${p._id}/edit`}}>edit</Link> {p.track}: <strong>{p.name}</strong></td>
+      <td className="W(35%)"><strong>{p.name || 'No name yet'}</strong></td>
       <td ><input className="Bdrs(10px) Bdw(1px) D(b) W(90%)" type="text" name="songName0" value={this.state.songName0} onChange={this.onChange}/></td>
       <td> <input className="Bdrs(10px) Bdw(1px) D(b) W(90%)" type="text" name="songName1" value={this.state.songName1} onChange={this.onChange}/></td>
       <td ><input className="Bdrs(10px) Bdw(1px) D(b) W(90%)" type="text" name="songName2" value={this.state.songName2} onChange={this.onChange}/></td>
@@ -87,29 +98,41 @@ class AlbumRow extends React.Component {
       albumName1: '',
       albumName2: '',
     };
+    this._isMounted = false;
+
     this.onChange = onChange.bind(this);
     this.onApplyTranslation = this.onApplyTranslation.bind(this);
   }
 
   async componentDidMount() {
     const p = this.props;
+    this._isMounted = true;
     await Promise.all([
       requestTranslationNS(p.lang0, p.name),
       requestTranslationNS(p.lang1, p.name),
       requestTranslationNS(p.lang2, p.name),
     ]).then((value) => {
-      this.setState({albumName0: value[0], albumName1: value[1], albumName2: value[2]});
+      if (this._isMounted) {
+        this.setState({albumName0: value[0], albumName1: value[1], albumName2: value[2]});
+      }
     });
   }
 
   async componentWillReceiveProps(props) {
+    this._isMounted = true;
     await Promise.all([
       requestTranslationNS(props.lang0, props.name),
       requestTranslationNS(props.lang1, props.name),
       requestTranslationNS(props.lang2, props.name),
     ]).then((value) => {
-      this.setState({albumName0: value[0], albumName1: value[1], albumName2: value[2]});
+      if (this._isMounted) {
+        this.setState({albumName0: value[0], albumName1: value[1], albumName2: value[2]});
+      }
     });
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   async onApplyTranslation() {
@@ -126,7 +149,9 @@ class AlbumRow extends React.Component {
       requestTranslationNS(p.lang1, p.name),
       requestTranslationNS(p.lang2, p.name),
     ]).then((value) => {
-      this.setState({albumName0: value[0], albumName1: value[1], albumName2: value[2]});
+      if (this._isMounted) {
+        this.setState({albumName0: value[0], albumName1: value[1], albumName2: value[2]});
+      }
     });
   }
 
@@ -135,18 +160,19 @@ class AlbumRow extends React.Component {
     const s = this.state;
 
     return <div className="Mb(30px) D(f)">
-      <div className="W(10%) Va(t)"><img className="W(90%) rounded shadow-sm" src={p.coverUrl} alt="" /></div>
+      {/* <div className="W(10%) Va(t)"><img className="W(90%) rounded shadow-sm" src={p.coverUrl} alt="" /></div> */}
       <table className="P(10px) W(100%)">
         <tbody>
           <tr>
-            <td className="W(15%) Va(t)"><Link className="btn btn-outline-secondary btn-sm" to={{pathname: `/albums/${p._id}/edit`}}>edit</Link> {p.abbr}: <strong>{p.name}</strong></td>
+            <td className="W(15%) Va(t)">{p.name || 'No name yet'}</td>
             <td className="W(35%)"></td>
             <td ><input className="Bdrs(10px) Bdw(1px) D(b) W(90%)" type="text" name="albumName0" value={s.albumName0} onChange={this.onChange}/></td>
             <td> <input className="Bdrs(10px) Bdw(1px) D(b) W(90%)" type="text" name="albumName1" value={s.albumName1} onChange={this.onChange}/></td>
             <td ><input className="Bdrs(10px) Bdw(1px) D(b) W(90%)" type="text" name="albumName2" value={s.albumName2} onChange={this.onChange}/></td>
             <td><button className="btn btn-primary btn-sm" onClick={this.onApplyTranslation}>apply</button></td>
           </tr>
-          {p.songs.map((song) => <SongRow {...song} key={song._id} lang0={p.lang0} lang1={p.lang1} lang2={p.lang2} app={this.props.app}/>)}
+          {p.type !== 'System' && p.songs.map((song, i) => <SongRow name={song} key={i} lang0={p.lang0} lang1={p.lang1} lang2={p.lang2} app={this.props.app}/>)}
+          {p.type === 'System' && p.songs.map((song) => <SongRow {...song} key={song._id} lang0={p.lang0} lang1={p.lang1} lang2={p.lang2} app={this.props.app}/>)}
         </tbody>
       </table>
     </div>;
@@ -162,14 +188,17 @@ export default class AlbumListing extends React.Component {
 
     this.state = {
       albums: [],
+      albumSystem: [],
       lang0: 'ja',
       lang1: 'zh-CN',
       lang2: 'en',
+      songType: 'Customized',
     };
 
     this.onLang0Change = this.onLang0Change.bind(this);
     this.onLang1Change = this.onLang1Change.bind(this);
     this.onLang2Change = this.onLang2Change.bind(this);
+    this.onSongTypeChange = this.onSongTypeChange.bind(this);
   }
 
   onLang1Change(e) {
@@ -189,8 +218,16 @@ export default class AlbumListing extends React.Component {
 
   async componentDidMount() {
     const {page} = queryString.parse(this.props.location.search);
-    const albums = await this.app.albumList({page});
-    this.setState({albums});
+    await Promise.all([
+      rpc('ClWebMidiAlbumList', {}),
+      this.app.albumList({page}),
+    ]).then((value) => {
+      this.setState({albums: value[0], albumSystem: value[1]});
+    });
+  }
+
+  async onSongTypeChange() {
+    this.state.songType === 'System' ? this.setState({songType: 'Customized'}) : this.setState({songType: 'System'});
   }
 
   render() {
@@ -200,21 +237,22 @@ export default class AlbumListing extends React.Component {
       <section className="Bgc($gray-700) P(30px) text-light shadow">
         <h2 className="row Fw(n)">Songs</h2>
       </section>
+      <button className="btn btn-outline-secondary" onClick={this.onSongTypeChange}>{s.songType}</button>
       <table className="table">
         <thead>
           <tr>
-            <th className="W(10%)">Cover</th>
-            <th className="W(13%)">Album</th>
-            <th className="W(31%)">Song</th>
-            <th> Name <select className="Bdrs(5px) W(80px)" onChange={this.onLang0Change} value={this.state.lang0}>
+            {/* <th className="W(10%)">Cover</th> */}
+            <th className="W(15%)">Album</th>
+            <th className="W(35%)">Song</th>
+            <th> Name <select className="Bdrs(5px) W(80px)" onChange={this.onLang0Change} value={s.lang0}>
               {langs.map((x) => <option value={x.lang} key={x.lang}>{x.name}</option>)}</select>
             </th>
 
-            <th> Name <select className="Bdrs(5px) W(80px)" onChange={this.onLang1Change} value={this.state.lang1}>
+            <th> Name <select className="Bdrs(5px) W(80px)" onChange={this.onLang1Change} value={s.lang1}>
               {langs.map((x) => <option value={x.lang} key={x.lang}>{x.name}</option>)}</select>
             </th>
 
-            <th> Name <select className="Bdrs(5px) W(80px)" onChange={this.onLang2Change} value={this.state.lang2}>
+            <th> Name <select className="Bdrs(5px) W(80px)" onChange={this.onLang2Change} value={s.lang2}>
               {langs.map((x) => <option value={x.lang} key={x.lang}>{x.name}</option>)}</select>
             </th>
             <th className="W(5%)">action</th>
@@ -224,7 +262,8 @@ export default class AlbumListing extends React.Component {
       <section className="mt-2 mb-3 shadow border">
         <div className="Bgc($gray-100)">
           <div className="Mx(10px) Pt(10px)">
-            {s.albums.map((album) => <AlbumRow {...album} key={album.id} lang1={s.lang1} lang2={s.lang2} lang0={s.lang0} app={this.app}/>)}
+            {s.songType === 'Customized' && s.albums.map((album) => <AlbumRow {...album} type={s.songType} key={album._id} lang1={s.lang1} lang2={s.lang2} lang0={s.lang0} app={this.app}/>)}
+            {s.songType === 'System' && s.albumSystem.map((album) => <AlbumRow {...album} type={s.songType} key={album.id} lang1={s.lang1} lang2={s.lang2} lang0={s.lang0} app={this.app}/>)}
           </div>
         </div>
       </section>
