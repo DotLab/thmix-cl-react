@@ -26,6 +26,7 @@ import BuildUpload from './components/BuildUpload';
 import BuildDetailEdit from './components/BuildDetailEdit';
 import AlbumDetailEdit from './components/AlbumDetailEdit';
 import AlbumListing from './components/AlbumListing';
+import AlbumCustomizedListing from './components/AlbumCustomizedListing';
 import SongDetailEdit from './components/SongDetailEdit';
 import PersonDetailEdit from './components/PersonDetailEdit';
 
@@ -58,6 +59,8 @@ const VERSION = 0;
 const INTENT = 'web';
 
 const DEVELOPMENT = 'development';
+const TRANSLATION_LANG_KEY = 'translationLang';
+const TRANSLATION_DICT_KEY = 'translationDict';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -504,6 +507,14 @@ export default class App extends React.Component {
   }
 
   async translationUpdate({src, lang, namespace, text}) {
+    const key = `${lang}:${namespace}:${src}`;
+    const dict_ = JSON.parse(localStorage.getItem(TRANSLATION_DICT_KEY) || '{}');
+    if (dict_[key]) {
+      dict_[key] = text;
+    }
+    localStorage.setItem(TRANSLATION_LANG_KEY, lang);
+    localStorage.setItem(TRANSLATION_DICT_KEY, JSON.stringify(dict_));
+
     return await this.genericApi1('cl_web_translation_update', {lang, src, namespace, text});
   }
 
@@ -591,6 +602,7 @@ export default class App extends React.Component {
         <PropsRoute exact path="/builds/:id/edit" component={BuildDetailEdit} app={this} />
 
         <PropsRoute exact path="/songs" component={AlbumListing} app={this} />
+        <PropsRoute exact path="/songs/customized" component={AlbumCustomizedListing} app={this} />
         <PropsRoute exact path="/songs/:id/edit" component={SongDetailEdit} app={this} />
 
         <PropsRoute exact path="/albums/:id/edit" component={AlbumDetailEdit} app={this} />

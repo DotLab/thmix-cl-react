@@ -41,6 +41,14 @@ export function pushDict(key, text) {
   localStorage.setItem(TRANSLATION_DICT_KEY, JSON.stringify(dict_));
 }
 
+export function pushDictLang(key, text, lang) {
+  dict_ = {...dict_, [key]: text};
+  app_.setState({translationDict: dict_});
+
+  localStorage.setItem(TRANSLATION_LANG_KEY, lang);
+  localStorage.setItem(TRANSLATION_DICT_KEY, JSON.stringify(dict_));
+}
+
 /**
  * @param {String} namespace
  * @param {String} src
@@ -64,7 +72,13 @@ export async function requestTranslation(namespace, src) {
 }
 
 export async function requestTranslationNS(lang, src) {
-  return await rpc('cl_web_translate', {lang, namespace: 'ns', src});
+  const key = `${lang}:ns:${src}`;
+  if (dict_[key]) {
+    return dict_[key];
+  }
+  const text = await rpc('cl_web_translate', {lang, namespace: 'ns', src});
+  pushDictLang(key, text, lang);
+  return text;
 }
 
 export const TranslationContext = React.createContext({});
