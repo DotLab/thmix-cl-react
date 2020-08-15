@@ -72,11 +72,11 @@ export async function requestTranslation(namespace, src) {
 }
 
 export async function requestTranslationNS(lang, src) {
-  const key = `${lang}:ns:${src}`;
+  const key = `${lang}:name.artifact:${src}`;
   if (dict_[key]) {
     return dict_[key];
   }
-  const text = await rpc('cl_web_translate', {lang, namespace: 'ns', src});
+  const text = await rpc('cl_web_translate', {lang, namespace: 'name.artifact', src});
   pushDictLang(key, text, lang);
   return text;
 }
