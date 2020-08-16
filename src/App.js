@@ -26,6 +26,7 @@ import BuildUpload from './components/BuildUpload';
 import BuildDetailEdit from './components/BuildDetailEdit';
 import AlbumDetailEdit from './components/AlbumDetailEdit';
 import AlbumListing from './components/AlbumListing';
+import AlbumCustomizedListing from './components/AlbumCustomizedListing';
 import SongDetailEdit from './components/SongDetailEdit';
 import PersonDetailEdit from './components/PersonDetailEdit';
 
@@ -513,10 +514,6 @@ export default class App extends React.Component {
     return await this.genericApi1('cl_web_translation_list', {lang: this.state.lang});
   }
 
-  async translationUpdate({src, lang, namespace, text}) {
-    return await this.genericApi1('cl_web_translation_update', {lang, src, namespace, text});
-  }
-
   render() {
     const s = this.state;
 
@@ -605,6 +602,7 @@ export default class App extends React.Component {
         <PropsRoute exact path="/builds/:id/edit" component={BuildDetailEdit} app={this} />
 
         <PropsRoute exact path="/songs" component={AlbumListing} app={this} />
+        <PropsRoute exact path="/songs/customized" component={AlbumCustomizedListing} app={this} />
         <PropsRoute exact path="/songs/:id/edit" component={SongDetailEdit} app={this} />
 
         <PropsRoute exact path="/albums/:id/edit" component={AlbumDetailEdit} app={this} />
