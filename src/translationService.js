@@ -77,7 +77,7 @@ export async function requestTranslationLang(lang, namespace, src) {
   return text;
 }
 
-export async function translationUpdate(src, lang, namespace, text) {
+export async function updateTranslationLang(src, lang, namespace, text) {
   const key = `${lang}:${namespace}:${src}`;
   pushDictLang(key, text, lang);
 

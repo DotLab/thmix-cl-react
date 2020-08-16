@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 
 import {onChange} from '../utils';
-import {requestTranslationLang, translationUpdate} from '../translationService';
+import {requestTranslationLang, updateTranslationLang} from '../translationService';
 // @ts-ignore
 import langs from '../json/langs.json';
 import {rpc} from '../apiService';
@@ -50,9 +50,9 @@ class SongRow extends React.Component {
     }
 
     await Promise.all([
-      s.editingTranslation0 && translationUpdate(p.sourceSongName, p.lang0, 'name.artifact', s.songName0),
-      s.editingTranslation1 && translationUpdate(p.sourceSongName, p.lang1, 'name.artifact', s.songName1),
-      s.editingTranslation2 && translationUpdate(p.sourceSongName, p.lang2, 'name.artifact', s.songName2),
+      s.editingTranslation0 && updateTranslationLang(p.sourceSongName, p.lang0, 'name.artifact', s.songName0),
+      s.editingTranslation1 && updateTranslationLang(p.sourceSongName, p.lang1, 'name.artifact', s.songName1),
+      s.editingTranslation2 && updateTranslationLang(p.sourceSongName, p.lang2, 'name.artifact', s.songName2),
     ]);
     this.setState({editingTranslation0: false, editingTranslation1: false, editingTranslation2: false});
 
@@ -138,9 +138,9 @@ class AlbumRow extends React.Component {
     }
 
     await Promise.all([
-      s.editingTranslation0 && translationUpdate(p.name, p.lang0, 'name.artifact', s.albumName0),
-      s.editingTranslation1 && translationUpdate(p.name, p.lang1, 'name.artifact', s.albumName1),
-      s.editingTranslation2 && translationUpdate(p.name, p.lang2, 'name.artifact', s.albumName2),
+      s.editingTranslation0 && updateTranslationLang(p.name, p.lang0, 'name.artifact', s.albumName0),
+      s.editingTranslation1 && updateTranslationLang(p.name, p.lang1, 'name.artifact', s.albumName1),
+      s.editingTranslation2 && updateTranslationLang(p.name, p.lang2, 'name.artifact', s.albumName2),
     ]);
     this.setState({editingTranslation0: false, editingTranslation1: false, editingTranslation2: false});
 
