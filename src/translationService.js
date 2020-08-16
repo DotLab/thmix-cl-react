@@ -34,10 +34,10 @@ export function clearTranslationCache() {
 }
 
 export function pushDict(key, text) {
-  pushDictLang(key, text, app_.state.lang);
+  pushDictLang(app_.state.lang, key, text);
 }
 
-export function pushDictLang(key, text, lang) {
+export function pushDictLang(lang, key, text) {
   dict_ = {...dict_, [key]: text};
   app_.setState({translationDict: dict_});
 
@@ -72,14 +72,14 @@ export async function requestTranslationLang(lang, namespace, src) {
   if (dict_[key]) {
     return dict_[key];
   }
-  const text = await rpc('cl_web_translate', {src, lang, namespace});
-  pushDictLang(key, text, lang);
+  const text = await rpc('cl_web_translate', {lang, src, namespace});
+  pushDictLang(lang, key, text);
   return text;
 }
 
-export async function updateTranslationLang(src, lang, namespace, text) {
+export async function updateTranslationLang(lang, src, namespace, text) {
   const key = `${lang}:${namespace}:${src}`;
-  pushDictLang(key, text, lang);
+  pushDictLang(lang, key, text);
 
   return await rpc('cl_web_translation_update', {lang, src, namespace, text});
 }

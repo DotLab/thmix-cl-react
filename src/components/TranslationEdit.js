@@ -79,7 +79,7 @@ export default class TranslationEdit extends React.Component {
   }
 
   async onApplyTranslation(p, text) {
-    await updateTranslationLang(p.src, p.lang, p.namespace, text);
+    await updateTranslationLang(p.lang, p.src, p.namespace, text);
 
     const translations = await this.app.translationList();
     this.setState({translations});

@@ -50,9 +50,9 @@ class SongRow extends React.Component {
     }
 
     await Promise.all([
-      s.editingTranslation0 && updateTranslationLang(p.sourceSongName, p.lang0, 'name.artifact', s.songName0),
-      s.editingTranslation1 && updateTranslationLang(p.sourceSongName, p.lang1, 'name.artifact', s.songName1),
-      s.editingTranslation2 && updateTranslationLang(p.sourceSongName, p.lang2, 'name.artifact', s.songName2),
+      s.editingTranslation0 && updateTranslationLang(p.lang0, p.sourceSongName, 'name.artifact', s.songName0),
+      s.editingTranslation1 && updateTranslationLang(p.lang1, p.sourceSongName, 'name.artifact', s.songName1),
+      s.editingTranslation2 && updateTranslationLang(p.lang2, p.sourceSongName, 'name.artifact', s.songName2),
     ]);
     this.setState({editingTranslation0: false, editingTranslation1: false, editingTranslation2: false});
 
@@ -138,9 +138,9 @@ class AlbumRow extends React.Component {
     }
 
     await Promise.all([
-      s.editingTranslation0 && updateTranslationLang(p.name, p.lang0, 'name.artifact', s.albumName0),
-      s.editingTranslation1 && updateTranslationLang(p.name, p.lang1, 'name.artifact', s.albumName1),
-      s.editingTranslation2 && updateTranslationLang(p.name, p.lang2, 'name.artifact', s.albumName2),
+      s.editingTranslation0 && updateTranslationLang(p.lang0, p.name, 'name.artifact', s.albumName0),
+      s.editingTranslation1 && updateTranslationLang(p.lang1, p.name, 'name.artifact', s.albumName1),
+      s.editingTranslation2 && updateTranslationLang(p.lang2, p.name, 'name.artifact', s.albumName2),
     ]);
     this.setState({editingTranslation0: false, editingTranslation1: false, editingTranslation2: false});
 
