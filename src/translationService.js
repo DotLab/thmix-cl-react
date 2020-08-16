@@ -34,11 +34,7 @@ export function clearTranslationCache() {
 }
 
 export function pushDict(key, text) {
-  dict_ = {...dict_, [key]: text};
-  app_.setState({translationDict: dict_});
-
-  localStorage.setItem(TRANSLATION_LANG_KEY, app_.state.lang);
-  localStorage.setItem(TRANSLATION_DICT_KEY, JSON.stringify(dict_));
+  pushDictLang(key, text, app_.state.lang);
 }
 
 export function pushDictLang(key, text, lang) {
@@ -61,24 +57,31 @@ export async function requestTranslation(namespace, src) {
     pushDict(key, src);
     return src;
   }
+
+  return requestTranslationLang(app_.state.lang, namespace, src);
+}
+
+/**
+ * @param {String} lang
+ * @param {String} namespace
+ * @param {String} src
+ * @return {Promise<String>}
+ */
+export async function requestTranslationLang(lang, namespace, src) {
+  const key = `${lang}:${namespace}:${src}`;
   if (dict_[key]) {
     return dict_[key];
   }
-
-  pushDict(key, src + '...');
-  const text = await rpc('cl_web_translate', {lang: app_.state.lang, namespace, src});
-  pushDict(key, text);
+  const text = await rpc('cl_web_translate', {src, lang, namespace});
+  pushDictLang(key, text, lang);
   return text;
 }
 
-export async function requestTranslationNS(lang, src) {
-  const key = `${lang}:name.artifact:${src}`;
-  if (dict_[key]) {
-    return dict_[key];
-  }
-  const text = await rpc('cl_web_translate', {lang, namespace: 'name.artifact', src});
+export async function translationUpdate(src, lang, namespace, text) {
+  const key = `${lang}:${namespace}:${src}`;
   pushDictLang(key, text, lang);
-  return text;
+
+  return await rpc('cl_web_translation_update', {lang, src, namespace, text});
 }
 
 export const TranslationContext = React.createContext({});

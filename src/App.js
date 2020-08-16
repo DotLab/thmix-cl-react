@@ -59,8 +59,6 @@ const VERSION = 0;
 const INTENT = 'web';
 
 const DEVELOPMENT = 'development';
-const TRANSLATION_LANG_KEY = 'translationLang';
-const TRANSLATION_DICT_KEY = 'translationDict';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -504,18 +502,6 @@ export default class App extends React.Component {
 
   async translationList() {
     return await this.genericApi1('cl_web_translation_list', {lang: this.state.lang});
-  }
-
-  async translationUpdate({src, lang, namespace, text}) {
-    const key = `${lang}:${namespace}:${src}`;
-    const dict_ = JSON.parse(localStorage.getItem(TRANSLATION_DICT_KEY) || '{}');
-    if (dict_[key]) {
-      dict_[key] = text;
-    }
-    localStorage.setItem(TRANSLATION_LANG_KEY, lang);
-    localStorage.setItem(TRANSLATION_DICT_KEY, JSON.stringify(dict_));
-
-    return await this.genericApi1('cl_web_translation_update', {lang, src, namespace, text});
   }
 
   render() {
