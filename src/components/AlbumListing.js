@@ -54,6 +54,7 @@ export default class AlbumListing extends React.Component {
       <section className="Bgc($gray-700) P(30px) text-light shadow">
         <h2 className="row Fw(n)">Songs</h2>
       </section>
+      <Link to='/songs/customized'><button className="btn btn-outline-secondary">Customized songs</button></Link>
       <section className="mt-2 mb-3 shadow border">
         <div className="Bgc($gray-100)">
           <div className="row">

@@ -1,6 +1,6 @@
 import React from 'react';
 import {onChange, formatDateTime} from '../utils';
-import {getKey} from '../translationService';
+import {getKey, updateTranslationLang} from '../translationService';
 
 function correctLang(lang) {
   if (lang === 'zh-CN') {
@@ -79,7 +79,7 @@ export default class TranslationEdit extends React.Component {
   }
 
   async onApplyTranslation(p, text) {
-    await this.app.translationUpdate({src: p.src, lang: p.lang, namespace: p.namespace, text});
+    await updateTranslationLang(p.lang, p.src, p.namespace, text);
 
     const translations = await this.app.translationList();
     this.setState({translations});
