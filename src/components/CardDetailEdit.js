@@ -59,8 +59,8 @@ export default class CardDetailEdit extends React.Component {
   }
 
   async updateMain() {
-    const {id, rarity} = this.state;
-    await rpc('ClWebCardUpdate', {id, rarity});
+    const {id, rarity, attribute} = this.state;
+    await rpc('ClWebCardUpdate', {id, rarity, attribute});
     // await this.app.cardUpdate({id, rarity, attribute});
   }
 
@@ -104,8 +104,6 @@ export default class CardDetailEdit extends React.Component {
 
   render() {
     const s = this.state;
-    // const inputErrors = this.validateInput();
-    // const noErrors = !Object.values(inputErrors).some((x) => x === false);
 
     return <div>
       <section className="Bgc($gray-800) container text-light px-5 pb-3 pt-5">
@@ -115,16 +113,6 @@ export default class CardDetailEdit extends React.Component {
         <Block.Left><h2 className="h5 m-0">Cover</h2></Block.Left>
         <Block.Right>
           <FormFieldCoverInput label="portrait" accept="image/* .png .jpg" coverUrl={s.portraitUrl} onChange={(e) => this.onCoverChange(e, 'portrait')}/>
-          <FormFieldCoverInput label="cover" accept="image/* .png .jpg" coverUrl={s.coverUrl} onChange={(e) => this.onCoverChange(e, 'cover')}/>
-          <FormFieldCoverInput label="background" accept="image/* .png .jpg" coverUrl={s.backgroundUrl} onChange={(e) => this.onCoverChange(e, 'background')}/>
-          <FormFieldCoverInput label="icon" accept="image/* .png .jpg" coverUrl={s.iconUrl} onChange={(e) => this.onCoverChange(e, 'icon')}/>
-          {/* <div className="form-group row">
-            <div className="offset-sm-3 col-sm-9">
-              <img className="H(256px) shadow-sm rounded" src={s.url || NoImageAvailable} alt=""/>
-              <img className="H(128px) shadow-sm rounded ml-2" src={s.coverBlurUrl} alt=""/>
-              <input className="D(b) W(a) mt-2 form-control-file" type="file" accept="image/*" onChange={this.onCoverChange}/>
-            </div>
-          </div> */}
         </Block.Right>
       </Block>
       <Block>
@@ -160,7 +148,7 @@ export default class CardDetailEdit extends React.Component {
               </select>
             </div>
           </div>
-          {/* <div className="form-group row">
+          <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">card attribute</label>
             <div className="col-sm-9">
               <select className="form-control" name="attribute" value={s.attribute} onChange={this.onChange}>
@@ -169,70 +157,13 @@ export default class CardDetailEdit extends React.Component {
                 <option value="ma">Ma</option>
               </select>
             </div>
-          </div> */}
+          </div>
           <hr/>
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updateMain}>Update</button></div>
           </div>
         </Block.Right>
       </Block>
-      {/* <Block>
-        <Block.Left><h2 className="h5 m-0">Parameters</h2></Block.Left>
-        <Block.Right>
-          <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">Initial SP</label>
-            <div className="col-sm-9"><input className="form-control" type="number" name="spInit" value={s.spInit} min={1} max={4} onChange={this.onChange}/>
-              <small className="form-text">range [1, 4]</small>
-            </div>
-          </div>
-          <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">Max SP</label>
-            <div className="col-sm-9"><input className="form-control" type="number" name="spMax" value={s.spMax} onChange={this.onChange}/>
-              <small className="form-text">range [1, 4]</small>
-            </div>
-          </div>
-          <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">Initial Haru</label>
-            <div className="col-sm-9"><input className="form-control" type="number" name="haruInit" value={s.haruInit} onChange={this.onChange}/>
-              <small className="form-text">range [1000, 2000]</small>
-            </div>
-          </div>
-          <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">Max Haru</label>
-            <div className="col-sm-9"><input className="form-control" type="number" name="haruMax" value={s.haruMax} onChange={this.onChange}/>
-              <small className="form-text">range [1500, 3000]</small>
-            </div>
-          </div>
-          <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">Initial Rei</label>
-            <div className="col-sm-9"><input className="form-control" type="number" name="reiInit" value={s.reiInit} onChange={this.onChange}/>
-              <small className="form-text">range [200, 750]</small>
-            </div>
-          </div>
-          <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">Max Rei</label>
-            <div className="col-sm-9"><input className="form-control" type="number" name="reiMax" value={s.reiMax} onChange={this.onChange}/>
-              <small className="form-text">range [400, 1200]</small>
-            </div>
-          </div>
-          <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">Initial Ma</label>
-            <div className="col-sm-9"><input className="form-control" type="number" name="maInit" value={s.maInit} onChange={this.onChange}/>
-              <small className="form-text">range [200, 750]</small>
-            </div>
-          </div>
-          <div className="form-group row">
-            <label className="col-sm-3 col-form-label text-right">Max Ma</label>
-            <div className="col-sm-9"><input className="form-control" type="number" name="maMax" value={s.maMax} onChange={this.onChange}/>
-              <small className="form-text">range [400, 1200]</small>
-            </div>
-          </div>
-          <hr/>
-          <div className="form-group row">
-            <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" disabled={!noErrors} onClick={this.updateParameter}>Update</button></div>
-          </div>
-        </Block.Right>
-      </Block> */}
     </div>;
   }
 }

@@ -32,6 +32,7 @@ import PersonDetailEdit from './components/PersonDetailEdit';
 
 import Board from './components/Board';
 
+import CardListing from './components/CardListing';
 import CardDetailEdit from './components/CardDetailEdit';
 
 import TranslationEdit from './components/TranslationEdit';
@@ -592,6 +593,7 @@ export default class App extends React.Component {
         <PropsRoute exact path="/resources/upload" component={ResourceUpload} app={this} />
         <PropsRoute exact path="/resources/:id/edit" component={ResourceDetailEdit} app={this} />
 
+        <PropsRoute exact path="/cards" component={CardListing} app={this} />
         <PropsRoute exact path="/cards/:id/edit" component={CardDetailEdit} app={this} />
 
         <PropsRoute exact path="/users" component={UserListing} app={this} />
