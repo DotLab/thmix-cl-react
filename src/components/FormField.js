@@ -28,3 +28,10 @@ export const FormFieldCoverInput = (s) => (
     </div>
   </div>
 );
+
+export const FormFieldRadioButton = (s) => (
+  <div className="form-check form-check form-check-inline">
+    <input className="form-check-input" type="radio" name={s.name} id={s.id} value={s.value} onClick={s.onClick}/>
+    <label className="form-check-label">{s.label}</label>
+  </div>
+);
