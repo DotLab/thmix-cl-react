@@ -576,7 +576,7 @@ export default class App extends React.Component {
                   <div className="dropdown-item Cur(p)" onClick={this.songCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create song"/></div>
                   <div className="dropdown-item Cur(p)" onClick={this.personCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create person"/></div>
                   <div className="dropdown-item Cur(p)" onClick={this.cardCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create card"/></div>
-                  <div className="dropdown-item Cur(p)" onClick={this.cardPoolCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create pool"/></div>
+                  <div className="dropdown-item Cur(p)" onClick={this.cardPoolCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create card pool"/></div>
                   {/* <Link className="dropdown-item" to="/resources/upload">upload resource</Link> */}
                   {/* <Link className="dropdown-item" to="/midis/upload">create story</Link> */}
                   {/* <a className="dropdown-item" href=".">Something else here</a> */}
