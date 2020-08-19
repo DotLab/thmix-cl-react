@@ -44,7 +44,7 @@ export default class CardPoolListing extends React.Component {
       <section className="mt-2 mb-3 shadow border">
         <div className="Bgc($gray-100)">
           <div className="row M(a) P(10px)">
-            {this.state.cardpools.map((pool) => <CardPool {...pool}/>)}
+            {this.state.cardpools.map((pool, i) => <CardPool {...pool} key={i}/>)}
           </div>
         </div>
       </section>
