@@ -170,7 +170,6 @@ export default class CardPoolDetailEdit extends React.Component {
       id: null,
 
       name: '',
-      cardCount: 0,
       cost: 0,
       nCards: [],
       rCards: [],

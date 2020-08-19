@@ -35,6 +35,7 @@ import Board from './components/Board';
 import CardListing from './components/CardListing';
 import CardDetailEdit from './components/CardDetailEdit';
 import CardPoolListing from './components/CardPoolListing';
+import CardPoolDetail from './components/CardPoolDetail';
 import CardPoolDetailEdit from './components/CardPoolDetailEdit';
 
 import TranslationEdit from './components/TranslationEdit';
@@ -605,8 +606,9 @@ export default class App extends React.Component {
         <PropsRoute exact path="/resources/:id/edit" component={ResourceDetailEdit} app={this} />
 
         <PropsRoute exact path="/cards" component={CardListing} app={this} />
-        <PropsRoute exact path="/cards/pool" component={CardPoolListing} app={this} />
         <PropsRoute exact path="/cards/:id/edit" component={CardDetailEdit} app={this} />
+        <PropsRoute exact path="/cardpools" component={CardPoolListing} app={this} />
+        <PropsRoute exact path="/cardpools/:id" component={CardPoolDetail} app={this} />
         <PropsRoute exact path="/cardpools/:id/edit" component={CardPoolDetailEdit} app={this} />
 
         <PropsRoute exact path="/users" component={UserListing} app={this} />
