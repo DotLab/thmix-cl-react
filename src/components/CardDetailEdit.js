@@ -2,7 +2,7 @@ import React from 'react';
 
 import {onTextareaChange, onChange, onCheckboxChange} from '../utils';
 import {rpc} from '../apiService';
-import {FormFieldCoverInput} from './FormField';
+import {FormFieldCoverInput, FormField} from './FormField';
 
 const Block = ({children}) => (<section className="container px-md-5 mb-2"><div className="row text-light">{children}</div></section>);
 Block.Left = ({children}) => (<div className="Bgc($gray-700) shadow col-lg-3 py-3 pl-4 font-italic">{children}</div>);
@@ -20,7 +20,6 @@ export default class CardDetailEdit extends React.Component {
     this.onCheckboxChange = onCheckboxChange.bind(this);
     this.updateMeta = this.updateMeta.bind(this);
     this.updateMain = this.updateMain.bind(this);
-    // this.updateParameter = this.updateParameter.bind(this);
     this.validateInput = this.validateInput.bind(this);
     this.onCoverChange = this.onCoverChange.bind(this);
 
@@ -29,6 +28,8 @@ export default class CardDetailEdit extends React.Component {
 
       name: '',
       desc: '',
+      picSource: '',
+      picAuthorName: '',
       rarity: '',
       portraitUrl: '',
       coverUrl: '',
@@ -53,29 +54,20 @@ export default class CardDetailEdit extends React.Component {
   }
 
   async updateMeta() {
-    const {id, name, desc} = this.state;
-    await rpc('ClWebCardUpdate', {id, name, desc});
-    // await this.app.cardUpdate({id, name, desc});
+    const {id, name, desc, picSource, picAuthorName} = this.state;
+    await rpc('ClWebCardUpdate', {id, name, desc, picSource, picAuthorName});
   }
 
   async updateMain() {
     const {id, rarity, attribute} = this.state;
     await rpc('ClWebCardUpdate', {id, rarity, attribute});
-    // await this.app.cardUpdate({id, rarity, attribute});
   }
-
-  // async updateParameter() {
-  //   const {id, spInit, spMax, haruInit, haruMax,
-  //     reiInit, reiMax, maInit, maMax} = this.state;
-  //   await this.app.cardUpdate({id, spInit, spMax, haruInit, haruMax,
-  //     reiInit, reiMax, maInit, maMax});
-  // }
 
   onCoverChange(e, type) {
     if (!e.target.files[0]) return;
 
     const size = e.target.files[0].size;
-    if (size > 2048576) {
+    if (size > 6048576) {
       this.app.error('image too large');
     } else {
       const fr = new FileReader();
@@ -128,6 +120,8 @@ export default class CardDetailEdit extends React.Component {
               <textarea className="form-control" value={s.desc} name="desc" rows={this.state.descRowCount} onChange={this.onTextareaChange}/>
             </div>
           </div>
+          <FormField label="picture source" name="picSource" value={s.picSource} onChange={this.onChange}/>
+          <FormField label="picture author name" name="picAuthorName" value={s.picAuthorName} onChange={this.onChange}/>
           <hr/>
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updateMeta}>Update</button></div>
