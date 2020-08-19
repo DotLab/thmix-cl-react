@@ -209,8 +209,10 @@ export default class CardPoolDetailEdit extends React.Component {
     this.setState({nRate: '', rRate: '', srRate: '', ssrRate: '', urRate: ''});
   }
 
-  calRate() {
+  async calRate() {
     const s = this.state;
+    const {id, nWeight, rWeight, srWeight, ssrWeight, urWeight} = this.state;
+    await rpc('ClWebCardPoolUpdate', {id, nWeight, rWeight, srWeight, ssrWeight, urWeight});
     const nRate = (parseFloat(s.nWeight) /(parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
     const rRate = (parseFloat(s.rWeight) /(parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
     const srRate = (parseFloat(s.srWeight) /(parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);

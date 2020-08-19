@@ -6,8 +6,11 @@ class CardRow extends React.Component {
   render() {
     const p = this.props;
 
-    return <div className="H(200px) W(160px) bg-light rounded shadow-sm border m-3">
-      <div className="HBgp(c) Bgz(cv) rounded-top text-dark p-2 Trsdu(0.5s) Brightness(0.6) Brightness(1):h" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(${p.portraitUrl})`}}>
+    return <div className="D(f) H(220px) W(260px) bg-light rounded m-3 p-2">
+      <div className="H(200px) W(160px) HBgp(c) Bgz(ct) Bgr(nr) Bgpy(c) shadow-sm border rounded-top text-dark" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(${p.portraitUrl})`}}></div>
+      <div className="mx-2 W(100px)">
+        <span className="Fw(b)">{p.rarity && p.rarity.toUpperCase()}</span>
+        <div className="">{p.name}</div>
       </div>
     </div>;
   }
@@ -19,6 +22,9 @@ export default class CardPoolDetail extends React.Component {
 
     /** @type {import('../App').default} */
     this.app = props.app;
+
+    this.drawOneCard = this.drawOneCard.bind(this);
+    this.drawElevenCards = this.drawElevenCards.bind(this);
 
     this.state = {
       name: '',
@@ -54,17 +60,22 @@ export default class CardPoolDetail extends React.Component {
     this.setState(cardpool);
     this.setState({isMounted: true});
     const s = this.state;
-    const nRate = (parseFloat(s.nWeight) /(parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
-    const rRate = (parseFloat(s.rWeight) /(parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
-    const srRate = (parseFloat(s.srWeight) /(parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
-    const ssrRate = (parseFloat(s.ssrWeight) /(parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
-    const urRate = (parseFloat(s.urWeight) /(parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
+    const nRate = (parseFloat(s.nWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
+    const rRate = (parseFloat(s.rWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
+    const srRate = (parseFloat(s.srWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
+    const ssrRate = (parseFloat(s.ssrWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
+    const urRate = (parseFloat(s.urWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
     this.setState({nRate, rRate, srRate, ssrRate, urRate});
   }
 
   async drawOneCard() {
-    const cardsDrew = await rpc('ClCardsDrawOnce', {id: this.props.match.params.id});
-    this.setState({cardsDrew});
+    const cardsDrew = await rpc('ClWebCardDrawOnce', {id: this.props.match.params.id});
+    this.setState({cardsDrew: [cardsDrew]});
+  }
+
+  async drawElevenCards() {
+    const cardsDrew = await rpc('ClWebCardDrawEleven', {id: this.props.match.params.id});
+    this.setState({cardsDrew: cardsDrew});
   }
 
   render() {
@@ -82,8 +93,8 @@ export default class CardPoolDetail extends React.Component {
                 </div>
                 <div className="mt-4 m-0">1 card cost: {s.cost} <i className="fas fa-coins"></i></div>
                 <div className="mt-2 m-0">11 card cost: {s.cost * 10} <i className="fas fa-coins"></i></div>
-                <button className="mt-4 btn btn-secondary">1 card</button>
-                <button className="mt-4 mx-2 btn btn-secondary">11 cards</button>
+                <button className="mt-4 btn btn-secondary" onClick={this.drawOneCard}>1 card</button>
+                <button className="mt-4 mx-2 btn btn-secondary" onClick={this.drawElevenCards}>11 cards</button>
               </div>
             </div>
           </div>
@@ -106,21 +117,10 @@ export default class CardPoolDetail extends React.Component {
           </div>
           <div className="col-md-8 row">
             {/* right */}
-            <CardRow/>
-            <CardRow/>
-            <CardRow/>
-            <CardRow/>
-            <CardRow/>
-            <CardRow/>
-            <CardRow/>
-            <CardRow/>
-            <CardRow/>
-            <CardRow/>
-            <CardRow/>
+            {s.cardsDrew.map((card, i) => <CardRow {...card} key={i}/>)}
           </div>
         </div>
       </section>
-
     </div>;
   }
 }
