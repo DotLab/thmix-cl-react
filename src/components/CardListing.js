@@ -5,13 +5,13 @@ class CardRow extends React.Component {
   render() {
     const p = this.props;
 
-    return <div className="col-xl-2 col-lg-3 col-md-4 mb-2 px-1">
+    return <div className="col-xl-2 col-lg-3 col-md-3 col-sm-6 mb-2 px-1">
       <div className="H(370px) bg-light rounded shadow-sm border">
         <div className="H(300px) Bgp(c) Bgz(cv) rounded-top text-dark p-2 Trsdu(0.5s) Brightness(0.6) Brightness(1):h" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(${p.portraitUrl})`}}>
-          <div className="B(-60px) position-absolute font-italic">
-            <span className="h5">{p.name}</span>
-            <div><small>by {(p.picAuthorName)}</small></div>
-          </div>
+        </div>
+        <div className="Lh(1.15) position-absolute w-100 p-2 small">
+          <div className="small font-weight-bold">uploaded by {p.uploader.name}</div>
+          <div className="Lh(1) font-weight-bold text-truncate">illustration by {p.picAuthorName}</div>
         </div>
       </div>
     </div>;
