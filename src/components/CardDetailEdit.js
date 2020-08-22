@@ -28,13 +28,10 @@ export default class CardDetailEdit extends React.Component {
 
       name: '',
       desc: '',
-      picSource: '',
-      picAuthorName: '',
+      coverSource: '',
+      coverAuthorName: '',
       rarity: '',
-      portraitUrl: '',
       coverUrl: '',
-      backgroundUrl: '',
-      iconUrl: '',
 
       // attribute: '',
       // spInit: 0,
@@ -54,8 +51,8 @@ export default class CardDetailEdit extends React.Component {
   }
 
   async updateMeta() {
-    const {id, name, desc, picSource, picAuthorName} = this.state;
-    await rpc('ClWebCardUpdate', {id, name, desc, picSource, picAuthorName});
+    const {id, name, desc, coverSource, coverAuthorName} = this.state;
+    await rpc('ClWebCardUpdate', {id, name, desc, coverSource, coverAuthorName});
   }
 
   async updateMain() {
@@ -104,7 +101,7 @@ export default class CardDetailEdit extends React.Component {
       <Block>
         <Block.Left><h2 className="h5 m-0">Cover</h2></Block.Left>
         <Block.Right>
-          <FormFieldCoverInput label="portrait" accept="image/* .png .jpg" coverUrl={s.portraitUrl} onChange={(e) => this.onCoverChange(e, 'portrait')}/>
+          <FormFieldCoverInput label="cover" accept="image/* .png .jpg" coverUrl={s.coverUrl} onChange={(e) => this.onCoverChange(e, 'cover')}/>
         </Block.Right>
       </Block>
       <Block>
@@ -120,8 +117,8 @@ export default class CardDetailEdit extends React.Component {
               <textarea className="form-control" value={s.desc} name="desc" rows={this.state.descRowCount} onChange={this.onTextareaChange}/>
             </div>
           </div>
-          <FormField label="picture source" name="picSource" value={s.picSource} onChange={this.onChange}/>
-          <FormField label="picture author name" name="picAuthorName" value={s.picAuthorName} onChange={this.onChange}/>
+          <FormField label="picture source" name="coverSource" value={s.coverSource} onChange={this.onChange}/>
+          <FormField label="picture author name" name="coverAuthorName" value={s.coverAuthorName} onChange={this.onChange}/>
           <hr/>
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updateMeta}>Update</button></div>
