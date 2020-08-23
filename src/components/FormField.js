@@ -3,35 +3,35 @@ import NoImageAvailable from './NoImageAvailable.jpg';
 
 const ROW = 5;
 
-export const FormField = (s) => (
+export const FormField = (p) => (
   <div className="form-group row">
-    <label className="col-sm-3 col-form-label text-right">{s.label}</label>
-    <div className="col-sm-9"><input className="form-control" type="text" name={s.name} value={s.value} onChange={s.onChange}/></div>
+    <label className="col-sm-3 col-form-label text-right">{p.label}</label>
+    <div className="col-sm-9"><input className="form-control" type="text" name={p.name} value={p.value} onChange={p.onChange}/></div>
   </div>
 );
 
-export const FormFieldTextArea = (s) => (
+export const FormFieldTextArea = (p) => (
   <div className="form-group row">
-    <label className="col-sm-3 col-form-label text-right">{s.label}</label>
+    <label className="col-sm-3 col-form-label text-right">{p.label}</label>
     <div className="col-sm-9">
-      <textarea className="form-control" value={s.value} name={s.name} rows={ROW} onChange={s.onChange}/>
+      <textarea className="form-control" value={p.value} name={p.name} rows={ROW} onChange={p.onChange}/>
     </div>
   </div>
 );
 
-export const FormFieldImageUpload = (s) => (
+export const FormFieldImageUpload = (p) => (
   <div className="form-group row">
-    <label className="col-sm-3 col-form-label text-right">{s.label}</label>
+    <label className="col-sm-3 col-form-label text-right">{p.label}</label>
     <div className="col-sm-9 p-2">
-      <img className="H(200px) shadow-sm" src={s.coverUrl || NoImageAvailable} alt=""/>
-      <input className="D(b) W(a) mt-2 form-control-file" type="file" accept={s.accept} onChange={s.onChange}/>
+      <img className="H(200px) shadow-sm" src={p.coverUrl || NoImageAvailable} alt=""/>
+      <input className="D(b) W(a) mt-2 form-control-file" type="file" accept={p.accept} onChange={p.onChange}/>
     </div>
   </div>
 );
 
-export const FormFieldRadioButton = (s) => (
+export const FormFieldRadioButton = (p) => (
   <div className="form-check form-check form-check-inline">
-    <input className="form-check-input" type="radio" name={s.name} id={s.id} value={s.value} onClick={s.onClick}/>
-    <label className="form-check-label">{s.label}</label>
+    <input className="form-check-input" type="radio" name={p.name} id={p.id} value={p.value} onClick={p.onClick}/>
+    <label className="form-check-label">{p.label}</label>
   </div>
 );
