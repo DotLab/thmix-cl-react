@@ -43,7 +43,7 @@ class CardRow extends React.Component {
         {s.editingWeight && <div><input className="form-control" type="text" name="weight" value={s.weight} onChange={this.onChange}/></div>}
       </td>
 
-      <td><img className="H(60px)" src={p.portraitUrl} alt=""/></td>
+      <td><img className="H(60px)" src={p.coverUrl} alt=""/></td>
       <td>{p.rarity} {p.poolRarity !== p.rarity && <i className="mx-2 text-danger fas fa-exclamation"></i>}</td>
       <td><div className="D(f)">
         <i className="fas fa-save Cur(p)" onClick={this.updateWeight}></i>
@@ -130,7 +130,7 @@ class CardTable extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {s.cards.map((card) => <CardRow {...card} key={card.id} removeCard={this.removeCard} updateWeight={this.updateWeight}
+          {s.cards.map((card, i) => <CardRow {...card} key={i} removeCard={this.removeCard} updateWeight={this.updateWeight}
             poolRarity={this.props.rarity} weight={card.weight} />)}
           {s.editing && <tr><td></td>
             <td><input className="form-control" type="text" name="id" value={s.id} onChange={this.onChange}/></td>
@@ -195,7 +195,12 @@ export default class CardPoolDetailEdit extends React.Component {
   async componentDidMount() {
     const cardPool = await rpc('ClWebCardPoolGet', {id: this.props.match.params.id});
     this.setState(cardPool);
-    this.setState({isMounted: true});
+    const nCards = this.state.nCards[0] ? this.state.nCards : [];
+    const rCards = this.state.rCards[0] ? this.state.rCards : [];
+    const srCards = this.state.srCards[0] ? this.state.srCards : [];
+    const ssrCards = this.state.ssrCards[0] ? this.state.ssrCards: [];
+    const urCards = this.state.urCards[0] ? this.state.urCards : [];
+    this.setState({isMounted: true, nCards, rCards, srCards, ssrCards, urCards});
   }
 
   async updateMeta() {
@@ -234,12 +239,17 @@ export default class CardPoolDetailEdit extends React.Component {
 
   async updateCardPool() {
     const s = this.state;
+    const nCards = s.nCards ? s.nCards.map((x) => ({cardId: x.id, weight: x.weight})) : [];
+    const rCards = s.rCards ? s.rCards.map((x) => ({cardId: x.id, weight: x.weight})) : [];
+    const srCards = s.srCards ? s.srCards.map((x) => ({cardId: x.id, weight: x.weight})) : [];
+    const ssrCards = s.ssrCards ? s.ssrCards.map((x) => ({cardId: x.id, weight: x.weight})) : [];
+    const urCards = s.urCards ? s.urCards.map((x) => ({cardId: x.id, weight: x.weight})) : [];
     await rpc('ClWebCardPoolUpdate', {id: this.props.match.params.id,
-      nCards: s.nCards,
-      rCards: s.rCards,
-      srCards: s.srCards,
-      ssrCards: s.ssrCards,
-      urCards: s.urCards});
+      nCards,
+      rCards,
+      srCards,
+      ssrCards,
+      urCards});
     this.app.success('card pool updated');
   }
 
