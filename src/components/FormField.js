@@ -19,7 +19,7 @@ export const FormFieldTextArea = (s) => (
   </div>
 );
 
-export const FormFieldCoverInput = (s) => (
+export const FormFieldImageUpload = (s) => (
   <div className="form-group row">
     <label className="col-sm-3 col-form-label text-right">{s.label}</label>
     <div className="col-sm-9 p-2">
