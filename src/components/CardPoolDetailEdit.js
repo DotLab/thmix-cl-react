@@ -195,12 +195,7 @@ export default class CardPoolDetailEdit extends React.Component {
   async componentDidMount() {
     const cardPool = await rpc('ClWebCardPoolGet', {id: this.props.match.params.id});
     this.setState(cardPool);
-    const nCards = this.state.nCards[0] ? this.state.nCards : [];
-    const rCards = this.state.rCards[0] ? this.state.rCards : [];
-    const srCards = this.state.srCards[0] ? this.state.srCards : [];
-    const ssrCards = this.state.ssrCards[0] ? this.state.ssrCards: [];
-    const urCards = this.state.urCards[0] ? this.state.urCards : [];
-    this.setState({isMounted: true, nCards, rCards, srCards, ssrCards, urCards});
+    this.setState({isMounted: true});
   }
 
   async updateMeta() {
