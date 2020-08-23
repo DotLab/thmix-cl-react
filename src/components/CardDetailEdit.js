@@ -135,6 +135,7 @@ export default class CardDetailEdit extends React.Component {
                 <option value="n">N</option>
                 <option value="r">R</option>
                 <option value="sr">SR</option>
+                <option value="ssr">SSR</option>
                 <option value="ur">UR</option>
               </select>
             </div>
