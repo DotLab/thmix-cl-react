@@ -2,7 +2,7 @@ import React from 'react';
 
 import {onTextareaChange, onChange, onCheckboxChange} from '../utils';
 import {rpc} from '../apiService';
-import {FormFieldCoverInput, FormField} from './FormField';
+import {FormFieldImageUpload, FormField} from './FormField';
 
 const Block = ({children}) => (<section className="container px-md-5 mb-2"><div className="row text-light">{children}</div></section>);
 Block.Left = ({children}) => (<div className="Bgc($gray-700) shadow col-lg-3 py-3 pl-4 font-italic">{children}</div>);
@@ -77,19 +77,19 @@ export default class CardDetailEdit extends React.Component {
     }
   }
 
-  validateInput() {
-    const s = this.state;
-    return {
-      spInitField: s.spInit >= 1 && s.spInit <= 4,
-      spMaxField: s.spMax >= 1 && s.spMax <= 4,
-      haruInitField: s.haruInit >= 1000 && s.haruInit <= 2000,
-      haruMaxField: s.haruMax >= 1500 && s.haruMax <= 3000,
-      reiInitField: s.reiInit >= 200 && s.reiInit <= 750,
-      reiMaxField: s.reiMax >= 400 && s.reiMax <= 1200,
-      maInitField: s.maInit >= 200 && s.maInit <= 750,
-      maMaxField: s.maMax >= 400 && s.maMax <= 1200,
-    };
-  }
+  // validateInput() {
+  //   const s = this.state;
+  //   return {
+  //     spInitField: s.spInit >= 1 && s.spInit <= 4,
+  //     spMaxField: s.spMax >= 1 && s.spMax <= 4,
+  //     haruInitField: s.haruInit >= 1000 && s.haruInit <= 2000,
+  //     haruMaxField: s.haruMax >= 1500 && s.haruMax <= 3000,
+  //     reiInitField: s.reiInit >= 200 && s.reiInit <= 750,
+  //     reiMaxField: s.reiMax >= 400 && s.reiMax <= 1200,
+  //     maInitField: s.maInit >= 200 && s.maInit <= 750,
+  //     maMaxField: s.maMax >= 400 && s.maMax <= 1200,
+  //   };
+  // }
 
   render() {
     const s = this.state;
@@ -101,7 +101,7 @@ export default class CardDetailEdit extends React.Component {
       <Block>
         <Block.Left><h2 className="h5 m-0">Cover</h2></Block.Left>
         <Block.Right>
-          <FormFieldCoverInput label="cover" accept="image/* .png .jpg" coverUrl={s.coverUrl} onChange={(e) => this.onCoverChange(e, 'cover')}/>
+          <FormFieldImageUpload label="cover" accept="image/* .png .jpg" coverUrl={s.coverUrl} onChange={(e) => this.onCoverChange(e, 'cover')}/>
         </Block.Right>
       </Block>
       <Block>
@@ -117,8 +117,8 @@ export default class CardDetailEdit extends React.Component {
               <textarea className="form-control" value={s.desc} name="desc" rows={this.state.descRowCount} onChange={this.onTextareaChange}/>
             </div>
           </div>
-          <FormField label="picture source" name="coverSource" value={s.coverSource} onChange={this.onChange}/>
-          <FormField label="picture author name" name="coverAuthorName" value={s.coverAuthorName} onChange={this.onChange}/>
+          <FormField label="cover source" name="coverSource" value={s.coverSource} onChange={this.onChange}/>
+          <FormField label="cover author name" name="coverAuthorName" value={s.coverAuthorName} onChange={this.onChange}/>
           <hr/>
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updateMeta}>Update</button></div>
