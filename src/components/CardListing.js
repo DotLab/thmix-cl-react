@@ -10,8 +10,9 @@ class CardRow extends React.Component {
         <div className="H(300px) Bgp(c) Bgz(cv) rounded-top text-dark p-2 Trsdu(0.5s) Brightness(0.6) Brightness(1):h" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(${p.coverUrl})`}}>
         </div>
         <div className="Lh(1.15) position-absolute w-100 p-2 small">
+          <div className="small font-weight-bold">{p.name}</div>
           <div className="small font-weight-bold">uploaded by {p.uploader.name}</div>
-          <div className="Lh(1) font-weight-bold text-truncate">illustration by {p.coverAuthorName}</div>
+          <div className="Lh(1) font-weight-bold text-truncate">illustration by <a className="C(black)" href={p.coverSource}>{p.coverAuthorName}</a></div>
         </div>
       </div>
     </div>;
