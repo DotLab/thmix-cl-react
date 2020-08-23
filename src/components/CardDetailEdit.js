@@ -20,7 +20,6 @@ export default class CardDetailEdit extends React.Component {
     this.onCheckboxChange = onCheckboxChange.bind(this);
     this.updateMeta = this.updateMeta.bind(this);
     this.updateMain = this.updateMain.bind(this);
-    this.validateInput = this.validateInput.bind(this);
     this.onCoverChange = this.onCoverChange.bind(this);
 
     this.state = {
