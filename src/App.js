@@ -534,7 +534,7 @@ export default class App extends React.Component {
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/midis"><i className="fas fa-music"></i> <Tr src="midis"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/songs"><i className="fas fa-info-circle"></i> <Tr src="songs"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts"><i className="fas fa-guitar"></i> <Tr src="soundfonts"/></NavLink></li>
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/cards"><i className="fas fa-star"></i><Tr src="cards"/></NavLink></li>
+              {s.user && <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/cards"><i className="fas fa-star"></i><Tr src="cards"/></NavLink></li>}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit"><i className="fas fa-language"></i> <Tr src="translations"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/versions"><i className="fas fa-parachute-box"></i> <Tr src="versions"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/errors"><i className="fas fa-bomb"></i> <Tr src="errors"/></NavLink></li>
