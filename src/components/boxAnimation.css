@@ -1,0 +1,120 @@
+#star1 {
+    animation: star1 2.4s ease-in-out ;
+}
+
+#star2 {
+    animation: star2 2.7s ease-in-out ;
+}
+
+#star3 {
+    animation: star3 2.3s ease-in-out ;
+}
+
+#star4 {
+    animation: star4 2.5s ease-in-out ;
+}
+
+#star5 {
+    animation: star5 2s ease-in-out ;
+}
+
+#star6 {
+    animation: star6 2.5s ease-in-out ;
+}
+
+#star7 {
+    animation: star7 2.3s ease-in-out ;
+}
+
+#star8 {
+    animation: star8 2.5s ease-in-out ;
+}
+
+#star9 {
+    animation: star9 2.6s ease-in-out ;
+}
+
+#star10 {
+    animation: star10 2.2s ease-in-out ;
+}
+
+#star11 {
+    animation: star11 2.6s ease-in-out ;
+}
+
+#star12 {
+    animation: star12 2s ease-in-out ;
+}
+
+#star13 {
+    animation: star13 1.7s ease-in-out ;
+}
+
+#star14 {
+    animation: star14 2s ease-in-out ;
+}
+
+@keyframes star1 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}
+
+@keyframes star2 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}
+
+@keyframes star3 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}
+
+@keyframes star4 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}
+
+@keyframes star5 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}
+
+@keyframes star6 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}
+
+@keyframes star7 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}
+
+@keyframes star8 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}
+@keyframes star9 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}
+@keyframes star10 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}
+@keyframes star11 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}
+
+@keyframes star12 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}
+@keyframes star13 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}
+@keyframes star14 {
+    from {transform: translateY(100px);}
+    to {transform: translateY(0px);}
+}

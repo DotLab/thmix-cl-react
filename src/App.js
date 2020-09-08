@@ -57,6 +57,7 @@ import langs from './json/langs.json';
 
 import {setApp as apiServiceSetApp} from './apiService';
 import {setApp as translationServiceSetApp, TranslationContext, Translation as Tr, saveLang, clearTranslationCache, UI_VOLATILE} from './translationService';
+import CardPoolDetail from './components/CardPoolDetail';
 
 // const debug = require('debug')('thmix:App');
 
@@ -607,6 +608,7 @@ export default class App extends React.Component {
         <PropsRoute exact path="/cards" component={CardListing} app={this} />
         <PropsRoute exact path="/cards/:id/edit" component={CardDetailEdit} app={this} />
         <PropsRoute exact path="/cardpools" component={CardPoolListing} app={this} />
+        <PropsRoute exact path="/cardpools/:id/" component={CardPoolDetail} app={this} />
         <PropsRoute exact path="/cardpools/:id/edit" component={CardPoolDetailEdit} app={this} />
 
         <PropsRoute exact path="/users" component={UserListing} app={this} />
