@@ -49,12 +49,12 @@ class App extends React.Component {
         <div className="form-group">
           <label><Tr src="Username"/> <span className="C($red)">*</span></label>
           <input className="form-control" type="text" required name="name" onChange={this.onChange}/>
-          <small className="form-text text-muted"><Tr src="This will be your username."/></small>
+          <small className="form-text Fw(b) C(red)"><Tr src="DO NOT use your real name or ID or real information. This is publicly visible."/></small>
         </div>
         <div className="form-group">
           <label><Tr src="Email address"/> <span className="C($red)">*</span></label>
           <input className="form-control" type="email" required name="email" onChange={this.onChange}/>
-          <small className="form-text text-muted"><Tr src="We'll never share your email address with anyone else."/></small>
+          <small className="form-text text-muted"><Tr src="We'll never share your email address with anyone else. This is ONLY visible to you."/></small>
         </div>
         <div className="form-group">
           <label><Tr src="Password"/> <span className="C($red)">*</span></label>
@@ -64,7 +64,11 @@ class App extends React.Component {
           <ReCAPTCHA sitekey={this.app.isDevelopment ? TEST_RECAPTCHA_KEY : RECAPTCHA_KEY} onChange={this.onRecaptchaChange}/>
         </div>
         <div className="form-group">
+          <small className="form-text Fw(b) C(red)"><Tr src="We DO NOT provide service to humans UNDER 13 years old."/></small>
+          <small className="form-text Fw(b) C(red)"><Tr src="By clicking “Register” below, you confirm that you are NOT UNDER 13 years old."/></small>
           <small className="form-text text-muted"><Tr src="By clicking “Register” below, you agree to our"/> <Link to="/terms"><Tr src="terms of service"/></Link> <Tr src="and"/> <Link to="/privacy"><Tr src="privacy policies"/></Link>.</small>
+          <small className="form-text text-muted"><Tr src="After clicking “Register” below, we will send an email with the Code needed to complete registration."/></small>
+          <small className="form-text text-muted"><Tr src="DO NOT close or refresh this window when looking for the Code. Sorry for the inconvenience."/></small>
         </div>
         <button type="submit" className="btn btn-primary" disabled={!this.state.recaptcha}><Tr src="Register"/></button>
       </form> : <form className="Maw(500px) Mx(a) shadow p-3 rounded" onSubmit={this.onSubmitCode}>
@@ -72,6 +76,7 @@ class App extends React.Component {
           <label><Tr src="Code"/> <span className="C($red)">*</span></label>
           <input className="form-control" type="text" required name="code" onChange={this.onChange}/>
           <small className="form-text text-muted"><Tr src="We send an email to the address that you provided."/></small>
+          <small className="form-text text-muted"><Tr src="DO NOT close or refresh this window when looking for the Code. Sorry for the inconvenience."/></small>
         </div>
         <button type="submit" className="btn btn-primary" disabled={!this.state.code}><Tr src="Finish"/></button>
       </form>}
