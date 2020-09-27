@@ -34,6 +34,8 @@ import Board from './components/Board';
 
 import CardListing from './components/CardListing';
 import CardDetailEdit from './components/CardDetailEdit';
+import CardPoolListing from './components/CardPoolListing';
+import CardPoolDetailEdit from './components/CardPoolDetailEdit';
 
 import TranslationEdit from './components/TranslationEdit';
 import VersionListing from './components/VersionListing';
@@ -89,6 +91,7 @@ export default class App extends React.Component {
     this.songCreate = this.songCreate.bind(this);
     this.personCreate = this.personCreate.bind(this);
     this.cardCreate = this.cardCreate.bind(this);
+    this.cardPoolCreate = this.cardPoolCreate.bind(this);
 
     apiServiceSetApp(this);
     translationServiceSetApp(this);
@@ -443,6 +446,13 @@ export default class App extends React.Component {
     this.history.push(`/cards/${res.id}/edit`);
   }
 
+  async cardPoolCreate() {
+    const res = await this.genericApi1('ClWebCardPoolCreate', {});
+    this.success('cardPool created');
+
+    this.history.push(`/cardpools/${res.id}/edit`);
+  }
+
   async albumGet({id}) {
     const album = await this.genericApi1('cl_web_album_get', {id});
     return album;
@@ -566,6 +576,7 @@ export default class App extends React.Component {
                   <div className="dropdown-item Cur(p)" onClick={this.songCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create song"/></div>
                   <div className="dropdown-item Cur(p)" onClick={this.personCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create person"/></div>
                   <div className="dropdown-item Cur(p)" onClick={this.cardCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create card"/></div>
+                  <div className="dropdown-item Cur(p)" onClick={this.cardPoolCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create card pool"/></div>
                   {/* <Link className="dropdown-item" to="/resources/upload">upload resource</Link> */}
                   {/* <Link className="dropdown-item" to="/midis/upload">create story</Link> */}
                   {/* <a className="dropdown-item" href=".">Something else here</a> */}
@@ -595,6 +606,8 @@ export default class App extends React.Component {
 
         <PropsRoute exact path="/cards" component={CardListing} app={this} />
         <PropsRoute exact path="/cards/:id/edit" component={CardDetailEdit} app={this} />
+        <PropsRoute exact path="/cardpools" component={CardPoolListing} app={this} />
+        <PropsRoute exact path="/cardpools/:id/edit" component={CardPoolDetailEdit} app={this} />
 
         <PropsRoute exact path="/users" component={UserListing} app={this} />
         <PropsRoute exact path="/users/:id" component={UserDetail} app={this} />

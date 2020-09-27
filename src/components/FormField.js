@@ -28,3 +28,10 @@ export const FormFieldImageUpload = (p) => (
     </div>
   </div>
 );
+
+export const FormFieldRadioButton = (p) => (
+  <div className="form-check form-check form-check-inline">
+    <input className="form-check-input" type="radio" name={p.name} id={p.id} value={p.value} onClick={p.onClick}/>
+    <label className="form-check-label">{p.label}</label>
+  </div>
+);
