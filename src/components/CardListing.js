@@ -45,7 +45,7 @@ export default class CardListing extends React.Component {
     return <div className="container-fluid">
       {!canView ? <div></div> : <div>
         <section className="Bgc($gray-700) P(30px) text-light shadow">
-          <h2 className="row Fw(n)">Cards</h2>
+          <h2 className="row Fw(n)">Cards <Link to="cardpools"><button className="btn btn-sm btn-outline-warning Mstart(20px)">Draw cards</button></Link></h2>
         </section>
         <section className="mt-2 mb-3 shadow border">
           <div className="Bgc($gray-100)">
