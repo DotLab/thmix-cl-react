@@ -8,6 +8,137 @@ const Block = ({children}) => (<section className="container px-md-5 mb-2"><div 
 Block.Left = ({children}) => (<div className="Bgc($gray-700) shadow col-lg-3 py-3 pl-4 font-italic">{children}</div>);
 Block.Right = ({children}) => (<div className="Bgc($gray-600) shadow col-lg-9 pt-3">{children}</div>);
 
+class PackRow extends React.Component {
+  constructor(props) {
+    super(props);
+
+    /** @type {import('../App').default} */
+    this.state = {
+      editingName: false,
+      editingCardNum: false,
+      editingCost: false,
+      name: this.props.name,
+      cardNum: this.props.cardNum,
+      cost: this.props.cost,
+    };
+
+    this.onChange = onChange.bind(this);
+    this.removePack = this.removePack.bind(this);
+    this.updatePack = this.updatePack.bind(this);
+  }
+
+  removePack() {
+    this.props.removePack(this.props.id);
+  }
+
+  updatePack() {
+    this.setState({editingName: false, editingCardNum: false, editingCost: false});
+    this.props.updatePack(this.props.id, this.state.name, this.state.cardNum, this.state.cost);
+  }
+
+  render() {
+    const p = this.props;
+    const s = this.state;
+    return <tr className="">
+      <td></td>
+      <td>
+        {!s.editingName && <div className="Cur(p)" onClick={() => this.setState({editingName: true})}>{p.name}</div>}
+        {s.editingName && <div><input className="form-control" type="text" name="name" value={s.name} onChange={this.onChange}/></div>}
+      </td>
+
+      <td>
+        {!s.editingCardNum && <div className="Cur(p)" onClick={() => this.setState({editingCardNum: true})}>{p.cardNum}</div>}
+        {s.editingCardNum && <div><input className="form-control" type="number" name="cardNum" value={s.cardNum} onChange={this.onChange}/></div>}
+      </td>
+
+      <td>
+        {!s.editingCost && <div className="Cur(p)" onClick={() => this.setState({editingCost: true})}>{p.cost}</div>}
+        {s.editingCost && <div><input className="form-control" type="number" name="cost" value={s.cost} onChange={this.onChange}/></div>}
+      </td>
+
+      <td><div className="D(f)">
+        <i className="fas fa-save Cur(p)" onClick={this.updatePack}></i>
+        <i className="mx-3 fas fa-trash-alt Cur(p)" onClick={this.removePack}></i></div></td>
+    </tr>;
+  }
+}
+
+class PackTable extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      packs: this.props.packs,
+      editing: false,
+      id: '',
+      name: '',
+      cardNum: 0,
+      cost: 0,
+    };
+
+    this.onChange = onChange.bind(this);
+    this.insertPack = this.insertPack.bind(this);
+    this.removePack = this.removePack.bind(this);
+    this.updatePack = this.updatePack.bind(this);
+  }
+
+  async insertPack() {
+    for (let i = 0; i < this.state.packs.length; i++) {
+      if (this.state.packs[i].id === this.state.id) return;
+    }
+
+    const packs = [...this.state.packs, {name: this.state.name, cardNum: this.state.cardNum, cost: this.state.cost}];
+    this.setState({packs, id: '', name: '', cardNum: 0, cost: 0});
+    this.props.updatePackTable(packs);
+  }
+
+  removePack(id) {
+    const packs = this.state.packs;
+    packs.splice(id, 1);
+    this.setState({packs});
+    this.props.updatePackTable(packs);
+  }
+
+  updatePack(id, name, cardNum, cost) {
+    const packs = this.state.packs;
+    packs[id] = {name, cardNum, cost};
+    this.setState({packs});
+    this.props.updatePackTable(packs);
+  }
+
+  render() {
+    const s = this.state;
+
+    return <div className="text-light">
+      <table className="table table-responsive table-sm text-light">
+        <thead>
+          <tr>
+            <th><i className="Fz(30px) fas fa-plus-circle Cur(p)" onClick={() => this.setState({editing: true, id: '', name: '', cardNum: 0, cost: 0})}></i></th>
+            <th>pack name</th>
+            <th>number of cards</th>
+            <th>cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          {s.packs.map((pack, i) => <PackRow {...pack} key={i} id={i} removePack={this.removePack} updatePack={this.updatePack}/>)}
+          {s.editing && <tr><td></td>
+            <td><input className="form-control" type="text" name="name" value={s.name} onChange={this.onChange}/></td>
+            <td><input className="form-control" type="number" name="cardNum" value={s.cardNum} onChange={this.onChange}/></td>
+            <td><input className="form-control" type="number" name="cost" value={s.cost} onChange={this.onChange}/></td>
+            <td></td>
+            <td></td>
+            <td><div className="D(f)">
+              <i className="fas fa-save Cur(p)" onClick={this.insertPack}></i>
+              <i className="fas fa-times-circle mx-3 Cur(p)" onClick={() => this.setState({editing: false, id: '', name: '', cardNum: 0, cost: 0})}></i></div>
+            </td>
+          </tr>}
+        </tbody>
+      </table>
+      <hr/>
+    </div>;
+  }
+}
+
 class CardRow extends React.Component {
   constructor(props) {
     super(props);
@@ -163,8 +294,10 @@ export default class CardPoolDetailEdit extends React.Component {
 
     this.onWeightChange = this.onWeightChange.bind(this);
     this.calRate = this.calRate.bind(this);
+    this.updatePackTable = this.updatePackTable.bind(this);
     this.updateTable = this.updateTable.bind(this);
     this.updateCardPool = this.updateCardPool.bind(this);
+    this.updatePack = this.updatePack.bind(this);
 
     this.state = {
       id: null,
@@ -189,6 +322,7 @@ export default class CardPoolDetailEdit extends React.Component {
       srWeight: 1,
       ssrWeight: 1,
       urWeight: 1,
+      packs: [],
     };
   }
 
@@ -203,6 +337,11 @@ export default class CardPoolDetailEdit extends React.Component {
     await rpc('ClWebCardPoolUpdate', {id, name, desc, cost});
   }
 
+  async updatePack() {
+    const {id, packs} = this.state;
+    await rpc('ClWebCardPoolUpdate', {id, packs});
+  }
+
   onWeightChange(e) {
     /* eslint-disable-next-line no-invalid-this */
     this.setState({[e.target.name]: e.target.value});
@@ -213,12 +352,16 @@ export default class CardPoolDetailEdit extends React.Component {
     const s = this.state;
     const {id, nWeight, rWeight, srWeight, ssrWeight, urWeight} = this.state;
     await rpc('ClWebCardPoolUpdate', {id, nWeight, rWeight, srWeight, ssrWeight, urWeight});
-    const nRate = (parseFloat(s.nWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
-    const rRate = (parseFloat(s.rWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
-    const srRate = (parseFloat(s.srWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
-    const ssrRate = (parseFloat(s.ssrWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
-    const urRate = (parseFloat(s.urWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
+    const nRate = (parseFloat(s.nWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
+    const rRate = (parseFloat(s.rWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
+    const srRate = (parseFloat(s.srWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
+    const ssrRate = (parseFloat(s.ssrWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
+    const urRate = (parseFloat(s.urWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
     this.setState({nRate, rRate, srRate, ssrRate, urRate});
+  }
+
+  updatePackTable(packs) {
+    this.setState({packs});
   }
 
   updateTable(cards, rarity) {
@@ -284,8 +427,22 @@ export default class CardPoolDetailEdit extends React.Component {
       </Block>
 
       {s.isMounted && <Block>
-        <Block.Left>
-        </Block.Left>
+        <Block.Left><h2 className="h5 m-0">Packs</h2></Block.Left>
+        <Block.Right>
+          <div className="mb-3 W(100%)">
+            <PackTable updatePackTable={this.updatePackTable} packs={s.packs}/>
+          </div>
+
+          <div className="form-group row">
+            <div className="offset-sm-3 col-sm-9">
+              <button className="btn btn-primary" onClick={this.updatePack}>Update</button>
+            </div>
+          </div>
+        </Block.Right>
+      </Block>}
+
+      {s.isMounted && <Block>
+        <Block.Left></Block.Left>
         <Block.Right>
           <div className="mb-3 W(100%)">
             <h2 className="font-weight-light text-light pt-4">N card</h2>
