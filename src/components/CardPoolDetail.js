@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 import milk from '../milky.jpg';
 import planet from '../planet.png';
 import transparent from '../transparent.png';
@@ -68,6 +69,7 @@ export default class CardPoolDetail extends React.Component {
       srCards: [],
       ssrCards: [],
       urCards: [],
+      packs: [],
       coverUrl: '',
 
       nRate: 20,
@@ -190,6 +192,7 @@ export default class CardPoolDetail extends React.Component {
 
   render() {
     const s = this.state;
+    const canEdit = true;
 
     return <div>
       {!s.animation && <section className="container Pb(100px) shadow">
@@ -202,12 +205,14 @@ export default class CardPoolDetail extends React.Component {
           <div className="col-md-8 row py-4">
             {/* right */}
             <img className="shadow Bdrs(4px) Mx(a) H(250px) Maw(200px)" alt="" src={s.coverUrl}/>
+            {canEdit && <Link to={`/cardpools/${this.props.match.params.id}/edit`} className="H(fc) Fz(1em) Cur(p) badge badge-pill badge-dark p-3 shadow-sm ml-2" style={{backgroundColor: '#00000080'}} ><i className="fas fa-pencil-alt"></i></Link>}
           </div>
         </div>
         <hr/>
         <div className="D(f) H(100px) px-4 py-3 text-center">
-          <button className="mt-1 btn btn-sm btn-outline-warning" onClick={this.drawOneCard}>{s.cost} gold ~ 1 card</button>
-          <button className="mt-1 mx-2 btn btn-sm btn-outline-warning" onClick={this.drawElevenCards}>{s.cost * 10} gold ~ 11 cards</button>
+          {s.packs.map((pack, i) => <button key={i} className="mt-1 btn btn-sm btn-outline-warning" onClick={this.drawOneCard}>{pack.name} ~ {pack.cost} gold ~ {pack.cardNum} card</button>)}
+
+          {/* <button className="mt-1 mx-2 btn btn-sm btn-outline-warning" onClick={this.drawElevenCards}>{s.cost * 10} gold ~ 11 cards</button> */}
         </div>
         <hr/>
         <div className="row">
