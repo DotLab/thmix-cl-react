@@ -10,16 +10,43 @@ class CardRow extends React.Component {
   render() {
     const p = this.props;
 
-    return <div className="col H(220px) W(180px) rounded m-3 p-2">
+    return <div className="col H(220px) W(160px) rounded m-3 p-2">
       <div id={p.animation} className="H(200px) W(160px) HBgp(c) Bgz(ct) Bgr(nr) Bgpy(c) shadow-sm rounded-top text-dark" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(${p.coverUrl})`}}>
         <div className="Fw(b) badge badge-light C(#fe7f9c)">{p.rarity && p.rarity.toUpperCase()}</div>
-        <div className="Fw(b) badge badge-light C(#fe7f9c) D(b) Mt(120px) Mx(a) W(50%)">{p.name}</div>
+        <div className="Fw(b) badge badge-light C(#fe7f9c) D(b) Mt(120px) Mx(a) W(70%)">{p.name.substring(0, 7)}</div>
       </div>
     </div>;
   }
 }
 
 const delay = (time) => new Promise((resolve) => setTimeout(resolve, time));
+const asyncIntervals = [];
+
+const runAsyncInterval = async (cb, interval, intervalIndex) => {
+  await cb();
+  if (asyncIntervals[intervalIndex]) {
+    setTimeout(() => runAsyncInterval(cb, interval, intervalIndex), interval);
+  }
+};
+
+const setAsyncInterval = (cb, interval) => {
+  if (cb && typeof cb === 'function') {
+    const intervalIndex = asyncIntervals.length;
+    asyncIntervals.push(true);
+    runAsyncInterval(cb, interval, intervalIndex);
+    return intervalIndex;
+  } else {
+    throw new Error('Callback must be a function');
+  }
+};
+
+const clearAsyncInterval = async () => {
+  for (let i = 0; i < asyncIntervals.length; i++) {
+    asyncIntervals[i] = false;
+  }
+  await delay(2000);
+};
+
 
 export default class CardPoolDetail extends React.Component {
   constructor(props) {
@@ -28,6 +55,8 @@ export default class CardPoolDetail extends React.Component {
     /** @type {import('../App').default} */
     this.app = props.app;
 
+    this.buyCard = this.buyCard.bind(this);
+    this.buyCardEleven = this.buyCardEleven.bind(this);
     this.drawOneCard = this.drawOneCard.bind(this);
     this.drawElevenCards = this.drawElevenCards.bind(this);
 
@@ -71,6 +100,8 @@ export default class CardPoolDetail extends React.Component {
       currCardUrl: '',
       currCardRarity: '',
       currCardName: '',
+      trialCost: 0,
+      animationMode: 0,
     };
   }
 
@@ -89,31 +120,33 @@ export default class CardPoolDetail extends React.Component {
     this.setState({nRate, rRate, srRate, ssrRate, urRate});
   }
 
-  async drawOneCard() {
-    const cardsDrew = await rpc('ClWebCardDrawOnce', {id: this.props.match.params.id});
 
-    this.setState({cardsDrew: [cardsDrew], animation: true});
+  async buyCard() {
+    const card = this.state.cardsDrew[0];
+    await clearAsyncInterval();
+    await rpc('ClWebCostGold', {cost: this.state.trialCost});
+    this.setState({animation: true, cardsDrew: [card]});
     await delay(500);
     this.setState({starId: 'star1'});
     await delay(1000);
-    // this.setState({currCardUrl: cardsDrew.coverUrl, currCardRarity: cardsDrew.rarity, currCardName: cardsDrew.name});
-    this.setState({currCardUrl: cardsDrew.coverUrl, starId: 'star2'});
+    this.setState({currCardUrl: card.coverUrl, starId: 'star2'});
     this.setState({cardId: 'card1'});
     await delay(2000);
     this.setState({cardId: '', starId: ''});
-    this.setState({animation: false, flipAnimation: true, currCardUrl: '', currCardRarity: '', currCardName: '', cardFlipId: 'card2'});
+    this.setState({animation: false, flipAnimation: true, currCardUrl: '', currCardRarity: '', currCardName: '', cardFlipId: 'card2', trialCost: 0});
   }
 
-  async drawElevenCards() {
-    const cardsDrew = await rpc('ClWebCardDrawEleven', {id: this.props.match.params.id});
-    this.setState({cardsDrew: cardsDrew, animation: true});
-    await delay(100);
+  async buyCardEleven() {
+    const cards = this.state.cardsDrew;
+    await clearAsyncInterval();
+    await rpc('ClWebCostGold', {cost: this.state.trialCost});
+    this.setState({animation: true, cardsDrew: cards});
+    await delay(500);
     this.setState({starId: 'star1'});
     await delay(1000);
     this.setState({starId: 'star2'});
-    for (let i = 0; i < cardsDrew.length; i++) {
-      // this.setState({currCardUrl: cardsDrew[i].coverUrl, currCardRarity: cardsDrew[i].rarity, currCardName: cardsDrew[i].name});
-      this.setState({currCardUrl: cardsDrew[i].coverUrl});
+    for (let i = 0; i < cards.length; i++) {
+      this.setState({currCardUrl: cards[i].coverUrl});
       await delay(300);
       this.setState({cardId: 'card1'});
       await delay(2000);
@@ -122,7 +155,38 @@ export default class CardPoolDetail extends React.Component {
     this.setState({animation: false, flipAnimation: true, currCardUrl: '', currCardRarity: '', currCardName: '', cardFlipId: 'card2'});
 
     await delay(2000);
-    this.setState({flipAnimation: false, cardFlipId: ''});
+    this.setState({flipAnimation: false, cardFlipId: '', trialCost: 0});
+  }
+
+  async drawOneCard() {
+    await clearAsyncInterval();
+    this.setState({cardsDrew: [], trialCost: this.state.cost, animationMode: 0});
+
+    setAsyncInterval(async () => {
+      this.setState({cardFlipId: ''});
+      const promise = new Promise((resolve) => {
+        setTimeout(resolve(), 500);
+      });
+      await promise;
+      const cardsDrew = await rpc('ClWebCardDrawOnce', {id: this.props.match.params.id});
+      this.setState({cardsDrew: [cardsDrew], cardFlipId: 'card2'});
+    }, 1000);
+  }
+
+  async drawElevenCards() {
+    await clearAsyncInterval();
+    this.setState({cardsDrew: [], trialCost: this.state.cost * 10, animationMode: 1});
+
+
+    setAsyncInterval(async () => {
+      this.setState({cardFlipId: ''});
+      const promise = new Promise((resolve) => {
+        setTimeout(resolve(), 500);
+      });
+      await promise;
+      const cardsDrew = await rpc('ClWebCardDrawEleven', {id: this.props.match.params.id});
+      this.setState({cardsDrew: cardsDrew, cardFlipId: 'card2'});
+    }, 1000);
   }
 
   render() {
@@ -148,8 +212,12 @@ export default class CardPoolDetail extends React.Component {
         </div>
         <hr/>
         <div className="row">
-          {s.cardsDrew.map((card) => <CardRow animation={s.cardFlipId} key={card.id} {...card}/>)}
+          {s.cardsDrew.map((card, i) => <CardRow animation={s.cardFlipId} key={i} {...card}/>)}
         </div>
+        {s.trialCost !== 0 && <div>
+          <hr/>
+          <button className="mt-1 btn btn-sm btn-outline-warning" onClick={this.state.animationMode === 0 ? this.buyCard : this.buyCardEleven}>{s.trialCost} buy </button>
+        </div>}
       </section>}
 
       {s.animation && <section className="H(1200px) Bgz(cv) Bgp(c)" style={{backgroundImage: `url(${milk})`}}>
