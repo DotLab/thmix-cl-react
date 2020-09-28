@@ -177,7 +177,6 @@ export default class CardPoolDetail extends React.Component {
     await clearAsyncInterval();
     this.setState({cardsDrew: [], trialCost: this.state.cost * 10, animationMode: 1});
 
-
     setAsyncInterval(async () => {
       this.setState({cardFlipId: ''});
       const promise = new Promise((resolve) => {
