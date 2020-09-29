@@ -56,14 +56,12 @@ export default class CardPoolDetail extends React.Component {
     /** @type {import('../App').default} */
     this.app = props.app;
 
-    this.buyCard = this.buyCard.bind(this);
-    this.buyCardEleven = this.buyCardEleven.bind(this);
-    this.drawOneCard = this.drawOneCard.bind(this);
-    this.drawElevenCards = this.drawElevenCards.bind(this);
+    this.drawCardsConfirm = this.drawCardsConfirm.bind(this);
+    this.drawCards = this.drawCards.bind(this);
 
     this.state = {
       name: '',
-      cost: 0,
+      creatorId: '',
       nCards: [],
       rCards: [],
       srCards: [],
@@ -87,7 +85,7 @@ export default class CardPoolDetail extends React.Component {
 
       cardsDrew: [],
       animation: false,
-      flipAnimation: false,
+
       starStartSize: '50px',
       starEndSize: '100px',
       cardStartSize: '100px',
@@ -100,10 +98,7 @@ export default class CardPoolDetail extends React.Component {
       cardId: '',
       cardFlipId: '',
       currCardUrl: '',
-      currCardRarity: '',
-      currCardName: '',
-      trialCost: 0,
-      animationMode: 0,
+      cost: 0,
     };
   }
 
@@ -122,26 +117,10 @@ export default class CardPoolDetail extends React.Component {
     this.setState({nRate, rRate, srRate, ssrRate, urRate});
   }
 
-
-  async buyCard() {
-    const card = this.state.cardsDrew[0];
-    await clearAsyncInterval();
-    await rpc('ClWebCostGold', {cost: this.state.trialCost});
-    this.setState({animation: true, cardsDrew: [card]});
-    await delay(500);
-    this.setState({starId: 'star1'});
-    await delay(1000);
-    this.setState({currCardUrl: card.coverUrl, starId: 'star2'});
-    this.setState({cardId: 'card1'});
-    await delay(2000);
-    this.setState({cardId: '', starId: ''});
-    this.setState({animation: false, flipAnimation: true, currCardUrl: '', currCardRarity: '', currCardName: '', cardFlipId: 'card2', trialCost: 0});
-  }
-
-  async buyCardEleven() {
+  async drawCardsConfirm() {
     const cards = this.state.cardsDrew;
     await clearAsyncInterval();
-    await rpc('ClWebCostGold', {cost: this.state.trialCost});
+    await rpc('ClWebCardDrawConfirm', {});
     this.setState({animation: true, cardsDrew: cards});
     await delay(500);
     this.setState({starId: 'star1'});
@@ -154,15 +133,15 @@ export default class CardPoolDetail extends React.Component {
       await delay(2000);
       this.setState({cardId: '', currCardUrl: ''});
     }
-    this.setState({animation: false, flipAnimation: true, currCardUrl: '', currCardRarity: '', currCardName: '', cardFlipId: 'card2'});
+    this.setState({animation: false, starId: '', currCardUrl: '', cardFlipId: 'card2'});
 
     await delay(2000);
-    this.setState({flipAnimation: false, cardFlipId: '', trialCost: 0});
+    this.setState({cardFlipId: '', cost: 0});
   }
 
-  async drawOneCard() {
+  async drawCards(packInd) {
     await clearAsyncInterval();
-    this.setState({cardsDrew: [], trialCost: this.state.cost, animationMode: 0});
+    this.setState({cardsDrew: [], cost: 1, animationMode: 1});
 
     setAsyncInterval(async () => {
       this.setState({cardFlipId: ''});
@@ -170,29 +149,14 @@ export default class CardPoolDetail extends React.Component {
         setTimeout(resolve(), 500);
       });
       await promise;
-      const cardsDrew = await rpc('ClWebCardDrawOnce', {id: this.props.match.params.id});
-      this.setState({cardsDrew: [cardsDrew], cardFlipId: 'card2'});
-    }, 1000);
-  }
-
-  async drawElevenCards() {
-    await clearAsyncInterval();
-    this.setState({cardsDrew: [], trialCost: this.state.cost * 10, animationMode: 1});
-
-    setAsyncInterval(async () => {
-      this.setState({cardFlipId: ''});
-      const promise = new Promise((resolve) => {
-        setTimeout(resolve(), 500);
-      });
-      await promise;
-      const cardsDrew = await rpc('ClWebCardDrawEleven', {id: this.props.match.params.id});
+      const cardsDrew = await rpc('ClWebCardDraw', {cardPoolId: this.props.match.params.id, packInd});
       this.setState({cardsDrew: cardsDrew, cardFlipId: 'card2'});
     }, 1000);
   }
 
   render() {
     const s = this.state;
-    const canEdit = true;
+    const canEdit = this.app.state.user && this.app.state.user.id === s.creatorId;
 
     return <div>
       {!s.animation && <section className="container Pb(100px) shadow">
@@ -210,17 +174,15 @@ export default class CardPoolDetail extends React.Component {
         </div>
         <hr/>
         <div className="D(f) H(100px) px-4 py-3 text-center">
-          {s.packs.map((pack, i) => <button key={i} className="mt-1 btn btn-sm btn-outline-warning" onClick={this.drawOneCard}>{pack.name} ~ {pack.cost} gold ~ {pack.cardNum} card</button>)}
-
-          {/* <button className="mt-1 mx-2 btn btn-sm btn-outline-warning" onClick={this.drawElevenCards}>{s.cost * 10} gold ~ 11 cards</button> */}
+          {s.packs.map((pack, i) => <button key={i} className="mt-1 btn btn-sm btn-outline-warning" onClick={() => this.drawCards(i)}>{pack.name} ~ {pack.cost} gold ~ {pack.cardNum} card</button>)}
         </div>
         <hr/>
         <div className="row">
           {s.cardsDrew.map((card, i) => <CardRow animation={s.cardFlipId} key={i} {...card}/>)}
         </div>
-        {s.trialCost !== 0 && <div>
+        {s.cost !== 0 && <div>
           <hr/>
-          <button className="mt-1 btn btn-sm btn-outline-warning" onClick={this.state.animationMode === 0 ? this.buyCard : this.buyCardEleven}>{s.trialCost} buy </button>
+          <button className="mt-1 btn btn-sm btn-outline-warning" onClick={this.drawCardsConfirm}>{s.cost} buy </button>
         </div>}
       </section>}
 
