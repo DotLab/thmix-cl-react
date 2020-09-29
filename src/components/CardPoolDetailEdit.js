@@ -303,7 +303,6 @@ export default class CardPoolDetailEdit extends React.Component {
       id: null,
 
       name: '',
-      cost: 0,
       nCards: [],
       rCards: [],
       srCards: [],
@@ -333,8 +332,8 @@ export default class CardPoolDetailEdit extends React.Component {
   }
 
   async updateMeta() {
-    const {id, name, desc, cost} = this.state;
-    await rpc('ClWebCardPoolUpdate', {id, name, desc, cost});
+    const {id, name, desc} = this.state;
+    await rpc('ClWebCardPoolUpdate', {id, name, desc});
   }
 
   async updatePack() {
@@ -404,7 +403,7 @@ export default class CardPoolDetailEdit extends React.Component {
         <Block.Right>
           <FormField label="card pool name" name="name" value={s.name} onChange={this.onChange}/>
           <FormFieldTextArea label="card pool description" name="desc" value={s.desc} onChange={this.onTextareaChange}/>
-          <FormField label="single card cost" name="cost" value={s.cost} onChange={this.onChange}/>
+
           <hr/>
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updateMeta}>Update</button></div>
