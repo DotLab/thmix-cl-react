@@ -342,7 +342,9 @@ export default class CardPoolDetailEdit extends React.Component {
 
   async updateRate() {
     const s = this.state;
-    await rpc('ClWebCardPoolUpdate', {id: s.id, group: s.group});
+    let group = this.state.group.slice();
+    group = group.map((x) => ({name: x.name, weight: x.weight, cards: x.cards.map((y) => ({cardId: y.id, weight: y.weight}))}));
+    await rpc('ClWebCardPoolUpdate', {id: s.id, group});
     const weights = [];
     const rates = [];
     s.group.forEach((x) => weights.push(parseFloat(x.weight) || 0));
