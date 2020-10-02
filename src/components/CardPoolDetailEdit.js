@@ -315,12 +315,6 @@ export default class CardPoolDetailEdit extends React.Component {
   async componentDidMount() {
     const cardPool = await rpc('ClWebCardPoolGet', {id: this.props.match.params.id});
     this.setState(cardPool);
-    const nRate = (parseFloat(cardPool.nWeight) / (parseFloat(cardPool.nWeight) + parseFloat(cardPool.rWeight) + parseFloat(cardPool.srWeight) + parseFloat(cardPool.ssrWeight) + parseFloat(cardPool.urWeight)) * 100).toFixed(1);
-    const rRate = (parseFloat(cardPool.rWeight) / (parseFloat(cardPool.nWeight) + parseFloat(cardPool.rWeight) + parseFloat(cardPool.srWeight) + parseFloat(cardPool.ssrWeight) + parseFloat(cardPool.urWeight)) * 100).toFixed(1);
-    const srRate = (parseFloat(cardPool.srWeight) / (parseFloat(cardPool.nWeight) + parseFloat(cardPool.rWeight) + parseFloat(cardPool.srWeight) + parseFloat(cardPool.ssrWeight) + parseFloat(cardPool.urWeight)) * 100).toFixed(1);
-    const ssrRate = (parseFloat(cardPool.ssrWeight) / (parseFloat(cardPool.nWeight) + parseFloat(cardPool.rWeight) + parseFloat(cardPool.srWeight) + parseFloat(cardPool.ssrWeight) + parseFloat(cardPool.urWeight)) * 100).toFixed(1);
-    const urRate = (parseFloat(cardPool.urWeight) / (parseFloat(cardPool.nWeight) + parseFloat(cardPool.rWeight) + parseFloat(cardPool.srWeight) + parseFloat(cardPool.ssrWeight) + parseFloat(cardPool.urWeight)) * 100).toFixed(1);
-    this.setState({nRate, rRate, srRate, ssrRate, urRate});
     const weights = [];
     const rates = [];
     cardPool.group.forEach((x) => weights.push(x.weight || 0));
@@ -333,11 +327,13 @@ export default class CardPoolDetailEdit extends React.Component {
   async updateMeta() {
     const {id, name, desc} = this.state;
     await rpc('ClWebCardPoolUpdate', {id, name, desc});
+    this.app.success('card pool updated');
   }
 
   async updatePack() {
     const {id, packs} = this.state;
     await rpc('ClWebCardPoolUpdate', {id, packs});
+    this.app.success('card pool updated');
   }
 
   async updateRate() {
@@ -351,6 +347,7 @@ export default class CardPoolDetailEdit extends React.Component {
     const sum = weights.reduce((acc, cur) => acc + cur, 0);
     weights.forEach((x) => rates.push((parseFloat(x) / sum * 100).toFixed(1)));
     this.setState({rates});
+    this.app.success('card pool updated');
   }
 
   updatePackTable(packs) {
