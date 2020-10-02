@@ -294,8 +294,7 @@ export default class CardPoolDetailEdit extends React.Component {
     this.onCheckboxChange = onCheckboxChange.bind(this);
     this.updateMeta = this.updateMeta.bind(this);
 
-    this.onWeightChange = this.onWeightChange.bind(this);
-    this.calRate = this.calRate.bind(this);
+    this.updateRate = this.updateRate.bind(this);
     this.updatePackTable = this.updatePackTable.bind(this);
     this.updateTable = this.updateTable.bind(this);
     this.updateCardPool = this.updateCardPool.bind(this);
@@ -307,18 +306,7 @@ export default class CardPoolDetailEdit extends React.Component {
       name: '',
       isMounted: false,
 
-      nRate: 20,
-      rRate: 20,
-      srRate: 20,
-      ssrRate: 20,
-      urRate: 20,
-
-      nWeight: 1,
-      rWeight: 1,
-      srWeight: 1,
-      ssrWeight: 1,
-      urWeight: 1,
-
+      rates: [],
       packs: [],
       group: [],
     };
@@ -333,6 +321,12 @@ export default class CardPoolDetailEdit extends React.Component {
     const ssrRate = (parseFloat(cardPool.ssrWeight) / (parseFloat(cardPool.nWeight) + parseFloat(cardPool.rWeight) + parseFloat(cardPool.srWeight) + parseFloat(cardPool.ssrWeight) + parseFloat(cardPool.urWeight)) * 100).toFixed(1);
     const urRate = (parseFloat(cardPool.urWeight) / (parseFloat(cardPool.nWeight) + parseFloat(cardPool.rWeight) + parseFloat(cardPool.srWeight) + parseFloat(cardPool.ssrWeight) + parseFloat(cardPool.urWeight)) * 100).toFixed(1);
     this.setState({nRate, rRate, srRate, ssrRate, urRate});
+    const weights = [];
+    const rates = [];
+    cardPool.group.forEach((x) => weights.push(x.weight || 0));
+    const sum = weights.reduce((acc, cur) => acc + cur, 0);
+    weights.forEach((x) => rates.push((parseFloat(x) / sum * 100).toFixed(1)));
+    this.setState({rates});
     this.setState({isMounted: true});
   }
 
@@ -346,22 +340,15 @@ export default class CardPoolDetailEdit extends React.Component {
     await rpc('ClWebCardPoolUpdate', {id, packs});
   }
 
-  onWeightChange(e) {
-    /* eslint-disable-next-line no-invalid-this */
-    this.setState({[e.target.name]: e.target.value});
-    this.setState({nRate: '', rRate: '', srRate: '', ssrRate: '', urRate: ''});
-  }
-
-  async calRate() {
+  async updateRate() {
     const s = this.state;
-    const {id, nWeight, rWeight, srWeight, ssrWeight, urWeight} = this.state;
-    await rpc('ClWebCardPoolUpdate', {id, nWeight, rWeight, srWeight, ssrWeight, urWeight});
-    const nRate = (parseFloat(s.nWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
-    const rRate = (parseFloat(s.rWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
-    const srRate = (parseFloat(s.srWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
-    const ssrRate = (parseFloat(s.ssrWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
-    const urRate = (parseFloat(s.urWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
-    this.setState({nRate, rRate, srRate, ssrRate, urRate});
+    await rpc('ClWebCardPoolUpdate', {id: s.id, group: s.group});
+    const weights = [];
+    const rates = [];
+    s.group.forEach((x) => weights.push(parseFloat(x.weight) || 0));
+    const sum = weights.reduce((acc, cur) => acc + cur, 0);
+    weights.forEach((x) => rates.push((parseFloat(x) / sum * 100).toFixed(1)));
+    this.setState({rates});
   }
 
   updatePackTable(packs) {
@@ -376,7 +363,7 @@ export default class CardPoolDetailEdit extends React.Component {
 
   async updateCardPool() {
     let group = this.state.group.slice();
-    group = group.map((x) => ({name: x.name, cards: x.cards.map((y) => ({cardId: y.id, weight: y.weight}))}));
+    group = group.map((x) => ({name: x.name, weight: x.weight, cards: x.cards.map((y) => ({cardId: y.id, weight: y.weight}))}));
 
     await rpc('ClWebCardPoolUpdate', {id: this.props.match.params.id, group});
     this.app.success('card pool updated');
@@ -404,15 +391,15 @@ export default class CardPoolDetailEdit extends React.Component {
       </Block>
 
       <Block>
-        <Block.Left><h2 className="h5 m-0">Weight by rarity</h2></Block.Left>
+        <Block.Left><h2 className="h5 m-0">Weight by group</h2></Block.Left>
         <Block.Right>
-          <FormField label={`(${s.nRate} %)  N`} name="nWeight" value={s.nWeight} onChange={this.onWeightChange}/>
-          <FormField label={`(${s.rRate} %)  R`} name="rWeight" value={s.rWeight} onChange={this.onWeightChange}/>
-          <FormField label={`(${s.srRate} %)  SR`} name="srWeight" value={s.srWeight} onChange={this.onWeightChange}/>
-          <FormField label={`(${s.ssrRate} %)  SSR`} name="ssrWeight" value={s.ssrWeight} onChange={this.onWeightChange}/>
-          <FormField label={`(${s.urRate} %)  UR`} name="urWeight" value={s.urWeight} onChange={this.onWeightChange}/>
+          {s.group.map((x, i) => <FormField key={i} label={`(${s.rates[i] || ''} %)  ${x.name.substring(0, x.name.length - 5)}`} value={x.weight || ''} onChange={(e) => {
+            const group = this.state.group;
+            group[i].weight = e.target.value || 0;
+            this.setState({group, rates: []});
+          }}/>)}
           <div className="form-group row">
-            <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.calRate}>Update</button></div>
+            <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updateRate}>Update</button></div>
           </div>
         </Block.Right>
       </Block>
