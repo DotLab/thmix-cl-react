@@ -183,7 +183,7 @@ class CardRow extends React.Component {
   }
 }
 
-const rarityArr = ['n', 'r', 'sr', 'ssr', 'ur'];
+const rarityArr = ['ur', 'ssr', 'sr', 'r', 'n'];
 
 class CardTable extends React.Component {
   constructor(props) {
