@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {onTextareaChange, onChange, onCheckboxChange} from '../utils';
+import {onTextareaChange, onChange, onCheckboxChange, formatPct} from '../utils';
 import {rpc} from '../apiService';
 import {FormField, FormFieldTextArea} from './FormField';
 
@@ -8,143 +8,237 @@ const Block = ({children}) => (<section className="container px-md-5 mb-2"><div 
 Block.Left = ({children}) => (<div className="Bgc($gray-700) shadow col-lg-3 py-3 pl-4 font-italic">{children}</div>);
 Block.Right = ({children}) => (<div className="Bgc($gray-600) shadow col-lg-9 pt-3">{children}</div>);
 
+function getWeightSum(arr) {
+  return arr.reduce((acc, cur) => acc + (parseFloat(cur.weight) || 0), 0);
+}
+
+class EditableText extends React.Component {
+  constructor(props) {
+    super(props);
+    this.spanRef = React.createRef();
+    this.updateText = this.updateText.bind(this);
+  }
+
+  UNSAFE_componentWillReceiveProps(props) {
+    if (document.activeElement !== this.spanRef.current) {
+      this.spanRef.current.innerText = String(props.text);
+    }
+  }
+
+  async updateText() {
+    const text = this.spanRef.current.innerText;
+    if (text != String(this.props.text)) {
+      if (!await this.props.updateText(text)) {
+        this.spanRef.current.innerText = String(this.props.text);
+      }
+    }
+  }
+
+  render() {
+    return React.createElement(this.props.e || 'span', {
+      className: this.props.className,
+      ref: this.spanRef,
+      contentEditable: 'true',
+      suppressContentEditableWarning: true,
+      onBlur: this.updateText,
+    }, [String(this.props.text)]);
+  }
+}
+
+class PackRow extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.onChange = onChange.bind(this);
+    this.removePack = this.removePack.bind(this);
+    this.updatePack = this.updatePack.bind(this);
+  }
+
+  removePack() {
+    this.props.removePack(this.props.id);
+  }
+
+  updatePack(pack) {
+    this.props.updatePack(this.props.id, pack);
+  }
+
+  render() {
+    return <tr className="">
+      <EditableText e="td" className="Fw(b):f" text={this.props.name} updateText={(name) => this.updatePack({name})} />
+      <EditableText e="td" className="Fw(b):f Ta(end)" text={this.props.cardNum} updateText={(cardNum) => this.updatePack({cardNum})} />
+      <EditableText e="td" className="Fw(b):f Ta(end)" text={this.props.cost} updateText={(cost) => this.updatePack({cost})} />
+      <td><i className="fas fa-trash-alt fa-fw Cur(p)" onClick={this.removePack}></i></td>
+    </tr>;
+  }
+}
+
+class PackTable extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.insertPack = this.insertPack.bind(this);
+    this.removePack = this.removePack.bind(this);
+    this.updatePack = this.updatePack.bind(this);
+  }
+
+  async insertPack() {
+    const packs = [
+      ...this.props.packs,
+      {name: 'Draw 0 Card', cardNum: 0, cost: 0},
+    ];
+    this.props.updatePacks(packs);
+  }
+
+  removePack(index) {
+    const packs = this.props.packs;
+    packs.splice(index, 1);
+    this.props.updatePacks(packs);
+  }
+
+  updatePack(index, pack) {
+    const packs = this.props.packs;
+    const newPacks = packs.slice();
+    newPacks.splice(index, 1, {...packs[index], ...pack});
+    this.props.updatePacks(newPacks);
+  }
+
+  render() {
+    return <table className="table table-sm table-dark table-striped Bdrs(5px)">
+      <thead>
+        <tr>
+          <th>pack name</th>
+          <th className="Ta(end)">number of cards</th>
+          <th className="Ta(end)">cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        {this.props.packs.map((pack, i) => <PackRow {...pack} key={i} id={i} removePack={this.removePack} updatePack={this.updatePack}/>)}
+        <tr>
+          <td></td><td></td><td></td>
+          <td><i className="fas fa-plus-circle fa-fw Cur(p)" onClick={this.insertPack}></i></td></tr>
+      </tbody>
+    </table>;
+  }
+}
+
 class CardRow extends React.Component {
   constructor(props) {
     super(props);
 
-    /** @type {import('../App').default} */
-    this.state = {
-      editingWeight: false,
-      weight: this.props.weight,
-    };
-
-    this.onChange = onChange.bind(this);
     this.removeCard = this.removeCard.bind(this);
     this.updateWeight = this.updateWeight.bind(this);
   }
 
   removeCard() {
-    this.props.removeCard(this.props.id);
+    this.props.removeCard(this.props.index);
   }
 
-  updateWeight() {
-    this.setState({editingWeight: false});
-    this.props.updateWeight(this.props.id, this.state.weight);
+  updateWeight(weight) {
+    this.props.updateWeight(this.props.index, weight);
+  }
+
+  updateId(cardId) {
+    this.props.updateId(this.props.index, cardId);
   }
 
   render() {
     const p = this.props;
-    const s = this.state;
-    return <tr className="">
-      <td></td>
-      <td>{p.id}</td>
-      <td>
-        {!s.editingWeight && <div className="Cur(p)" onClick={() => this.setState({editingWeight: true})}>{p.weight}</div>}
-        {s.editingWeight && <div><input className="form-control" type="text" name="weight" value={s.weight} onChange={this.onChange}/></div>}
-      </td>
 
-      <td><img className="H(60px)" src={p.coverUrl} alt=""/></td>
-      <td>{p.rarity} {p.poolRarity !== p.rarity && <i className="mx-2 text-danger fas fa-exclamation"></i>}</td>
-      <td><div className="D(f)">
-        <i className="fas fa-save Cur(p)" onClick={this.updateWeight}></i>
-        <i className="mx-3 fas fa-trash-alt Cur(p)" onClick={this.removeCard}></i></div></td>
+    return <tr className="">
+      <EditableText e="td" className="Va(m)! Fw(b):f" text={p.id} updateText={(id) => this.updateId(id)} />
+      <EditableText e="td" className="Va(m)! Ta(end) Fw(b):f" text={p.weight} updateText={(weight) => this.updateWeight(weight)} />
+      <td className="Va(m)! Ta(end)">{formatPct(p.weight / p.cardWeightSum, 2)}</td>
+      <td className="Va(m)! Ta(end)">{formatPct(p.weight / p.cardWeightSum * p.groupWeight / p.groupWeightSum, 5)}</td>
+      <td className="Va(m)! Bgz(ct) Bgr(nr) Bgp(c) Trsdu(.5s) H(0) H(100px):h " style={{backgroundImage: `url(${p.coverUrl})`}}></td>
+      <td className="Va(m)! Ta(c) Tt(u) Fw(b)">{p.rarity}</td>
+      <td className="Va(m)!"><i className="fas fa-trash-alt fa-fw Cur(p)" onClick={this.removeCard}></i></td>
     </tr>;
   }
 }
 
-class CardTable extends React.Component {
+const rarityArr = ['ur', 'ssr', 'sr', 'r', 'n'];
+
+class CardGroupTable extends React.Component {
   constructor(props) {
     super(props);
 
-    /** @type {import('../App').default} */
-    this.state = {
-      editing: false,
-      id: '',
-      weight: '',
-      cards: this.props.cards,
-    };
-
     this.onChange = onChange.bind(this);
-    this.insertCard = this.insertCard.bind(this);
-    this.removeCard = this.removeCard.bind(this);
     this.import = this.import.bind(this);
     this.updateWeight = this.updateWeight.bind(this);
-  }
-
-  async insertCard() {
-    for (let i = 0; i < this.state.cards.length; i++) {
-      if (this.state.cards[i].id === this.state.id) return;
-    }
-    const card = await rpc('ClWebCardGet', {id: this.state.id});
-
-    const cards = [...this.state.cards, {...card, weight: this.state.weight}];
-    this.setState({cards, id: '', weight: ''});
-    this.props.updateTable(this.state.cards, this.props.rarity);
-  }
-
-  removeCard(id) {
-    let cards = this.state.cards;
-    cards = cards.filter((x) => x.id !== id);
-    this.setState({cards});
-    this.props.updateTable(cards, this.props.rarity);
+    this.updateId = this.updateId.bind(this);
+    this.removeCard = this.removeCard.bind(this);
+    this.insertCard = this.insertCard.bind(this);
   }
 
   async import() {
-    let imports = await rpc('ClWebCardList', {rarity: this.props.rarity});
-    const cards = this.state.cards;
-    cards.forEach((x) => {
-      imports = imports.filter((i) => x.id !== i.id);
-    });
-    imports.forEach((x) => {
-      cards.push({...x, weight: 1});
-    });
-    if (imports.length !== 0) {
-      this.setState({cards});
-    }
-    this.props.updateTable(this.state.cards, this.props.rarity);
+    const cards = await rpc('ClWebCardList', {rarity: rarityArr[this.props.index]});
+    this.props.updateCardTable(cards.map((x) => ({...x, weight: 1})), this.props.index);
   }
 
-  updateWeight(id, weight) {
-    let cards = this.state.cards;
-    cards = cards.map((x) => {
-      return x.id === id ? {...x, weight: parseFloat(weight)} : x;
-    });
-    this.setState({cards});
-    this.props.updateTable(cards, this.props.rarity);
+  updateWeight(index, weight) {
+    const cards = this.props.cards.slice();
+    cards[index].weight = parseFloat(weight);
+    this.props.updateCardTable(cards, this.props.index);
+  }
+
+  async updateId(index, id) {
+    const card = await rpc('ClWebCardGet', {id});
+
+    const cards = this.props.cards;
+    const newCards = cards.slice();
+    newCards.splice(index, 1, {...card, weight: cards[index].weight});
+    this.props.updateCardTable(newCards, this.props.index);
+  }
+
+  insertCard() {
+    const cards = this.props.cards.slice();
+    cards.push({weight: 0});
+    this.props.updateCardTable(cards, this.props.index);
+  }
+
+  removeCard(index) {
+    const cards = this.props.cards.slice();
+    cards.splice(index, 1);
+    this.props.updateCardTable(cards, this.props.index);
   }
 
   render() {
-    const s = this.state;
-
-    return <div className="text-light">
-      <button className="Mend(10px) btn btn-secondary" onClick={this.import}>import all</button>
-      <table className="table table-responsive table-sm text-light">
-        <thead>
-          <tr>
-            <th><i className="Fz(30px) fas fa-plus-circle Cur(p)" onClick={() => this.setState({editing: true, id: '', weight: ''})}></i></th>
-            <th>card id</th>
-            <th>weight</th>
-            <th>preview</th>
-            <th>rarity</th>
-            <th>action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {s.cards.map((card, i) => <CardRow {...card} key={i} removeCard={this.removeCard} updateWeight={this.updateWeight}
-            poolRarity={this.props.rarity} weight={card.weight} />)}
-          {s.editing && <tr><td></td>
-            <td><input className="form-control" type="text" name="id" value={s.id} onChange={this.onChange}/></td>
-            <td><input className="form-control" type="text" name="weight" value={s.weight} onChange={this.onChange}/></td>
-            <td></td>
-            <td></td>
-            <td><div className="D(f)">
-              <i className="fas fa-save Cur(p)" onClick={this.insertCard}></i>
-              <i className="fas fa-times-circle mx-3 Cur(p)" onClick={() => this.setState({editing: false, id: '', weight: ''})}></i></div>
-            </td>
-          </tr>}
-        </tbody>
-      </table>
-      <hr/>
+    return <div>
+      <h2 className="font-weight-light text-light pt-4">{this.props.name} <button className="btn btn-info" onClick={this.import}>import all</button></h2>
+      <div className="table-responsive">
+        <table className="table table-sm table-dark table-striped Bdrs(5px)">
+          <thead>
+            <tr>
+              <th>card id</th>
+              <th className="Ta(end)">weight</th>
+              <th className="Ta(end)">group pct</th>
+              <th className="Ta(end)">pool pct</th>
+              <th>image</th>
+              <th className="Ta(c)">rarity</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.props.cards.map((card, i) => <CardRow
+              {...card}
+              key={i}
+              index={i}
+              cardWeightSum={getWeightSum(this.props.cards)}
+              groupWeight={this.props.groupWeight}
+              groupWeightSum={this.props.groupWeightSum}
+              removeCard={this.removeCard}
+              updateWeight={this.updateWeight} updateId={this.updateId} />)}
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td><i className="fa-fw fas fa-plus-circle Cur(p)" onClick={this.insertCard}></i></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>;
   }
 }
@@ -161,90 +255,74 @@ export default class CardPoolDetailEdit extends React.Component {
     this.onCheckboxChange = onCheckboxChange.bind(this);
     this.updateMeta = this.updateMeta.bind(this);
 
-    this.onWeightChange = this.onWeightChange.bind(this);
-    this.calRate = this.calRate.bind(this);
-    this.updateTable = this.updateTable.bind(this);
+    this.updateGroupWeights = this.updateGroupWeights.bind(this);
+    this.updateCardTable = this.updateCardTable.bind(this);
     this.updateCardPool = this.updateCardPool.bind(this);
+    this.updatePacks = this.updatePacks.bind(this);
 
     this.state = {
       id: null,
 
       name: '',
-      cost: 0,
-      nCards: [],
-      rCards: [],
-      srCards: [],
-      ssrCards: [],
-      urCards: [],
-      isMounted: false,
 
-      nRate: 20,
-      rRate: 20,
-      srRate: 20,
-      ssrRate: 20,
-      urRate: 20,
-
-      nWeight: 1,
-      rWeight: 1,
-      srWeight: 1,
-      ssrWeight: 1,
-      urWeight: 1,
+      groupWeightSum: 0,
+      packs: [],
+      group: [],
     };
   }
 
   async componentDidMount() {
     const cardPool = await rpc('ClWebCardPoolGet', {id: this.props.match.params.id});
-    this.setState(cardPool);
-    this.setState({isMounted: true});
+    this.setState({...cardPool, groupWeightSum: this.getWeightSum(cardPool.group)});
   }
 
   async updateMeta() {
-    const {id, name, desc, cost} = this.state;
-    await rpc('ClWebCardPoolUpdate', {id, name, desc, cost});
+    const {id, name, desc} = this.state;
+    await rpc('ClWebCardPoolUpdate', {id, name, desc});
+    this.app.success('card pool updated');
   }
 
-  onWeightChange(e) {
-    /* eslint-disable-next-line no-invalid-this */
-    this.setState({[e.target.name]: e.target.value});
-    this.setState({nRate: '', rRate: '', srRate: '', ssrRate: '', urRate: ''});
+  async updatePacks(packs) {
+    await rpc('ClWebCardPoolUpdate', {id: this.state.id, packs});
+    this.setState({packs});
+    this.app.success('card pool updated');
   }
 
-  async calRate() {
+  async updateGroupWeights() {
     const s = this.state;
-    const {id, nWeight, rWeight, srWeight, ssrWeight, urWeight} = this.state;
-    await rpc('ClWebCardPoolUpdate', {id, nWeight, rWeight, srWeight, ssrWeight, urWeight});
-    const nRate = (parseFloat(s.nWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
-    const rRate = (parseFloat(s.rWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
-    const srRate = (parseFloat(s.srWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
-    const ssrRate = (parseFloat(s.ssrWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
-    const urRate = (parseFloat(s.urWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight))*100).toFixed(1);
-    this.setState({nRate, rRate, srRate, ssrRate, urRate});
+    await rpc('ClWebCardPoolUpdate', {
+      id: s.id,
+      group: this.state.group.slice().map((x) => ({
+        name: x.name,
+        weight: x.weight,
+        cards: x.cards.map((y) => ({cardId: y.id, weight: y.weight})),
+      })),
+    });
+
+    this.updateGroupWeightSum();
+    this.app.success('card pool updated');
   }
 
-  updateTable(cards, rarity) {
-    switch (rarity) {
-      case 'n': this.setState({nCards: cards}); break;
-      case 'r': this.setState({rCards: cards}); break;
-      case 'sr': this.setState({srCards: cards}); break;
-      case 'ssr': this.setState({ssrCards: cards}); break;
-      case 'ur': this.setState({urCards: cards}); break;
-      default: break;
-    }
+  getWeightSum(arr) {
+    return arr.reduce((acc, cur) => acc + (parseFloat(cur.weight) || 0), 0);
+  }
+
+  updateGroupWeightSum() {
+    const groupWeightSum = this.getWeightSum(this.state.group);
+    this.setState({groupWeightSum});
+  }
+
+  updateCardTable(cards, index) {
+    const group = this.state.group;
+    group[index].cards = cards;
+    this.setState({group});
   }
 
   async updateCardPool() {
-    const s = this.state;
-    const nCards = s.nCards ? s.nCards.map((x) => ({cardId: x.id, weight: x.weight})) : [];
-    const rCards = s.rCards ? s.rCards.map((x) => ({cardId: x.id, weight: x.weight})) : [];
-    const srCards = s.srCards ? s.srCards.map((x) => ({cardId: x.id, weight: x.weight})) : [];
-    const ssrCards = s.ssrCards ? s.ssrCards.map((x) => ({cardId: x.id, weight: x.weight})) : [];
-    const urCards = s.urCards ? s.urCards.map((x) => ({cardId: x.id, weight: x.weight})) : [];
-    await rpc('ClWebCardPoolUpdate', {id: this.props.match.params.id,
-      nCards,
-      rCards,
-      srCards,
-      ssrCards,
-      urCards});
+    let group = this.state.group.slice();
+    group = group.map((x) => ({name: x.name, weight: x.weight, cards: x.cards.map((y) => ({cardId: y.id, weight: y.weight}))}));
+
+    await rpc('ClWebCardPoolUpdate', {id: this.props.match.params.id, group});
     this.app.success('card pool updated');
   }
 
@@ -261,60 +339,59 @@ export default class CardPoolDetailEdit extends React.Component {
         <Block.Right>
           <FormField label="card pool name" name="name" value={s.name} onChange={this.onChange}/>
           <FormFieldTextArea label="card pool description" name="desc" value={s.desc} onChange={this.onTextareaChange}/>
-          <FormField label="single card cost" name="cost" value={s.cost} onChange={this.onChange}/>
-          <hr/>
+
           <div className="form-group row">
-            <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updateMeta}>Update</button></div>
+            <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updateMeta}>update</button></div>
           </div>
         </Block.Right>
       </Block>
 
       <Block>
-        <Block.Left><h2 className="h5 m-0">Weight by rarity</h2></Block.Left>
+        <Block.Left><h2 className="h5 m-0">Packs</h2></Block.Left>
         <Block.Right>
-          <FormField label={`(${s.nRate} %)  N`} name="nWeight" value={s.nWeight} onChange={this.onWeightChange}/>
-          <FormField label={`(${s.rRate} %)  R`} name="rWeight" value={s.rWeight} onChange={this.onWeightChange}/>
-          <FormField label={`(${s.srRate} %)  SR`} name="srWeight" value={s.srWeight} onChange={this.onWeightChange}/>
-          <FormField label={`(${s.ssrRate} %)  SSR`} name="ssrWeight" value={s.ssrWeight} onChange={this.onWeightChange}/>
-          <FormField label={`(${s.urRate} %)  UR`} name="urWeight" value={s.urWeight} onChange={this.onWeightChange}/>
-          <div className="form-group row">
-            <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.calRate}>Update</button></div>
+          <div className="mb-3 W(100%)">
+            <PackTable updatePacks={this.updatePacks} packs={s.packs}/>
           </div>
         </Block.Right>
       </Block>
 
-      {s.isMounted && <Block>
-        <Block.Left>
-        </Block.Left>
+      <Block>
+        <Block.Left><h2 className="h5 m-0">Card Group Weights</h2></Block.Left>
         <Block.Right>
-          <div className="mb-3 W(100%)">
-            <h2 className="font-weight-light text-light pt-4">N card</h2>
-            <CardTable updateTable={this.updateTable} cards={s.nCards} rarity="n"/>
+          {s.group.map((x, i) => <FormField
+            key={i} label={`(${formatPct(x.weight / s.groupWeightSum, 2)})  ${x.name.substring(0, x.name.length - 5)}`} value={x.weight || ''}
+            onChange={(e) => {
+              const group = this.state.group;
+              group[i].weight = e.target.value || 0;
+              this.setState({group, groupWeightSum: this.getWeightSum(group)});
+            }}
+          />)}
+          <div className="form-group row">
+            <div className="offset-sm-3 col-sm-9"><button className="btn btn-primary" onClick={this.updateGroupWeights}>update</button></div>
           </div>
-          <div className="mb-3 W(100%)">
-            <h2 className="font-weight-light text-light pt-4">R card</h2>
-            <CardTable updateTable={this.updateTable} cards={s.rCards} rarity="r"/>
-          </div>
-          <div className="mb-3 W(100%)">
-            <h2 className="font-weight-light text-light pt-4">SR card</h2>
-            <CardTable updateTable={this.updateTable} cards={s.srCards} rarity="sr"/>
-          </div>
-          <div className="mb-3 W(100%)">
-            <h2 className="font-weight-light text-light pt-4">SSR card</h2>
-            <CardTable updateTable={this.updateTable} cards={s.ssrCards} rarity="ssr"/>
-          </div>
-          <div className="mb-3 W(100%)">
-            <h2 className="font-weight-light text-light pt-4">UR card</h2>
-            <CardTable updateTable={this.updateTable} cards={s.urCards} rarity="ur"/>
-          </div>
+        </Block.Right>
+      </Block>
+
+      <Block>
+        <Block.Left><h2 className="h5 m-0">Card Groups</h2></Block.Left>
+        <Block.Right>
+          {s.group && s.group.map((x, i) => <CardGroupTable
+            key={i}
+            name={x.name}
+            updateCardTable={this.updateCardTable}
+            groupWeight={x.weight}
+            groupWeightSum={s.groupWeightSum}
+            cards={x.cards}
+            index={i}
+          />)}
 
           <div className="form-group row">
-            <div className="offset-sm-3 col-sm-9">
-              <button className="btn btn-primary" onClick={this.updateCardPool}>Update</button>
+            <div className="col">
+              <button className="btn btn-primary" onClick={this.updateCardPool}>update</button>
             </div>
           </div>
         </Block.Right>
-      </Block>}
+      </Block>
     </div>;
   }
 }
