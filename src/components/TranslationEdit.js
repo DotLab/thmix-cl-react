@@ -1,6 +1,7 @@
 import React from 'react';
-import {onChange, formatDateTime} from '../utils';
-import {getKey, updateTranslationLang} from '../translationService';
+import {formatDate} from '../utils';
+import {updateTranslationLang} from '../translationService';
+import EditableText from './EditableText';
 
 function correctLang(lang) {
   if (lang === 'zh-CN') {
@@ -16,31 +17,33 @@ class Row extends React.Component {
   constructor(props) {
     super(props);
 
-    this.onChange = onChange.bind(this);
+    this.updateText = this.updateText.bind(this);
 
     this.state = {
       text: props.text,
     };
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.src !== prevProps.src || this.props.lang !== prevProps.lang) {
-      this.setState({text: this.props.text});
-    }
+  updateText(text) {
+    this.setState({text});
   }
 
   render() {
     const p = this.props;
     const s = this.state;
 
-    return <tr>
-      <td className="">{p.src}</td>
-      <td className="">{p.namespace}</td>
-      <td className="Whs(nw)">{correctLang(p.lang)}</td>
-      <td className="W(500px)"><input className="Bdrs(10px) Bdw(1px) D(b) W(100%)" type="text" name="text" onChange={this.onChange} value={s.text}/></td>
-      <td><button className="btn btn-primary btn-sm" disabled={s.text === p.text} onClick={() => p.onApply(p, s.text)}>apply</button></td>
-      <td>{formatDateTime(p.date)}</td>
-      <td>{p.editorName || '?'}</td>
+    const modified = s.text.trim() !== p.text;
+
+    return <tr className={modified ? 'table-warning Fw(b)' : ''}>
+      <td className="Va(m)! ">{p.src}</td>
+      <td className="Va(m)! Fw(b)">{p.namespace}</td>
+      <td className="Va(m)! Whs(nw)">{correctLang(p.lang)}</td>
+      <EditableText className={'Va(m)!'} e="td" text={s.text} updateText={this.updateText} />
+      <td className="Va(m)! ">
+        <button className="btn btn-primary btn-sm" disabled={!modified} onClick={() => p.onApply(p, s.text)}><i className="fa-fw fas fa-save" /></button>
+      </td>
+      <td className={'Va(m)!' + (modified ? ' Td(lt)' : '')}>{formatDate(p.date)}</td>
+      <td className={'Va(m)!' + (modified ? ' Td(lt)' : '')}>{p.editorName || '?'}</td>
     </tr>;
   }
 }
@@ -57,18 +60,17 @@ export default class TranslationEdit extends React.Component {
       filter: '',
       lang: this.app.state.lang,
       translations: [],
-      translationsFiltered: [],
+      filteredTranslations: [],
     };
 
     this.onApplyTranslation = this.onApplyTranslation.bind(this);
     this.changeFilter = this.changeFilter.bind(this);
-    this.onChange = onChange.bind(this);
   }
 
   async componentDidMount() {
     const translations = await this.app.translationList();
-    const translationsFiltered = translations;
-    this.setState({translations, translationsFiltered});
+    const filteredTranslations = translations;
+    this.setState({translations, filteredTranslations});
   }
 
   async componentDidUpdate() {
@@ -78,20 +80,32 @@ export default class TranslationEdit extends React.Component {
     }
   }
 
-  async onApplyTranslation(p, text) {
-    await updateTranslationLang(p.lang, p.src, p.namespace, text);
+  async onApplyTranslation({lang, src, namespace}, text) {
+    await updateTranslationLang(lang, src, namespace, text);
 
-    const translations = await this.app.translationList();
-    this.setState({translations});
+    const translations = this.state.translations.map((x) => {
+      if (x.lang === lang && x.src === src && x.namespace === namespace) {
+        x.text = text;
+      }
+      return x;
+    });
+    this.setState({translations, filteredTranslations: this.getFilteredTranslations(translations, this.state.filter)});
+
+    this.app.success('translation updated');
   }
 
   changeFilter(e) {
-    e.preventDefault();
-    const regex = new RegExp(this.state.filter);
-    const translationsFiltered = this.state.translations.filter((x) =>
+    this.setState({
+      [e.target.name]: e.target.value,
+      filteredTranslations: this.getFilteredTranslations(this.state.translations, e.target.value),
+    });
+  }
+
+  getFilteredTranslations(translations, filter) {
+    const regex = new RegExp(filter);
+    return translations.filter((x) =>
       [x.src, x.namespace, x.text, x.editorName].join('\n').match(regex)
     );
-    this.setState({translationsFiltered});
   }
 
   render() {
@@ -101,28 +115,30 @@ export default class TranslationEdit extends React.Component {
       <section className="Bgc($gray-700) P(30px) text-light shadow">
         <h2 className="row Fw(n)">Translations</h2>
       </section>
-      <section className="mt-2 mb-3 shadow border">
-        <div className="Bgc($gray-100)">
-          <form onSubmit={this.changeFilter} className="input-group Op(.7)">
-            <input className="form-control" type="text" name="filter" value={s.filter} onChange={this.onChange}/>
-            <div className="input-group-append">
-              <button type="submit" className="btn btn-secondary"><i class="fas fa-filter"></i></button>
-            </div>
-          </form>
-          <table className="table table-hover">
+
+      <div className="input-group mt-2 shadow">
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="basic-addon1"><i className="fas fa-filter"></i></span>
+        </div>
+        <input className="form-control" type="text" name="filter" value={s.filter} onChange={this.changeFilter}/>
+      </div>
+
+      <section className="mt-2 mb-3 shadow">
+        <div className="table-responsive">
+          <table className="table table-sm table-hover mb-0">
             <thead>
               <tr>
                 <th>src</th>
                 <th>namespace</th>
                 <th>lang</th>
                 <th>text</th>
-                <th>action</th>
+                <th></th>
                 <th>date</th>
                 <th>editor</th>
               </tr>
             </thead>
             <tbody>
-              {s.translationsFiltered.map((x) => <Row {...x} key={getKey(x.namespace, x.src)} onApply={this.onApplyTranslation}/>)}
+              {s.filteredTranslations.map((x, i) => <Row {...x} key={x._id} onApply={this.onApplyTranslation}/>)}
             </tbody>
           </table>
         </div>
