@@ -45,17 +45,14 @@ class PackRow extends React.Component {
         {!s.editingName && <div className="Cur(p)" onClick={() => this.setState({editingName: true})}>{p.name}</div>}
         {s.editingName && <div><input className="form-control" type="text" name="name" value={s.name} onChange={this.onChange}/></div>}
       </td>
-
       <td>
         {!s.editingCardNum && <div className="Cur(p)" onClick={() => this.setState({editingCardNum: true})}>{p.cardNum}</div>}
         {s.editingCardNum && <div><input className="form-control" type="number" name="cardNum" value={s.cardNum} onChange={this.onChange}/></div>}
       </td>
-
       <td>
         {!s.editingCost && <div className="Cur(p)" onClick={() => this.setState({editingCost: true})}>{p.cost}</div>}
         {s.editingCost && <div><input className="form-control" type="number" name="cost" value={s.cost} onChange={this.onChange}/></div>}
       </td>
-
       <td><div className="D(f)">
         <i className="fas fa-save Cur(p)" onClick={this.updatePack}></i>
         <i className="mx-3 fas fa-trash-alt Cur(p)" onClick={this.removePack}></i></div></td>
@@ -212,18 +209,18 @@ class CardTable extends React.Component {
 
     const cards = [...this.state.cards, {...card, weight: this.state.weight}];
     this.setState({cards, id: '', weight: ''});
-    this.props.updateTable(this.state.cards, this.props.ind);
+    this.props.updateTable(this.state.cards, this.props.index);
   }
 
   removeCard(id) {
     let cards = this.state.cards;
     cards = cards.filter((x) => x.id !== id);
     this.setState({cards});
-    this.props.updateTable(cards, this.props.ind);
+    this.props.updateTable(cards, this.props.index);
   }
 
   async import() {
-    let imports = await rpc('ClWebCardList', {rarity: rarityArr[this.props.ind]});
+    let imports = await rpc('ClWebCardList', {rarity: rarityArr[this.props.index]});
     const cards = this.state.cards;
     cards.forEach((x) => {
       imports = imports.filter((i) => x.id !== i.id);
@@ -234,7 +231,7 @@ class CardTable extends React.Component {
     if (imports.length !== 0) {
       this.setState({cards});
     }
-    this.props.updateTable(this.state.cards, this.props.ind);
+    this.props.updateTable(this.state.cards, this.props.index);
   }
 
   updateWeight(id, weight) {
@@ -243,7 +240,7 @@ class CardTable extends React.Component {
       return x.id === id ? {...x, weight: parseFloat(weight)} : x;
     });
     this.setState({cards});
-    this.props.updateTable(cards, this.props.ind);
+    this.props.updateTable(cards, this.props.index);
   }
 
   render() {
@@ -274,7 +271,7 @@ class CardTable extends React.Component {
             </td>
           </tr>}
           {s.cards.map((card, i) => <CardRow {...card} key={i} removeCard={this.removeCard} updateWeight={this.updateWeight}
-            poolRarity={rarityArr[this.props.ind]} weight={card.weight} />)}
+            poolRarity={rarityArr[this.props.index]} weight={card.weight} />)}
         </tbody>
       </table>
       <hr/>
@@ -354,9 +351,9 @@ export default class CardPoolDetailEdit extends React.Component {
     this.setState({packs});
   }
 
-  updateTable(cards, ind) {
+  updateTable(cards, index) {
     const group = this.state.group;
-    group[ind].cards = cards;
+    group[index].cards = cards;
     this.setState({group});
   }
 
@@ -423,7 +420,7 @@ export default class CardPoolDetailEdit extends React.Component {
         <Block.Right>
           {s.group && s.group.map((x, i) => <div className="mb-3 W(100%)" key={i}>
             <h2 className="font-weight-light text-light pt-4">{x.name}</h2>
-            <CardTable updateTable={this.updateTable} cards={x.cards} ind={i}/>
+            <CardTable updateTable={this.updateTable} cards={x.cards} index={i}/>
           </div>)}
 
           <div className="form-group row">
