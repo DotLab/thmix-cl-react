@@ -106,6 +106,7 @@ export default class App extends React.Component {
 
   error(message) {
     if (typeof message === 'string') this.setState({error: message});
+    else this.setState({error: 'i don\'t know what\'s wrong'});
   }
 
   success(message) {
