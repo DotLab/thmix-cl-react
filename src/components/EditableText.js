@@ -15,7 +15,7 @@ export default class EditableText extends React.Component {
 
   async updateText() {
     const text = this.spanRef.current.innerText;
-    if (text != String(this.props.text)) {
+    if (text !== String(this.props.text)) {
       if (!await this.props.updateText(text)) {
         this.spanRef.current.innerText = String(this.props.text);
       }
