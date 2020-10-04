@@ -8,65 +8,6 @@ import {rpc} from '../apiService';
 
 import EditableText from './EditableText';
 
-class SongRow extends React.Component {
-  constructor(props) {
-    super(props);
-
-    /** @type {import('../App').default} */
-    this.state = {
-      translations: [],
-      langs: [],
-    };
-  }
-
-  async componentDidMount() {
-    const p = this.props;
-
-    if (!p._id) return;
-    await Promise.all(
-        p.langs.map((x) => requestTranslationLang(x, 'name.artifact', p._id)),
-    ).then((value) => {
-      this.setState({translations: value});
-    });
-  }
-
-  async componentDidUpdate(prevProps) {
-    if (!this.props._id) return;
-
-    this.props.langs.map(async (x, i) => {
-      if (x !== prevProps.langs[i]) {
-        const translation = await requestTranslationLang(x, 'name.artifact', this.props._id);
-        const translations = this.state.translations.slice();
-        translations[i] = translation;
-        this.setState({translations, langs: this.props.langs});
-      }
-    });
-  }
-
-  updateId(id) {
-    this.props.sourceSongNameChange(this.props.index, id);
-  }
-
-  async updateTranslation(index, translation) {
-    const translations = this.state.translations;
-    translations[index] = translation;
-    this.setState({translations});
-    await updateTranslationLang(this.props.langs[index], this.props._id, 'name.artifact', translation);
-    this.props.app.success('Updated');
-  }
-
-  render() {
-    const p = this.props;
-    const s = this.state;
-
-    return <tr className="" key={p._id}>
-      <td></td>
-      <EditableText e="td" className="Fw(b):f" text={p._id} updateText={(id) => this.updateId(id)}/>
-      {p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i] || '?'} updateText={(translation) => this.updateTranslation(translation)}/>)}
-    </tr>;
-  }
-}
-
 class AlbumRow extends React.Component {
   constructor(props) {
     super(props);
@@ -76,8 +17,6 @@ class AlbumRow extends React.Component {
       translations: [],
       langs: [],
     };
-
-    this.sourceSongNameChange = this.sourceSongNameChange.bind(this);
   }
 
   async componentDidMount() {
@@ -105,33 +44,30 @@ class AlbumRow extends React.Component {
   }
 
   updateId(id) {
-    this.props.sourceAlbumNameChange(this.props.index, id);
+    this.props.sourceNameChange(this.props.index, id, this.props.isAlbum);
   }
 
   async updateTranslation(index, translation) {
     const translations = this.state.translations;
     translations[index] = translation;
-    this.setState({translations});
     await updateTranslationLang(this.props.langs[index], this.props._id, 'name.artifact', translation);
+    this.setState({translations});
     this.props.app.success('Updated');
-  }
-
-  async sourceSongNameChange(songIndex, sourceSongName) {
-    await this.props.sourceSongNameChange(this.props.index, songIndex, sourceSongName);
   }
 
   render() {
     const p = this.props;
     const s = this.state;
 
-    return [
-      <tr key={p._id}>
-        <EditableText e="td" className="Fw(b):f" text={p._id} updateText={(id) => this.updateId(id)}/>
-        <td></td>
-        {p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i] || '?'} updateText={(translation) => this.updateTranslation(i, translation)}/>)}
-      </tr>,
-      p.songs.map((song, i) => <SongRow {...song} key={song._id} langs={p.langs} index={i} app={this.props.app} sourceSongNameChange={this.sourceSongNameChange}/>),
-    ];
+    return p.isAlbum ? <tr key={p._id}>
+      <EditableText e="td" className="Fw(b):f" text={p._id} updateText={(id) => this.updateId(id)}/>
+      <td></td>
+      {p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i] || '?'} updateText={(translation) => this.updateTranslation(i, translation)}/>)}
+    </tr> : <tr key={p._id}>
+      <td></td>
+      <EditableText e="td" className="Fw(b):f" text={p._id} updateText={(id) => this.updateId(id)}/>
+      {p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i] || '?'} updateText={(translation) => this.updateTranslation(i, translation)}/>)}
+    </tr>;
   }
 }
 
@@ -144,38 +80,40 @@ export default class AlbumListing extends React.Component {
 
     this.state = {
       albums: [],
+      rows: [],
       langs: ['ja', 'zh-TW', 'en'],
     };
 
-    this.sourceAlbumNameChange = this.sourceAlbumNameChange.bind(this);
-    this.sourceSongNameChange = this.sourceSongNameChange.bind(this);
+    this.sourceNameChange = this.sourceNameChange.bind(this);
   }
 
   async componentDidMount() {
     const albums = await rpc('ClWebMidiCustomizedAlbumList', {});
-    this.setState({albums});
+    const rows = albums.reduce((acc, cur) => {
+      let midiIds = [];
+      cur.songs.forEach((x) => midiIds = [...midiIds, ...x.midiIds]);
+      acc.push({_id: cur._id, midiIds, isAlbum: true});
+      cur.songs.forEach((x) => acc.push({...x, isAlbum: false}));
+      return acc;
+    }, []);
+
+    this.setState({rows});
   }
 
-  async sourceAlbumNameChange(index, sourceAlbumName) {
-    const albums = this.state.albums.slice();
-    albums.splice(index, 1, {...albums[index], _id: sourceAlbumName});
-    this.setState({albums});
-    const midiIds = [];
-    albums[index].songs.forEach((x) => x.midiIds.forEach((y) => midiIds.push(y)));
-    await Promise.all([
-      midiIds.forEach((x) => this.app.midiUpdate({id: x, sourceAlbumName})),
-    ]);
-  }
-
-  async sourceSongNameChange(albumIndex, songIndex, sourceSongName) {
-    const albums = this.state.albums.slice();
-    albums[albumIndex].songs.splice(songIndex, 1, {...albums[albumIndex].songs[songIndex], _id: sourceSongName});
-    this.setState({albums});
-    const midiIds = [];
-    albums[albumIndex].songs[songIndex].midiIds.forEach((x) => midiIds.push(x));
-    await Promise.all([
-      midiIds.forEach((x) => this.app.midiUpdate({id: x, sourceSongName})),
-    ]);
+  async sourceNameChange(index, name, isAlbum) {
+    const rows = this.state.rows.slice();
+    rows.splice(index, 1, {...rows[index], _id: name});
+    this.setState({rows});
+    const midiIds = rows[index].midiIds;
+    if (isAlbum) {
+      await Promise.all([
+        midiIds.forEach((x) => this.app.midiUpdate({id: x, sourceAlbumName: name})),
+      ]);
+    } else {
+      await Promise.all([
+        midiIds.forEach((x) => this.app.midiUpdate({id: x, sourceSongName: name})),
+      ]);
+    }
   }
 
   render() {
@@ -201,8 +139,8 @@ export default class AlbumListing extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {s.albums.map((album, i) => <AlbumRow key={album._id} {...album} langs={s.langs} app={this.app}
-            sourceAlbumNameChange={this.sourceAlbumNameChange} sourceSongNameChange={this.sourceSongNameChange} index={i}/>)}
+          {s.rows.map((row, i) => <AlbumRow key={row._id + row.isAlbum} {...row} langs={s.langs} app={this.app}
+            sourceNameChange={this.sourceNameChange} index={i}/>)}
         </tbody>
       </table>
     </div>;
