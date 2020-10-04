@@ -89,8 +89,7 @@ export default class AlbumListing extends React.Component {
   async componentDidMount() {
     const albums = await rpc('ClWebMidiCustomizedAlbumList', {});
     const rows = albums.reduce((acc, cur) => {
-      let midiIds = [];
-      cur.songs.forEach((x) => midiIds = [...midiIds, ...x.midiIds]);
+      const midiIds = [].concat(...cur.songs.map((x) => x.midiIds));
       acc.push({_id: cur._id, midiIds, isAlbum: true});
       cur.songs.forEach((x) => acc.push({...x, isAlbum: false}));
       return acc;
