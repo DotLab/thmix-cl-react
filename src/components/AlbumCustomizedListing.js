@@ -128,7 +128,7 @@ class AlbumRow extends React.Component {
       <tr key={p._id}>
         <EditableText e="td" className="Fw(b):f" text={p._id} updateText={(id) => this.updateId(id)}/>
         <td></td>
-        {s.isMounted && p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i]} updateText={(translation) => this.updateTranslation(i, translation)}/>)}
+        {p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i]} updateText={(translation) => this.updateTranslation(i, translation)}/>)}
       </tr>,
       p.songs.map((song, i) => <SongRow {...song} key={song._id} langs={p.langs} index={i} app={this.props.app} sourceSongNameChange={this.sourceSongNameChange}/>),
     ];
