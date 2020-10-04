@@ -79,7 +79,6 @@ export default class AlbumListing extends React.Component {
     this.app = props.app;
 
     this.state = {
-      albums: [],
       rows: [],
       langs: ['ja', 'zh-TW', 'en'],
     };
