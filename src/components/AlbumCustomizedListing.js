@@ -1,7 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-import {onChange} from '../utils';
 import {requestTranslationLang, updateTranslationLang} from '../translationService';
 // @ts-ignore
 import langs from '../json/langs.json';
@@ -15,58 +14,45 @@ class SongRow extends React.Component {
 
     /** @type {import('../App').default} */
     this.state = {
-      songName0: '',
-      songName1: '',
-      songName2: '',
-
-      sourceSongName: this.props.sourceSongName,
+      translations: [],
+      langs: [],
     };
-
-    this.onChange = onChange.bind(this);
-    this.onApplyTranslation = this.onApplyTranslation.bind(this);
   }
 
   async componentDidMount() {
     const p = this.props;
-    if (!p.sourceSongName) return;
 
-    await Promise.all([
-      requestTranslationLang(p.lang0, 'name.artifact', p.sourceSongName),
-      requestTranslationLang(p.lang1, 'name.artifact', p.sourceSongName),
-      requestTranslationLang(p.lang2, 'name.artifact', p.sourceSongName),
-    ]).then((value) => {
-      this.setState({songName0: value[0], songName1: value[1], songName2: value[2]});
+    if (!p._id) return;
+    await Promise.all(
+        p.langs.map((x) => requestTranslationLang(x, 'name.artifact', p._id)),
+    ).then((value) => {
+      this.setState({translations: value});
     });
   }
 
-  async onApplyTranslation() {
-    const p = this.props;
-    const s = this.state;
+  async componentDidUpdate(prevProps) {
+    if (!this.props._id) return;
 
-    if (!p.sourceSongName) {
-      this.setState({editing: false});
-      return;
-    }
-
-    await Promise.all([
-      s.editingTranslation0 && updateTranslationLang(p.lang0, p.sourceSongName, 'name.artifact', s.songName0),
-      s.editingTranslation1 && updateTranslationLang(p.lang1, p.sourceSongName, 'name.artifact', s.songName1),
-      s.editingTranslation2 && updateTranslationLang(p.lang2, p.sourceSongName, 'name.artifact', s.songName2),
-    ]);
-    this.setState({editingTranslation0: false, editingTranslation1: false, editingTranslation2: false});
-
-    if (!this.state.editing) return;
-    this.setState({editing: false});
-
-    if (this.state.sourceSongName === this.props.sourceSongName) return;
-    await Promise.all([
-      this.props.sourceSongNameChange({midiId: this.props._id, sourceSongName: this.state.sourceSongName}),
-      requestTranslationLang(p.lang0, 'name.artifact', s.sourceSongName),
-      requestTranslationLang(p.lang1, 'name.artifact', s.sourceSongName),
-      requestTranslationLang(p.lang2, 'name.artifact', s.sourceSongName),
-    ]).then((value) => {
-      this.setState({songName0: value[1], songName1: value[2], songName2: value[3]});
+    this.props.langs.map(async (x, i) => {
+      if (x !== prevProps.langs[i]) {
+        const translation = await requestTranslationLang(x, 'name.artifact', this.props._id);
+        const translations = this.state.translations.slice();
+        translations[i] = translation;
+        this.setState({translations, langs: this.props.langs});
+      }
     });
+  }
+
+  updateId(id) {
+    this.props.sourceSongNameChange(this.props.index, id);
+  }
+
+  async updateTranslation(index, translation) {
+    const translations = this.state.translations;
+    translations[index] = translation;
+    this.setState({translations});
+    await updateTranslationLang(this.props.langs[index], this.props._id, 'name.artifact', translation);
+    this.props.app.success('Updated');
   }
 
   render() {
@@ -74,21 +60,9 @@ class SongRow extends React.Component {
     const s = this.state;
 
     return <tr className="" key={p._id}>
-      <td className="W(15%)"></td>
-      <td className="W(30%)">
-        {!s.editing && <strong onClick={() => this.setState({editing: true})}>{s.sourceSongName || 'No name yet'}</strong>}
-        {s.editing && <input className="Bdrs(10px) Bdw(1px) D(b) W(90%)" type="text" name="sourceSongName" value={s.sourceSongName} onChange={this.onChange}/>}
-      </td>
-      {!s.editingTranslation0 && <td className="Pend(3%) W(20%)"><div onClick={() => this.setState({editingTranslation0: true})}>{s.songName0}</div></td>}
-      {s.editingTranslation0 && <td className="Pend(3%) W(20%)"><input className="Bdrs(10px) Bdw(1px) D(b) W(90%)" type="text" name="songName0" value={this.state.songName0} onChange={this.onChange}/></td>}
-
-      {!s.editingTranslation1 && <td className="Pend(3%) W(20%)"><div onClick={() => this.setState({editingTranslation1: true})}>{s.songName1}</div></td>}
-      {s.editingTranslation1 && <td className="Pend(3%) W(20%)"> <input className="Bdrs(10px) Bdw(1px) D(b) W(90%)" type="text" name="songName1" value={this.state.songName1} onChange={this.onChange}/></td>}
-
-      {!s.editingTranslation2 && <td className="Pend(3%) W(20%)"><div onClick={() => this.setState({editingTranslation2: true})}>{s.songName2}</div></td>}
-      {s.editingTranslation2 && <td className="Pend(3%) W(20%)"><input className="Bdrs(10px) Bdw(1px) D(b) W(90%)" type="text" name="songName2" value={this.state.songName2} onChange={this.onChange}/></td>}
-
-      <td><button className="btn btn-primary btn-sm" onClick={this.onApplyTranslation}>apply</button></td>
+      <td></td>
+      <EditableText e="td" className="Fw(b):f" text={p._id} updateText={(id) => this.updateId(id)}/>
+      {p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i]} updateText={(translation) => this.updateTranslation(translation)}/>)}
     </tr>;
   }
 }
@@ -99,18 +73,10 @@ class AlbumRow extends React.Component {
 
     /** @type {import('../App').default} */
     this.state = {
-      albumTranslation0: '',
-      albumTranslation1: '',
-      albumTranslation2: '',
-      lang0: this.props.lang0,
-      lang1: this.props.lang1,
-      lang2: this.props.lang2,
-      _id: this.props._id,
-
-      sourceAlbumName: this.props.name,
+      translations: [],
+      langs: [],
     };
 
-    this.onChange = onChange.bind(this);
     this.sourceSongNameChange = this.sourceSongNameChange.bind(this);
   }
 
@@ -118,53 +84,40 @@ class AlbumRow extends React.Component {
     const p = this.props;
 
     if (!p._id) return;
-    await Promise.all([
-      requestTranslationLang(p.lang0, 'name.artifact', p.editedAlbumName || p._id),
-      requestTranslationLang(p.lang1, 'name.artifact', p.editedAlbumName || p._id),
-      requestTranslationLang(p.lang2, 'name.artifact', p.editedAlbumName || p._id),
-    ]).then((value) => {
-      this.setState({albumTranslation0: value[0], albumTranslation1: value[1], albumTranslation2: value[2]});
+    await Promise.all(
+        p.langs.map((x) => requestTranslationLang(x, 'name.artifact', p._id)),
+    ).then((value) => {
+      this.setState({translations: value});
     });
   }
 
-  async UNSAFE_componentWillReceiveProps(props) {
-    if (!props._id) return;
+  async componentDidUpdate(prevProps) {
+    if (!this.props._id) return;
 
-    if (props.lang0 !== this.state.lang0) {
-      const albumTranslation0 = await requestTranslationLang(props.lang0, 'name.artifact', props._id);
-      this.setState({updated: true, albumTranslation0});
-    }
-    if (props.lang1 !== this.state.lang1) {
-      const albumTranslation1 = await requestTranslationLang(props.lang1, 'name.artifact', props._id);
-      this.setState({updated: true, albumTranslation1});
-    }
-    if (props.lang2 !== this.state.lang2) {
-      const albumTranslation2 = await requestTranslationLang(props.lang2, 'name.artifact', props._id);
-      this.setState({updated: true, albumTranslation2});
-    }
+    this.props.langs.map(async (x, i) => {
+      if (x !== prevProps.langs[i]) {
+        const translation = await requestTranslationLang(x, 'name.artifact', this.props._id);
+        const translations = this.state.translations.slice();
+        translations[i] = translation;
+        this.setState({translations, langs: this.props.langs});
+      }
+    });
   }
 
   updateId(id) {
     this.props.sourceAlbumNameChange(this.props.index, id);
   }
 
-  async updateTranslation0(translation) {
-    this.setState({albumTranslation0: translation});
-    await updateTranslationLang(this.props.lang0, this.props._id, 'name.artifact', translation);
+  async updateTranslation(index, translation) {
+    const translations = this.state.translations;
+    translations[index] = translation;
+    this.setState({translations});
+    await updateTranslationLang(this.props.langs[index], this.props._id, 'name.artifact', translation);
+    this.props.app.success('Updated');
   }
 
-  async updateTranslation1(translation) {
-    this.setState({albumTranslation1: translation});
-    await updateTranslationLang(this.props.lang1, this.props._id, 'name.artifact', translation);
-  }
-
-  async updateTranslation2(translation) {
-    this.setState({albumTranslation2: translation});
-    await updateTranslationLang(this.props.lang2, this.props._id, 'name.artifact', translation);
-  }
-
-  async sourceSongNameChange({midiId, sourceSongName}) {
-    await this.props.sourceSongNameChange({midiId, sourceSongName});
+  async sourceSongNameChange(songIndex, sourceSongName) {
+    await this.props.sourceSongNameChange(this.props.index, songIndex, sourceSongName);
   }
 
   render() {
@@ -173,15 +126,11 @@ class AlbumRow extends React.Component {
 
     return [
       <tr key={p._id}>
-        <EditableText e="td" className="Fw(b):f" text={p.editedAlbumName || p._id} updateText={(id) => this.updateId(id)}/>
+        <EditableText e="td" className="Fw(b):f" text={p._id} updateText={(id) => this.updateId(id)}/>
         <td></td>
-        <EditableText e="td" className="Fw(b):f" text={s.albumTranslation0} updateText={(translation) => this.updateTranslation0(translation)}/>
-        <EditableText e="td" className="Fw(b):f" text={s.albumTranslation1} updateText={(translation) => this.updateTranslation1(translation)}/>
-        <EditableText e="td" className="Fw(b):f" text={s.albumTranslation2} updateText={(translation) => this.updateTranslation2(translation)}/>
-
-        {/* <td><button className="btn btn-primary btn-sm" onClick={this.onApplyTranslation} disabled={!this.state.updated}>apply</button></td> */}
+        {s.isMounted && p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i]} updateText={(translation) => this.updateTranslation(i, translation)}/>)}
       </tr>,
-      p.songs.map((song, i) => <SongRow {...song} key={song._id} lang0={p.lang0} lang1={p.lang1} lang2={p.lang2} app={this.props.app} sourceSongNameChange={this.sourceSongNameChange}/>),
+      p.songs.map((song, i) => <SongRow {...song} key={song._id} langs={p.langs} index={i} app={this.props.app} sourceSongNameChange={this.sourceSongNameChange}/>),
     ];
   }
 }
@@ -195,31 +144,11 @@ export default class AlbumListing extends React.Component {
 
     this.state = {
       albums: [],
-      lang0: 'ja',
-      lang1: 'zh-CN',
-      lang2: 'en',
+      langs: ['ja', 'zh-TW', 'en'],
     };
 
-    this.onLang0Change = this.onLang0Change.bind(this);
-    this.onLang1Change = this.onLang1Change.bind(this);
-    this.onLang2Change = this.onLang2Change.bind(this);
     this.sourceAlbumNameChange = this.sourceAlbumNameChange.bind(this);
     this.sourceSongNameChange = this.sourceSongNameChange.bind(this);
-  }
-
-  onLang0Change(e) {
-    const lang0 = e.target.value;
-    this.setState({lang0});
-  }
-
-  onLang1Change(e) {
-    const lang1 = e.target.value;
-    this.setState({lang1});
-  }
-
-  onLang2Change(e) {
-    const lang2 = e.target.value;
-    this.setState({lang2});
   }
 
   async componentDidMount() {
@@ -238,8 +167,15 @@ export default class AlbumListing extends React.Component {
     ]);
   }
 
-  async sourceSongNameChange({midiId, sourceSongName}) {
-    await this.app.midiUpdate({id: midiId, sourceSongName});
+  async sourceSongNameChange(albumIndex, songIndex, sourceSongName) {
+    const albums = this.state.albums.slice();
+    albums[albumIndex].songs.splice(songIndex, 1, {...albums[albumIndex].songs[songIndex], _id: sourceSongName});
+    this.setState({albums});
+    const midiIds = [];
+    albums[albumIndex].songs[songIndex].midiIds.forEach((x) => midiIds.push(x));
+    await Promise.all([
+      midiIds.forEach((x) => this.app.midiUpdate({id: x, sourceSongName})),
+    ]);
   }
 
   render() {
@@ -249,28 +185,25 @@ export default class AlbumListing extends React.Component {
       <section className="Bgc($gray-700) P(30px) text-light shadow">
         <h2 className="row Fw(n)">Songs <Link to='/songs'><button className="mx-3 btn btn-warning">System songs</button></Link></h2>
       </section>
-
       <table className="table table-responsive">
         <thead>
           <tr>
             <th>Album</th>
             <th>Song</th>
-            <th> Name <select className="Bdrs(5px) W(90px)" onChange={this.onLang0Change} value={s.lang0}>
-              {langs.map((x) => <option value={x.lang} key={x.lang}>{x.name}</option>)}</select>
-            </th>
 
-            <th> Name <select className="Bdrs(5px) W(90px)" onChange={this.onLang1Change} value={s.lang1}>
-              {langs.map((x) => <option value={x.lang} key={x.lang}>{x.name}</option>)}</select>
-            </th>
+            {s.langs.map((lang, i) =>
+              <th key={i}> Name <select className="Bdrs(5px) W(90px)" onChange={(e) => {
+                const langs = this.state.langs.slice();
+                langs[i] = e.target.value;
+                this.setState({langs});
+              }} value={s.langs[i]}>
+                {langs.map((x) => <option value={x.lang} key={x.lang}>{x.name}</option>)}</select>
+              </th>)}
 
-            <th> Name <select className="Bdrs(5px) W(90px)" onChange={this.onLang2Change} value={s.lang2}>
-              {langs.map((x) => <option value={x.lang} key={x.lang}>{x.name}</option>)}</select>
-            </th>
-            <th className="W(5%)">action on translation</th>
           </tr>
         </thead>
         <tbody>
-          {s.albums.map((album, i) => <AlbumRow key={album._id} {...album} lang1={s.lang1} lang2={s.lang2} lang0={s.lang0} app={this.app}
+          {s.albums.map((album, i) => <AlbumRow key={album._id} {...album} langs={s.langs} app={this.app}
             sourceAlbumNameChange={this.sourceAlbumNameChange} sourceSongNameChange={this.sourceSongNameChange} index={i}/>)}
         </tbody>
       </table>
