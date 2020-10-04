@@ -8,7 +8,7 @@ import {rpc} from '../apiService';
 
 import EditableText from './EditableText';
 
-class AlbumRow extends React.Component {
+class Row extends React.Component {
   constructor(props) {
     super(props);
 
@@ -59,13 +59,10 @@ class AlbumRow extends React.Component {
     const p = this.props;
     const s = this.state;
 
-    return p.isAlbum ? <tr key={p._id}>
+    return <tr key={p._id}>
+      {!p.isAlbum ? <td></td> : null}
       <EditableText e="td" className="Fw(b):f" text={p._id} updateText={(id) => this.updateId(id)}/>
-      <td></td>
-      {p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i] || '?'} updateText={(translation) => this.updateTranslation(i, translation)}/>)}
-    </tr> : <tr key={p._id}>
-      <td></td>
-      <EditableText e="td" className="Fw(b):f" text={p._id} updateText={(id) => this.updateId(id)}/>
+      {p.isAlbum ? <td></td> : null}
       {p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i] || '?'} updateText={(translation) => this.updateTranslation(i, translation)}/>)}
     </tr>;
   }
@@ -131,7 +128,7 @@ export default class AlbumListing extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {s.rows.map((row, i) => <AlbumRow key={row._id + row.isAlbum} {...row} langs={s.langs} app={this.app}
+          {s.rows.map((row, i) => <Row key={row._id + row.isAlbum} {...row} langs={s.langs} app={this.app}
             sourceNameChange={this.sourceNameChange} index={i}/>)}
         </tbody>
       </table>
