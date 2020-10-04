@@ -103,15 +103,9 @@ export default class AlbumListing extends React.Component {
     rows.splice(index, 1, {...rows[index], _id: name});
     this.setState({rows});
     const midiIds = rows[index].midiIds;
-    if (isAlbum) {
-      await Promise.all([
-        midiIds.forEach((x) => this.app.midiUpdate({id: x, sourceAlbumName: name})),
-      ]);
-    } else {
-      await Promise.all([
-        midiIds.forEach((x) => this.app.midiUpdate({id: x, sourceSongName: name})),
-      ]);
-    }
+    await Promise.all([
+      midiIds.forEach((x) => this.app.midiUpdate({id: x, [isAlbum ? 'sourceAlbumName' : 'sourceSongName']: name})),
+    ]);
   }
 
   render() {
