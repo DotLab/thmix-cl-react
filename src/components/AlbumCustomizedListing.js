@@ -62,7 +62,7 @@ class SongRow extends React.Component {
     return <tr className="" key={p._id}>
       <td></td>
       <EditableText e="td" className="Fw(b):f" text={p._id} updateText={(id) => this.updateId(id)}/>
-      {p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i]} updateText={(translation) => this.updateTranslation(translation)}/>)}
+      {p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i] || '?'} updateText={(translation) => this.updateTranslation(translation)}/>)}
     </tr>;
   }
 }
@@ -128,7 +128,7 @@ class AlbumRow extends React.Component {
       <tr key={p._id}>
         <EditableText e="td" className="Fw(b):f" text={p._id} updateText={(id) => this.updateId(id)}/>
         <td></td>
-        {p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i]} updateText={(translation) => this.updateTranslation(i, translation)}/>)}
+        {p.langs.map((x, i) => <EditableText key={i} e="td" className="Fw(b):f" text={s.translations[i] || '?'} updateText={(translation) => this.updateTranslation(i, translation)}/>)}
       </tr>,
       p.songs.map((song, i) => <SongRow {...song} key={song._id} langs={p.langs} index={i} app={this.props.app} sourceSongNameChange={this.sourceSongNameChange}/>),
     ];
@@ -190,7 +190,6 @@ export default class AlbumListing extends React.Component {
           <tr>
             <th>Album</th>
             <th>Song</th>
-
             {s.langs.map((lang, i) =>
               <th key={i}> Name <select className="Bdrs(5px) W(90px)" onChange={(e) => {
                 const langs = this.state.langs.slice();
@@ -199,7 +198,6 @@ export default class AlbumListing extends React.Component {
               }} value={s.langs[i]}>
                 {langs.map((x) => <option value={x.lang} key={x.lang}>{x.name}</option>)}</select>
               </th>)}
-
           </tr>
         </thead>
         <tbody>
