@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import milk from '../milky.jpg';
-import planet from '../planet.png';
+import nasa2 from '../nasa2.png';
+import energy from '../energy.png';
 import transparent from '../transparent.png';
 import './boxAnimation.css';
 
@@ -45,7 +45,7 @@ const clearAsyncInterval = async () => {
   for (let i = 0; i < asyncIntervals.length; i++) {
     asyncIntervals[i] = false;
   }
-  await delay(2000);
+  await delay(500);
 };
 
 
@@ -87,13 +87,11 @@ export default class CardPoolDetail extends React.Component {
       animation: false,
 
       starStartSize: '50px',
-      starEndSize: '100px',
+      starEndSize: '80px',
       cardStartSize: '100px',
       cardEndSize: '100px',
       starStartPos: ['30%', '300px'],
-      starEndPos: ['30%', '300px'],
       cardStartPos: ['57%', '-100px'],
-      cardEndPos: ['30%', '300px'],
       starId: '',
       cardId: '',
       cardFlipId: '',
@@ -130,7 +128,7 @@ export default class CardPoolDetail extends React.Component {
       this.setState({currCardUrl: cards[i].coverUrl});
       await delay(300);
       this.setState({cardId: 'card1'});
-      await delay(2000);
+      await delay(500);
       this.setState({cardId: '', currCardUrl: ''});
     }
     this.setState({animation: false, starId: '', currCardUrl: '', cardFlipId: 'card2'});
@@ -146,7 +144,7 @@ export default class CardPoolDetail extends React.Component {
     setAsyncInterval(async () => {
       this.setState({cardFlipId: ''});
       const promise = new Promise((resolve) => {
-        setTimeout(resolve(), 500);
+        setTimeout(resolve(), 400);
       });
       await promise;
       const cardsDrew = await rpc('ClWebCardDraw', {cardPoolId: this.props.match.params.id, packInd});
@@ -186,9 +184,9 @@ export default class CardPoolDetail extends React.Component {
         </div>}
       </section>}
 
-      {s.animation && <section className="H(1200px) Bgz(cv) Bgp(c)" style={{backgroundImage: `url(${milk})`}}>
+      {s.animation && <section className="H(500px) Bgz(cv) Bgp(c)" style={{backgroundImage: `url(${nasa2})`}}>
         <div style={{marginLeft: s.starStartPos[0], paddingTop: s.starStartPos[1]}}>
-          <img id={s.starId} className={`W(${s.starStartSize}) H(${s.starStartSize}) `} alt="" src={planet}/>
+          <img id={s.starId} className={`W(${s.starStartSize}) H(${s.starStartSize}) `} alt="" src={energy}/>
         </div>
         <div style={{marginLeft: s.cardStartPos[0], marginTop: s.cardStartPos[1]}}>
           <img style={{height: s.cardStartSize}} id={s.cardId} alt=" " src={s.currCardUrl || transparent}/>

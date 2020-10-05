@@ -6,21 +6,21 @@
 }
 
 #star2 {
-    animation: star2 4s linear infinite;
+    animation: star2 3s linear infinite;
     transform-origin: center;
     transform-box: fill-box;
     animation-fill-mode: forwards;
 }
 
 #card1 {
-    animation: card1 2s linear;
+    animation: card1 0.5s ease-in;
     transform-origin: center;
     transform-box: fill-box;
     animation-fill-mode: forwards
 }
 
 #card2 {
-    animation: card2 0.4s linear;
+    animation: card2 0.2s linear;
     transform-origin: center;
     transform-box: fill-box;
     animation-fill-mode: forwards
@@ -28,24 +28,24 @@
 
 @keyframes star1 {
     0% {transform: translateX(0%) scale(1) } 
-    25% {transform:  translateX(150%) scale(2) }
-    50% {transform:  translateX(300%) scale(3) }
-    80% {transform:  translateX(450%) scale(4) }
-    100% {transform:  translateX(600%) scale(5) }
+    25% {transform:  translateX(100px) scale(2) }
+    50% {transform:  translateX(200px) scale(3) }
+    80% {transform:  translateX(300px) scale(4) }
+    100% {transform:  translateX(350px) scale(5) }
 }
 
 @keyframes star2 {
-    0% {transform: translateX(600%) scale(5) rotateZ(0deg) } 
-    100% {transform:  translateX(600%) scale(5) rotateZ(360deg) }
+    0% {transform: translateX(350px) scale(5) rotateZ(0deg) } 
+    100% {transform:  translateX(350px) scale(5) rotateZ(360deg) }
 }
 
 @keyframes card1 {
-    0% {transform: translateX(0px) scale(1); opacity: 0 } 
-    1% {transform: translateX(0px) scale(1); opacity: 1;} 
-    20% {transform:  translateX(0px) scale(2) }
-    30% {transform:  translateX(-300%) scale(2) }
-    70% {transform:  translateX(-300%) scale(2); opacity: 1;}
-    100% {transform:  translateX(-500%) scale(2); opacity: 0; }
+    0% {transform: translateX(0px) scale(0.5); opacity: 0 } 
+    1% {transform: translateX(0px) scale(0.5); opacity: 1;} 
+    20% {transform:  translateX(0px) scale(1) }
+    30% {transform:  translateX(-300px) scale(1) }
+    80% {transform:  translateX(-300px) scale(1); opacity: 1;}
+    100% {transform:  translateX(-500px) scale(1); opacity: 0; }
 }
 
 @keyframes card2 {

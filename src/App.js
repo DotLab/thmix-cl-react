@@ -529,7 +529,6 @@ export default class App extends React.Component {
 
   render() {
     const s = this.state;
-    console.log(this.history.location.pathname);
 
     return <TranslationContext.Provider value={s.translationDict}><div>
       {(s.error || s.success) && <div className="Pe(n) Z(1) position-fixed w-100 text-center">
@@ -553,7 +552,7 @@ export default class App extends React.Component {
                 </div>
               </li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts"><i className="fas fa-guitar"></i> <Tr src="soundfonts"/></NavLink></li> */}
-              {/* {s.user && <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/cards"><i className="fas fa-star"></i><Tr src="cards"/></NavLink></li>} */}
+              {s.user && <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/cards"><i className="fas fa-star"></i><Tr src="cards"/></NavLink></li>}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit"><i className="fas fa-language"></i> <Tr src="translations"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/versions"><i className="fas fa-parachute-box"></i> <Tr src="versions"/></NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/errors"><i className="fas fa-bomb"></i> <Tr src="errors"/></NavLink></li> */}
@@ -584,8 +583,8 @@ export default class App extends React.Component {
                   <div className="dropdown-item Cur(p)" onClick={this.albumCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create album"/></div>
                   <div className="dropdown-item Cur(p)" onClick={this.songCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create song"/></div>
                   <div className="dropdown-item Cur(p)" onClick={this.personCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create person"/></div>
-                  {/* <div className="dropdown-item Cur(p)" onClick={this.cardCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create card"/></div> */}
-                  {/* <div className="dropdown-item Cur(p)" onClick={this.cardPoolCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create card pool"/></div> */}
+                  <div className="dropdown-item Cur(p)" onClick={this.cardCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create card"/></div>
+                  <div className="dropdown-item Cur(p)" onClick={this.cardPoolCreate}><i className="fa-fw fas fa-plus-square"></i> <Tr src="create card pool"/></div>
                   {/* <Link className="dropdown-item" to="/resources/upload">upload resource</Link> */}
                   {/* <Link className="dropdown-item" to="/midis/upload">create story</Link> */}
                   {/* <a className="dropdown-item" href=".">Something else here</a> */}
