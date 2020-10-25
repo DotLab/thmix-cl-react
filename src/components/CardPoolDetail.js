@@ -113,10 +113,9 @@ export default class CardPoolDetail extends React.Component {
 
     setAsyncInterval(async () => {
       this.setState({cardFlipId: ''});
-      const promise = new Promise((resolve) => {
+      await new Promise((resolve) => {
         setTimeout(resolve(), 400);
       });
-      await promise;
       const cardsDrew = await rpc('ClWebCardDraw', {cardPoolId: this.props.match.params.id, packIndex});
       this.setState({cardsDrew: cardsDrew, cardFlipId: 'card2'});
     }, 1000);
