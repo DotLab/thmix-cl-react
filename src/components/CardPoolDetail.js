@@ -61,11 +61,6 @@ export default class CardPoolDetail extends React.Component {
     this.state = {
       name: '',
       creatorId: '',
-      nCards: [],
-      rCards: [],
-      srCards: [],
-      ssrCards: [],
-      urCards: [],
       packs: [],
       coverUrl: '',
 
