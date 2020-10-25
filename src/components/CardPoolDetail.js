@@ -48,7 +48,6 @@ const clearAsyncInterval = async () => {
   await delay(500);
 };
 
-
 export default class CardPoolDetail extends React.Component {
   constructor(props) {
     super(props);
@@ -70,26 +69,11 @@ export default class CardPoolDetail extends React.Component {
       packs: [],
       coverUrl: '',
 
-      nRate: 20,
-      rRate: 20,
-      srRate: 20,
-      ssrRate: 20,
-      urRate: 20,
-      nWeight: 1,
-
-      rWeight: 1,
-      srWeight: 1,
-      ssrWeight: 1,
-      urWeight: 1,
-      isMounted: false,
-
       cardsDrew: [],
       animation: false,
 
       starStartSize: '50px',
-      starEndSize: '80px',
       cardStartSize: '100px',
-      cardEndSize: '100px',
       starStartPos: ['30%', '300px'],
       cardStartPos: ['57%', '-100px'],
       starId: '',
@@ -105,7 +89,6 @@ export default class CardPoolDetail extends React.Component {
     const cardpool = await rpc('ClWebCardPoolGet', {id});
 
     this.setState(cardpool);
-    this.setState({isMounted: true});
     const s = this.state;
     const nRate = (parseFloat(s.nWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
     const rRate = (parseFloat(s.rWeight) / (parseFloat(s.nWeight) + parseFloat(s.rWeight) + parseFloat(s.srWeight) + parseFloat(s.ssrWeight) + parseFloat(s.urWeight)) * 100).toFixed(1);
@@ -137,9 +120,9 @@ export default class CardPoolDetail extends React.Component {
     this.setState({cardFlipId: '', cost: 0});
   }
 
-  async drawCards(packInd) {
+  async drawCards(packIndex) {
     await clearAsyncInterval();
-    this.setState({cardsDrew: [], cost: 1, animationMode: 1});
+    this.setState({cardsDrew: [], cost: 1});
 
     setAsyncInterval(async () => {
       this.setState({cardFlipId: ''});
@@ -147,7 +130,7 @@ export default class CardPoolDetail extends React.Component {
         setTimeout(resolve(), 400);
       });
       await promise;
-      const cardsDrew = await rpc('ClWebCardDraw', {cardPoolId: this.props.match.params.id, packInd});
+      const cardsDrew = await rpc('ClWebCardDraw', {cardPoolId: this.props.match.params.id, packIndex});
       this.setState({cardsDrew: cardsDrew, cardFlipId: 'card2'});
     }, 1000);
   }
