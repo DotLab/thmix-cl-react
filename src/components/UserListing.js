@@ -19,6 +19,8 @@ const Row = (s) => (<tr className="Bgc($gray-700) Bgc($gray-600):h mb-1">
   <td className="px-2 py-1 C($gray-500)">{formatNumberShort(s.score)}</td>
   <td className="px-2 py-1 C($gray-500)">{formatNumber(s.avgCombo, 0)}x</td>
   <td className="px-2 py-1 C($gray-500)">{formatNumber(s.avgAccuracy * 100, 2)}%</td>
+  <td className="px-2 py-1 C($gray-500)">{formatNumberShort(s.score / s.trialCount)}</td>
+  <td className="px-2 py-1 C($gray-500)">{formatNumber(s.performance / s.trialCount, 2)}</td>
   <td className="px-2 py-1">{formatNumber(s.performance)}</td>
   <td className="px-2 py-1 C($gray-500)">{formatNumber(s.sCount)}</td>
   <td className="px-2 py-1 C($gray-500)">{formatNumber(s.aCount)}</td>
@@ -118,7 +120,9 @@ export default class RankingListing extends React.Component {
                   <td className="px-2 py-1 text-muted">play count</td>
                   <td className="px-2 py-1 text-muted">scores</td>
                   <td className="px-2 py-1 text-muted">avg. combo</td>
-                  <td className="px-2 py-1 text-muted">avg. accuracy</td>
+                  <td className="px-2 py-1 text-muted">avg. acc.</td>
+                  <td className="px-2 py-1 text-muted">avg. score</td>
+                  <td className="px-2 py-1 text-muted">avg. perf.</td>
                   <td className="px-2 py-1">performance</td>
                   <td className="px-2 py-1 text-muted">S</td>
                   <td className="px-2 py-1 text-muted">A</td>
