@@ -6,7 +6,7 @@ import {formatNumber, getTimeSpan, formatTimeSpan, formatNumberShort} from '../u
 import DefaultAvatar from './DefaultAvatar.jpg';
 
 const MAX_PAGE = 20;
-const years = [2021, 2020, 2019];
+const years = [2021, 2020];
 
 const Row = (s) => (<tr className="Bgc($gray-700) Bgc($gray-600):h mb-1">
   <td className="px-2 py-1 rounded-left">#{formatNumber(s.index)}</td>
