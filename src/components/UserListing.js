@@ -19,7 +19,7 @@ const Row = (s) => (<tr className="Bgc($gray-700) Bgc($gray-600):h mb-1">
   <td className="px-2 py-1 C($gray-500)">{formatNumberShort(s.score)}</td>
   <td className="px-2 py-1 C($gray-500)">{formatNumber(s.avgCombo, 0)}x</td>
   <td className="px-2 py-1 C($gray-500)">{formatNumber(s.avgAccuracy * 100, 2)}%</td>
-  <td className="px-2 py-1">{formatNumber(s.yearPerformance ? s.yearPerformance : s.performance)}</td>
+  <td className="px-2 py-1">{formatNumber(s.performance)}</td>
   <td className="px-2 py-1 C($gray-500)">{formatNumber(s.sCount)}</td>
   <td className="px-2 py-1 C($gray-500)">{formatNumber(s.aCount)}</td>
   <td className="px-2 py-1 C($gray-500) rounded-right">{formatNumber(s.bCount)}</td>
