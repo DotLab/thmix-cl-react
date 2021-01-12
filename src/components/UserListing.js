@@ -3,6 +3,8 @@ import {Link} from 'react-router-dom';
 import QueryString from 'query-string';
 
 import {formatNumber, getTimeSpan, formatTimeSpan, formatNumberShort} from '../utils';
+import {Translation as Tr} from '../translationService';
+
 import DefaultAvatar from './DefaultAvatar.jpg';
 
 const MAX_PAGE = 20;
@@ -74,7 +76,7 @@ export default class RankingListing extends React.Component {
 
   async componentDidMount() {
     const page = this.getPage(this.props);
-    const users = await this.app.userList({page: page, year: 2021});
+    const users = await this.app.userList({page: page, year: new Date().getFullYear()});
 
     this.setState({page, users});
   }
@@ -99,7 +101,7 @@ export default class RankingListing extends React.Component {
       <section className="container">
         <div className="Bgc($gray-900) Py(100px) text-light text-center shadow">
           <h2 className="font-weight-light"><span className="text-warning">Performance</span> Ranking</h2>
-          <div className='Pos(r) Cur(p) text-light d-inline-block text-nowrap mr-3'> {s.year ? s.year : 'all time'}
+          <div className='Pos(r) Cur(p) text-light d-inline-block text-nowrap mr-3'> {s.year ? s.year : <Tr src="All time" />}
             <select className="form-control Pos(a) T(0) Cur(p) H(20px) Start(0) W(80px) Op(0)" name="year" value={s.year ? s.year : 'all time'} onChange={this.changeYear}>
               <option value="">all time</option>
               {years.map((x) => <option key={x} value={x}>{x}</option>)}
