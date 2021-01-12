@@ -528,7 +528,6 @@ export default class App extends React.Component {
 
   render() {
     const s = this.state;
-    console.log(this.history.location.pathname);
 
     return <TranslationContext.Provider value={s.translationDict}><div>
       {(s.error || s.success) && <div className="Pe(n) Z(1) position-fixed w-100 text-center">
