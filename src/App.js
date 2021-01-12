@@ -203,8 +203,8 @@ export default class App extends React.Component {
     return user;
   }
 
-  async userList({page}) {
-    const users = await this.genericApi1('cl_web_user_list', {page});
+  async userList({page, year}) {
+    const users = await this.genericApi1('cl_web_user_list', {page, year});
     return users;
   }
 

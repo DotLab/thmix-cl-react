@@ -3,12 +3,15 @@ import {Link} from 'react-router-dom';
 import QueryString from 'query-string';
 
 import {formatNumber, getTimeSpan, formatTimeSpan, formatNumberShort} from '../utils';
+import {Translation as Tr} from '../translationService';
+
 import DefaultAvatar from './DefaultAvatar.jpg';
 
 const MAX_PAGE = 20;
+const years = [2021, 2020];
 
 const Row = (s) => (<tr className="Bgc($gray-700) Bgc($gray-600):h mb-1">
-  <td className="px-2 py-1 rounded-left">#{formatNumber(s.ranking)}</td>
+  <td className="px-2 py-1 rounded-left">#{formatNumber(s.index)}</td>
   <td className="px-2 py-1 text-left">
     <img className="H(1em) Va(m) rounded" src={s.avatarUrl || DefaultAvatar} alt="avatar"/>
     <Link className="Va(m) Mstart(.25em) text-warning" to={`/users/${s.id}`}>{s.name}</Link>
@@ -18,6 +21,8 @@ const Row = (s) => (<tr className="Bgc($gray-700) Bgc($gray-600):h mb-1">
   <td className="px-2 py-1 C($gray-500)">{formatNumberShort(s.score)}</td>
   <td className="px-2 py-1 C($gray-500)">{formatNumber(s.avgCombo, 0)}x</td>
   <td className="px-2 py-1 C($gray-500)">{formatNumber(s.avgAccuracy * 100, 2)}%</td>
+  <td className="px-2 py-1 C($gray-500)">{formatNumberShort(s.score / s.trialCount)}</td>
+  <td className="px-2 py-1 C($gray-500)">{formatNumber(s.performance / s.trialCount, 2)}</td>
   <td className="px-2 py-1">{formatNumber(s.performance)}</td>
   <td className="px-2 py-1 C($gray-500)">{formatNumber(s.sCount)}</td>
   <td className="px-2 py-1 C($gray-500)">{formatNumber(s.aCount)}</td>
@@ -55,7 +60,9 @@ export default class RankingListing extends React.Component {
 
     this.state = {
       users: [],
+      year: 2021,
     };
+    this.changeYear = this.changeYear.bind(this);
   }
 
   getPage(props) {
@@ -69,16 +76,22 @@ export default class RankingListing extends React.Component {
 
   async componentDidMount() {
     const page = this.getPage(this.props);
-    const users = await this.app.userList({page: page});
+    const users = await this.app.userList({page: page, year: new Date().getFullYear()});
 
     this.setState({page, users});
   }
 
   async componentWillReceiveProps(props) {
     const page = this.getPage(props);
-    const users = await this.app.userList({page: page});
+    const users = await this.app.userList({page: page, year: this.state.year});
 
     this.setState({page, users});
+  }
+
+  async changeYear(e) {
+    const year = e.target.value;
+    const users = await this.app.userList({page: 0, year});
+    this.setState({users, year});
   }
 
   render() {
@@ -88,6 +101,12 @@ export default class RankingListing extends React.Component {
       <section className="container">
         <div className="Bgc($gray-900) Py(100px) text-light text-center shadow">
           <h2 className="font-weight-light"><span className="text-warning">Performance</span> Ranking</h2>
+          <div className='Pos(r) Cur(p) text-light d-inline-block text-nowrap mr-3'> {s.year ? s.year : <Tr src="All time" />}
+            <select className="form-control Pos(a) T(0) Cur(p) H(20px) Start(0) W(80px) Op(0)" name="year" value={s.year ? s.year : 'all time'} onChange={this.changeYear}>
+              <option value="">all time</option>
+              {years.map((x) => <option key={x} value={x}>{x}</option>)}
+            </select>
+          </div>
         </div>
       </section>
       <section className="container px-md-5 mb-2">
@@ -103,7 +122,9 @@ export default class RankingListing extends React.Component {
                   <td className="px-2 py-1 text-muted">play count</td>
                   <td className="px-2 py-1 text-muted">scores</td>
                   <td className="px-2 py-1 text-muted">avg. combo</td>
-                  <td className="px-2 py-1 text-muted">avg. accuracy</td>
+                  <td className="px-2 py-1 text-muted">avg. acc.</td>
+                  <td className="px-2 py-1 text-muted">avg. score</td>
+                  <td className="px-2 py-1 text-muted">avg. perf.</td>
                   <td className="px-2 py-1">performance</td>
                   <td className="px-2 py-1 text-muted">S</td>
                   <td className="px-2 py-1 text-muted">A</td>
@@ -111,7 +132,7 @@ export default class RankingListing extends React.Component {
                 </tr>
               </thead>
               <tbody>
-                {s.users.map((user, i) => <Row {...user} key={user.id} />)}
+                {s.users.map((user, i) => <Row {...user} key={i} index={!s.page ? i : s.page * 50 + i}/>)}
               </tbody>
             </table>
           </div>}
