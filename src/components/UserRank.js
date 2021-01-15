@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import {formatNumber, getTimeSpan, formatTimeSpan, formatNumberShort} from '../utils';
 import DefaultAvatar from './DefaultAvatar.jpg';
 
-const Row = (s) => (<tr className="Bgc($gray-700) Bgc($gray-600):h mb-1">
+const Row = (s) => (<tr className="Bgc(#363b49) Bgc(#3b404f):h mb-1">
   <td className="px-2 py-1 rounded-left">#{formatNumber(s.index)}</td>
   <td className="px-2 py-1 text-left">
     <img className="H(1em) Va(m) rounded" src={s.avatarUrl || DefaultAvatar} alt="avatar"/>
@@ -23,7 +23,7 @@ const Row = (s) => (<tr className="Bgc($gray-700) Bgc($gray-600):h mb-1">
 </tr>);
 
 export const RankTable = (p) => (<div className="table-responsive">
-  <table className="Bdcl(s) Bdsp(0,.25em) my-3  text-nowrap text-center">
+  <table className="Bdcl(s) Bdsp(0,.25em) text-nowrap text-center">
     <thead className="small">
       <tr>
         <td></td>
