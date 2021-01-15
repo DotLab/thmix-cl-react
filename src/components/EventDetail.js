@@ -116,7 +116,7 @@ export default class EventDetail extends React.Component {
         <div className="C(white) Fz(18px)">{s.desc}</div>
         <div className="row Mt(50px)">
           <div className="col col-lg-4">
-            <div className="Fz(20px) Fw(b) Py(5px)">EVENT SONGS</div>
+            <div className="Fz(20px) Fw(b) Py(5px)">EVENT MIDIS</div>
             {s.midis.map((midi) => <Card {...midi} key={midi._id} />)}
           </div>
           <section className="pb-3 col col-lg-8">
