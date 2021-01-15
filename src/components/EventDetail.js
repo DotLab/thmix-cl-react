@@ -97,7 +97,7 @@ export default class EventDetail extends React.Component {
           <img className="Op(0.7)" src={s.coverUrl} alt=""/>
         </div>
         <div className="Pt(150px) Px(100px)">
-          <div className="Bgc(#ffc0cb) C(gray) rounded border shadow-sm p-3 W(40%)">
+          <div className="Bgc(white) C(gray) rounded border shadow-sm p-3 W(40%)">
             <h2 className="h4 Op(1) font-weight-normal mb-0">Event {s.name}</h2>
             <div><small>{new Date(s.startDate).toDateString()} - {new Date(s.endDate).toDateString()}</small></div>
             <div><small>{s.desc}</small></div>

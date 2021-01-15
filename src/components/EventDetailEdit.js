@@ -27,6 +27,7 @@ export default class EventDetailEdit extends React.Component {
 
       name: '',
       desc: '',
+      active: true,
       startDate: new Date().toISOString().split('T')[0],
       endDate: new Date().toISOString().split('T')[0],
       coverUrl: '',
@@ -105,6 +106,15 @@ export default class EventDetailEdit extends React.Component {
           <div className="form-group row">
             <label className="col-sm-3 col-form-label text-right">end date</label>
             <div className="col-sm-9"><input className="form-control" type="date" name="endDate" value={s.endDate || new Date().toISOString().split('T')[0]} onChange={this.onChange}/></div>
+          </div>
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label text-right">midi artist name</label>
+            <div className="col-sm-9">
+              <select className="form-control" name="active" value={s.active} onChange={this.onChange}>
+                <option value={true}>Active</option>
+                <option value={false}>Inactive</option>
+              </select>
+            </div>
           </div>
           <hr/>
           <div className="form-group row">
