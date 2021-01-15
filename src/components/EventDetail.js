@@ -96,9 +96,12 @@ export default class EventDetail extends React.Component {
   }
 
   async componentDidMount() {
-    const ranks = await rpc('ClWebEventRanking', {id: this.props.match.params.id});
-    const event = await rpc('ClWebEventGetMidiList', {id: this.props.match.params.id});
-    this.setState({...event, ...ranks});
+    await Promise.all([
+      rpc('ClWebEventRanking', {id: this.props.match.params.id}),
+      rpc('ClWebEventGetMidiList', {id: this.props.match.params.id}),
+    ]).then((value) => {
+      this.setState({...value[0], ...value[1]});
+    });
   }
 
   render() {
