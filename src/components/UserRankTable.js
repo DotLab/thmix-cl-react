@@ -22,7 +22,7 @@ const Row = (s) => (<tr className="Bgc(#363b49) Bgc(#3b404f):h mb-1">
   <td className="px-2 py-1 C($gray-500) rounded-right">{formatNumber(s.bCount)}</td>
 </tr>);
 
-export const RankTable = (p) => (<div className="table-responsive">
+export const UserRankTable = (p) => (<div className="table-responsive">
   <table className="Bdcl(s) Bdsp(0,.25em) text-nowrap text-center">
     <thead className="small">
       <tr>
@@ -45,5 +45,4 @@ export const RankTable = (p) => (<div className="table-responsive">
       {p.users.map((user, i) => <Row {...user} key={i} index={!p.page ? i : p.page * 50 + i}/>)}
     </tbody>
   </table>
-</div>)
-;
+</div>);

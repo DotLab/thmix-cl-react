@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 
 import {formatNumber, formatTimeSpan, formatNumberShort, getTimeSpan, touhouAlbum} from '../utils';
 import DefaultAvatar from './DefaultAvatar.jpg';
-import {RankTable} from './UserRank';
+import {UserRankTable} from './UserRankTable';
 
 const Card = (s) => (<div className="overflow-hidden mb-2 shadow-lg ">
   <div className="H(100px) rounded shadow-sm Bgp(c) Bgz(cv)" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, .8)), url(${s.coverUrl})`, transition: `.4s cubic-bezier(.215,.61,.355,1)`}}>
@@ -124,7 +124,7 @@ export default class EventDetail extends React.Component {
             {/* rank */}
             {s.rankings && s.rankings.length ? <div className="container Bgc(#292d38) rounded shadow-lg p-3 mb-3">
               <UserRank userRanking={s.userRanking} userRankingDetail={s.userRankingDetail}/>
-              <RankTable users={s.rankings}/>
+              <UserRankTable users={s.rankings}/>
             </div> : <div className="container Bgc(#292d38) rounded shadow p-3 text-center">No scores yet. Maybe you should try setting some?</div>}
           </section>
         </div>

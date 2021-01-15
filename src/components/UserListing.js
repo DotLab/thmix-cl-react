@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import QueryString from 'query-string';
 
 import {Translation as Tr} from '../translationService';
-import {RankTable} from './UserRank';
+import {UserRankTable} from './UserRankTable';
 
 const MAX_PAGE = 20;
 const years = [2021, 2020];
@@ -91,7 +91,7 @@ export default class RankingListing extends React.Component {
       <section className="container px-md-5 mb-2">
         <div className="Bgc($gray-800) text-light p-3 shadow">
           <Pagination page={s.page} />
-          {!!s.users.length && <RankTable users={s.users} page={s.page}/>}
+          {!!s.users.length && <UserRankTable users={s.users} page={s.page}/>}
           {!!s.users.length && <Pagination page={s.page} />}
         </div>
       </section>
