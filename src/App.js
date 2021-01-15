@@ -37,7 +37,6 @@ import CardDetailEdit from './components/CardDetailEdit';
 import CardPoolListing from './components/CardPoolListing';
 import CardPoolDetailEdit from './components/CardPoolDetailEdit';
 
-import EventListing from './components/EventListing';
 import EventDetail from './components/EventDetail';
 import EventDetailEdit from './components/EventDetailEdit';
 
@@ -630,7 +629,6 @@ export default class App extends React.Component {
         <PropsRoute exact path="/cardpools" component={CardPoolListing} app={this} />
         <PropsRoute exact path="/cardpools/:id/edit" component={CardPoolDetailEdit} app={this} />
 
-        <PropsRoute exact path="/events" component={EventListing} app={this} />
         <PropsRoute exact path="/events/:id/edit" component={EventDetailEdit} app={this} />
         <PropsRoute exact path="/events/:id/" component={EventDetail} app={this} />
 
