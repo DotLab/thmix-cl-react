@@ -563,7 +563,7 @@ export default class App extends React.Component {
               </li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/soundfonts"><i className="fas fa-guitar"></i> <Tr src="soundfonts"/></NavLink></li> */}
               {/* {s.user && <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/cards"><i className="fas fa-star"></i><Tr src="cards"/></NavLink></li>} */}
-              <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/event"><i className="fas fa-trophy"></i> <Tr src="Events"/></NavLink></li>
+              {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/event"><i className="fas fa-trophy"></i> <Tr src="Events"/></NavLink></li> */}
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/translations/edit"><i className="fas fa-language"></i> <Tr src="translations"/></NavLink></li>
               <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/versions"><i className="fas fa-parachute-box"></i> <Tr src="versions"/></NavLink></li>
               {/* <li className="nav-item"><NavLink className="nav-link" activeClassName="active" to="/errors"><i className="fas fa-bomb"></i> <Tr src="errors"/></NavLink></li> */}
