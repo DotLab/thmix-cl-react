@@ -77,56 +77,55 @@ const UserRank = (p) => (<div className="px-3">
 </div>);
 
 export default class EventDetail extends React.Component {
-    _isMounted = false;
-    constructor(props) {
-      super(props);
+  constructor(props) {
+    super(props);
 
-      this.state = {
-        id: this.props.match.params.id,
+    this.state = {
+      id: this.props.match.params.id,
 
-        name: '',
-        desc: '',
-        startDate: null,
-        endDate: null,
-        coverUrl: '',
-        midis: [],
-        rankings: [],
-        userRanking: -1,
-        userRankingDetail: {},
-      };
-    }
+      name: '',
+      desc: '',
+      startDate: null,
+      endDate: null,
+      coverUrl: '',
+      midis: [],
+      rankings: [],
+      userRanking: -1,
+      userRankingDetail: {},
+    };
+  }
 
-    async componentDidMount() {
-      const ranks = await rpc('ClWebEventRanking', {id: this.props.match.params.id});
-      const event = await rpc('ClWebEventGetMidiList', {id: this.props.match.params.id});
-      this.setState({...event, ...ranks});
-    }
+  async componentDidMount() {
+    const ranks = await rpc('ClWebEventRanking', {id: this.props.match.params.id});
+    const event = await rpc('ClWebEventGetMidiList', {id: this.props.match.params.id});
+    this.setState({...event, ...ranks});
+  }
 
-    render() {
-      const s = this.state;
+  render() {
+    const s = this.state;
 
-      return <section className="Pos(r) Pb(100px) Bgc(#1e2129)">
-        <div className="Pos(a) Z(0) W(100%) H(50%) Bgp(c) Bgz(cv) " style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(30, 33, 41, 1)), url(${s.coverUrl})`}}></div>
+    return <section className="Pos(r) Pb(100px) Bgc(#1e2129)">
+      <div className="Pos(a) Z(0) W(100%) H(50%) Bgp(c) Bgz(cv) " style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(30, 33, 41, 1)), url(${s.coverUrl})`}}></div>
 
-        <div className="Pos(r) Pt(280px) Px(100px) C(white)">
-          <h1 className="Op(1) font-weight-normal mb-0">Event {s.name}</h1>
-          <div className="C(white) Fz(18px)">{new Date(s.startDate).toDateString()} - {new Date(s.endDate).toDateString()}</div>
-          <div className="C(white) Fz(18px)">{s.desc}</div>
-          <div className="row Mt(50px)">
-            <div className="col col-lg-4">
-              <div className="Fz(20px) Fw(b) Py(5px)">EVENT SONGS</div>
-              {s.midis.map((midi) => <Card {...midi} key={midi._id} />)}
-            </div>
-            <section className="pb-3 col col-lg-8">
-              <div className="Fz(20px) Fw(b) Py(5px)">RANKING</div>
-              {/* rank */}
-              {s.rankings && s.rankings.length ? <div className="container Bgc(#292d38) rounded shadow-lg p-3 mb-3">
-                <UserRank userRanking={s.userRanking} userRankingDetail={s.userRankingDetail}/>
-                <RankTable users={s.rankings}/>
-              </div> : <div className="container Bgc(#292d38) rounded shadow p-3 text-center">No scores yet. Maybe you should try setting some?</div>}
-            </section>
+      <div className="Pos(r) Pt(280px) Px(100px) C(white)">
+        <h1 className="Op(1) font-weight-normal mb-0">Event {s.name}</h1>
+        <div className="C(white) Fz(18px)">{new Date(s.startDate).toDateString()} - {new Date(s.endDate).toDateString()}</div>
+        <div className="C(white) Fz(18px)">{s.desc}</div>
+        <div className="row Mt(50px)">
+          <div className="col col-lg-4">
+            <div className="Fz(20px) Fw(b) Py(5px)">EVENT SONGS</div>
+            {s.midis.map((midi) => <Card {...midi} key={midi._id} />)}
           </div>
+          <section className="pb-3 col col-lg-8">
+            <div className="Fz(20px) Fw(b) Py(5px)">RANKING</div>
+            {/* rank */}
+            {s.rankings && s.rankings.length ? <div className="container Bgc(#292d38) rounded shadow-lg p-3 mb-3">
+              <UserRank userRanking={s.userRanking} userRankingDetail={s.userRankingDetail}/>
+              <RankTable users={s.rankings}/>
+            </div> : <div className="container Bgc(#292d38) rounded shadow p-3 text-center">No scores yet. Maybe you should try setting some?</div>}
+          </section>
         </div>
-      </section>;
-    }
+      </div>
+    </section>;
+  }
 }
