@@ -2,23 +2,24 @@ import React from 'react';
 import {rpc} from '../apiService';
 import {Link} from 'react-router-dom';
 
-import {formatNumber, formatTimeSpan, formatNumberShort, getTimeSpan, touhouAlbum} from '../utils';
+import {formatNumber, formatTimeSpan, formatNumberShort, getTimeSpan, touhouAlbum, formatDateTime} from '../utils';
 import DefaultAvatar from './DefaultAvatar.jpg';
 import {UserRankTable} from './UserRankTable';
+import {Translation as Tr, UI_WEB, UI_VOLATILE} from '../translationService';
 
-const Card = (s) => (<div className="overflow-hidden mb-2 shadow-lg ">
-  <div className="H(100px) rounded shadow-sm Bgp(c) Bgz(cv)" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, .8)), url(${s.coverUrl})`, transition: `.4s cubic-bezier(.215,.61,.355,1)`}}>
-    <div className="rounded-top py-2 px-3">
+const MidiCard = (s) => (<div className="overflow-hidden mb-2 shadow-lg ">
+  <div className="H(88px) rounded shadow-sm Bgp(c) Bgz(cv)" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, .8)), url(${s.coverUrl})`}}>
+    <div className="rounded-top py-1 px-2">
 
       <div className="position-relative" >
-        <div className="T(0) End(0) Lh(1.15) position-absolute text-right">
+        <div className="T(3px) End(0) Lh(1.15) position-absolute text-right">
           <em>{formatNumber(s.trialCount)}</em> <i className="small fa-fw fas fa-play"></i><br/>
           <em>{formatNumber(s.downloadCount)}</em> <i className="small fa-fw fas fa-download"></i><br/>
           <em>{formatNumber(s.voteSum)}</em> <i className="small fa-fw fas fa-chevron-up"></i><br/>
           <em>{formatNumber(s.loveCount)}</em> <i className="small fa-fw fas fa-heart"></i><br/>
         </div>
         <div className="T(0px) Pend(40px) Start(0) Lh(1.15) Fz(16px) position-absolute font-italic w-100">
-          <Link className="h5 m-0 text-light text-decoration-none" to={`/midis/${s._id}`}>{s.name}</Link>
+          <Link className="h5 m-0 text-light text-decoration-none d-block text-truncate" to={`/midis/${s._id}`}>{s.name}</Link>
           <div>{s.artistName}</div>
           <div className="font-weight-bold text-truncate">{s.touhouAlbumIndex > 0 ? touhouAlbum[s.touhouAlbumIndex].name : s.sourceAlbumName}</div>
           <div className="Lh(1) font-weight-bold text-truncate">{s.touhouAlbumIndex > 0 ? touhouAlbum[s.touhouAlbumIndex].songs[s.touhouSongIndex].name : s.sourceSongName}</div>
@@ -108,24 +109,29 @@ export default class EventDetail extends React.Component {
     const s = this.state;
 
     return <section className="Pos(r) Pb(100px) Bgc(#1e2129)">
-      <div className="Pos(a) Z(0) W(100%) H(50%) Bgp(c) Bgz(cv) " style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(30, 33, 41, 1)), url(${s.coverUrl})`}}></div>
+      <div className="Pos(a) W(100%) H(100%)">
+        <div className="Pos(r)">
+          <div className="Pos(a) W(100%) H(100%)" style={{backgroundImage: `linear-gradient(rgba(30, 33, 41, .2), rgba(30, 33, 41, 1))`}}></div>
+          <img className="W(100%)" src={s.coverUrl} alt="" />
+        </div>
+      </div>
 
-      <div className="Pos(r) Pt(280px) Px(100px) C(white)">
-        <h1 className="Op(1) font-weight-normal mb-0">Event {s.name}</h1>
-        <div className="C(white) Fz(18px)">{new Date(s.startDate).toDateString()} - {new Date(s.endDate).toDateString()}</div>
+      <div className="container Pos(r) Pt(280px) C(white)">
+        <h1 className="Op(1) font-weight-normal mb-0"><Tr ns="name.event" src={s.name}/></h1>
+        <div className="C(white) Fz(18px)">{formatDateTime(s.startDate)} - {formatDateTime(s.endDate)}</div>
         <div className="C(white) Fz(18px)">{s.desc}</div>
         <div className="row Mt(50px)">
-          <div className="col col-lg-4">
-            <div className="Fz(20px) Fw(b) Py(5px)">EVENT MIDIS</div>
-            {s.midis.map((midi) => <Card {...midi} key={midi._id} />)}
+          <div className="col-lg-4">
+            <div className="Fz(20px) Fw(b) Py(5px)"><Tr ns={UI_WEB} src="EVENT MIDIS"/></div>
+            {s.midis.map((midi) => <MidiCard {...midi} key={midi._id} />)}
           </div>
-          <section className="pb-3 col col-lg-8">
-            <div className="Fz(20px) Fw(b) Py(5px)">RANKING</div>
+          <section className="pb-3 col-lg-8">
+            <div className="Fz(20px) Fw(b) Py(5px)"><Tr ns={UI_WEB} src="RANKING"/></div>
             {/* rank */}
-            {s.rankings && s.rankings.length ? <div className="container Bgc(#292d38) rounded shadow-lg p-3 mb-3">
+            {s.rankings && s.rankings.length ? <div className="container-fluid Bgc(#292d38) rounded shadow-lg p-3 mb-3">
               <UserRank userRanking={s.userRanking} userRankingDetail={s.userRankingDetail}/>
               <UserRankTable users={s.rankings}/>
-            </div> : <div className="container Bgc(#292d38) rounded shadow p-3 text-center">No scores yet. Maybe you should try setting some?</div>}
+            </div> : <div className="container-fluid Bgc(#292d38) rounded shadow p-3 text-center"><Tr ns={UI_WEB} src="No records yet. Maybe you should try setting some?" /></div>}
           </section>
         </div>
       </div>

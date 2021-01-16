@@ -130,3 +130,4 @@ export class Translation extends React.Component {
 }
 
 export const UI_VOLATILE = 'ui.volatile';
+export const UI_WEB = 'ui.web';
