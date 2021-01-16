@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom';
 import {formatNumber, formatTimeSpan, formatNumberShort, getTimeSpan, touhouAlbum, formatDateTime} from '../utils';
 import DefaultAvatar from './DefaultAvatar.jpg';
 import {UserRankTable} from './UserRankTable';
-import {Translation as Tr, UI_WEB, UI_VOLATILE} from '../translationService';
+import {Translation as Tr, UI_WEB} from '../translationService';
 
 const MidiCard = (s) => (<div className="overflow-hidden mb-2 shadow-lg ">
   <div className="H(88px) rounded shadow-sm Bgp(c) Bgz(cv)" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, .8)), url(${s.coverUrl})`}}>
