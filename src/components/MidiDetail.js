@@ -4,7 +4,6 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import {RECAPTCHA_KEY, TEST_RECAPTCHA_KEY} from '../secrets';
 import {GradeBadge} from './gradeBadges';
 import {rpc} from '../apiService';
-import {ROLE_MIDI_ADMIN, checkUserRole} from '../roleService';
 
 import {formatNumber, formatDate, formatDateTime, touhouAlbum, onChange, onChangeNamedDirect} from '../utils';
 
@@ -250,7 +249,6 @@ export default class MidiDetail extends React.Component {
 
   render() {
     const s = this.state;
-    const canEditStatus = this.props.app.state.user && checkUserRole(this.props.app.state.user.roles, ROLE_MIDI_ADMIN);
 
     return <div className="Bgp(c) Bgz(cv)" style={{backgroundImage: `url(${s.coverBlurUrl})`}}>
       <section className="container" style={{backgroundColor: '#ffffffc0'}}>
@@ -297,12 +295,12 @@ export default class MidiDetail extends React.Component {
           <div className="col-md-4">
             <div className="text-right mt-md-4">
               <div className="Pos(r) Fz(1em) badge badge-pill badge-dark p-3 shadow-sm" style={{backgroundColor: '#00000080'}}>{s.status}
-                {canEditStatus && <select className="form-control Pos(a) T(0) Cur(p) H(52px) Start(0) W(110px) Op(0)" name="status" value={s.status} onChange={this.changeStatus}>
+                <select className="form-control Pos(a) T(0) Cur(p) H(52px) Start(0) W(110px) Op(0)" name="status" value={s.status} onChange={this.changeStatus}>
                   <option value="PENDING">PENDING</option>
                   <option value="APPROVED">APPROVED</option>
                   <option value="INCLUDED">INCLUDED</option>
                   <option value="DEAD">DEAD</option>
-                </select>}
+                </select>
               </div>
               {s.canEdit && <span className="Fz(1em) Cur(p) badge badge-pill badge-dark p-3 shadow-sm ml-2" style={{backgroundColor: '#00000080'}} onClick={this.startEdit}><i className="fas fa-pencil-alt"></i></span>}
             </div>
