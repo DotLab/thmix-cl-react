@@ -29,7 +29,7 @@ const MidiCard = (s) => (<div className="overflow-hidden mb-2 shadow-lg ">
   </div>
 </div>);
 
-const UserRank = (p) => (<div className="px-3">
+const UserRank = (p) => (<div className="px-3 pt-3">
   <div className="D(ib) Lh(1) text-center align-middle">
     {p.userRanking !== -1 && <div className="Fz(1.2em) font-weight-bold m-0">#{p.userRanking}</div>}
   </div>
@@ -80,6 +80,8 @@ const UserRank = (p) => (<div className="px-3">
 export default class EventDetail extends React.Component {
   constructor(props) {
     super(props);
+    /** @type {import('../App').default} */
+    this.app = props.app;
 
     this.state = {
       id: this.props.match.params.id,
@@ -129,8 +131,8 @@ export default class EventDetail extends React.Component {
           <section className="pb-3 col-lg-8">
             <div className="Fz(20px) Fw(b) Py(5px)"><Tr ns={UI_WEB} src="RANKING"/></div>
             {/* rank */}
-            {s.rankings && s.rankings.length ? <div className="container-fluid Bgc(#292d38) rounded shadow-lg p-3 mb-3">
-              <UserRank userRanking={s.userRanking} userRankingDetail={s.userRankingDetail}/>
+            {s.rankings && s.rankings.length ? <div className="container-fluid Bgc(#292d38) rounded shadow-lg px-3 pb-3 mb-3">
+              {this.app.state.user && <UserRank userRanking={s.userRanking} userRankingDetail={s.userRankingDetail}/>}
               <UserRankTable users={s.rankings}/>
             </div> : <div className="container-fluid Bgc(#292d38) rounded shadow p-3 text-center"><Tr ns={UI_WEB} src="No records yet. Maybe you should try setting some?" /></div>}
           </section>
