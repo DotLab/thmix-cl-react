@@ -16,7 +16,7 @@ export default class MidiUpload extends React.Component {
     const name = e.target.files[0].name;
     const size = e.target.files[0].size;
 
-    if (size > 1048576) {
+    if (size > 1e+7) { // 10mb
       this.app.error('image too large');
     } else {
       const fr = new FileReader();
